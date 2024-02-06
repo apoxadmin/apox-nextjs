@@ -58,7 +58,6 @@ function CalendarPicker({
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
       }}
-      disabled={{before: startOfToday()}}
       {...props}
     />
   )

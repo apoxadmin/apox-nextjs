@@ -12,7 +12,7 @@ import {
   import { cn } from "@/lib/utils"
 import { CalendarPicker } from "@/components/ui/calendar-picker"
 
-export default function DatePickerForm({ value, onChange }: { value: any, onChange: any }) {
+export default function DatePickerForm({ value, onChange, ...props }: { value: any, onChange: any, disabled?: any, className?: string }) {
     return (
         <Popover>
           <PopoverTrigger asChild>
@@ -20,7 +20,8 @@ export default function DatePickerForm({ value, onChange }: { value: any, onChan
               variant={"outline"}
               className={cn(
                 "w-[200px] justify-start text-left font-normal",
-                !value && "text-muted-foreground"
+                !value && "text-muted-foreground",
+                props.className
               )}
             >
               {/* <CalendarIcon className="mr-2 h-4 w-4" /> */}
@@ -33,6 +34,7 @@ export default function DatePickerForm({ value, onChange }: { value: any, onChan
               selected={value}
               onSelect={onChange}
               initialFocus
+              disabled={props.disabled}
             />
           </PopoverContent>
         </Popover>

@@ -53,7 +53,7 @@ export function TimePicker({ value, onChange }: { value: Date, onChange: (date: 
                     contentEditable
                     suppressContentEditableWarning
                 >
-                    {value ? getHours(value) == 0 ? '12' : getHours(value) : '――'}
+                    {value ? getHours(value) == 0 ? '12' : getHours(value) % 12 : '――'}
                 </span>
                 :
                 <span role="textbox" 

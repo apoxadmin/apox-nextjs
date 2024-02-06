@@ -8,13 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectTrigger, SelectGroup, SelectItem, SelectLabel, SelectValue } from "../ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import DatePickerForm from "@/components/ui/DatePicker";
+import DatePickerForm from "@/components/ui/date-picker";
 import { getHours, getMinutes, isBefore, set, startOfToday } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import TimeRangePicker from "@/components/ui/TimeRangePicker";
+import { createDoc } from "@/lib/contentfulCMA";
+import { toField } from "@/lib/contentfulClientUtils";
+import { useAuthContext } from "@/lib/firebaseAuth";
+
+const EVENT_TYPES: any = ['s/service', 'fel/fellowship', 'f/fundraising', 'fam/family'];
 
 const formSchema = z.object({
-    type: z.enum(['service', 'fellowship', 'fundraising', 'family'], {
+    type: z.enum(EVENT_TYPES, {
         required_error: "Event type is required."
     }),
     name: z.string().min(1, {
@@ -48,6 +53,8 @@ const formSchema = z.object({
   
 
 export default function EventForm() {
+    const { userData } = useAuthContext();
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -59,14 +66,29 @@ export default function EventForm() {
             shifts: []
         },
     })
-        // 2. Define a submit handler.
+
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+        createDoc('event', {
+            type: toField(values.type),
+            name: toField(values.name),
+            description: toField(values.description),
+            location: toField(values.location),
+            startDate: toField(values.dates.startDate),
+            endDate: toField(values.dates.endDate),
+            limit: toField(values.limit),
+            shifts: toField(values.shifts),
+            creator: toField({ sys: {
+                id: userData.id,
+                linkType: 'Entry',
+                type: 'User'
+            } })
+        })
+        .then(()=> console.log(values))
+        .catch(e => console.log(e));
     }
     return <div className="w-full max-w-md text-gray-800">
         <Form {...form}>
+            {JSON.stringify(userData)}
             <form 
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col space-y-8"
@@ -85,10 +107,12 @@ export default function EventForm() {
                                     <SelectContent>
                                         <SelectGroup className="text-start">
                                             <SelectLabel>Event Types</SelectLabel>
-                                            <SelectItem value="service">Service</SelectItem>
-                                            <SelectItem value="fellowship">Fellowship</SelectItem>
-                                            <SelectItem value="fundraising">Fundraising</SelectItem>
-                                            <SelectItem value="family">Family</SelectItem>
+                                            {
+                                                EVENT_TYPES.map((eventType: string, i: number) => {
+                                                    const name = eventType.charAt(0).toUpperCase() + eventType.split('/')[1].slice(1);
+                                                    return <SelectItem key={i} value={eventType}>{name}</SelectItem>
+                                                }) 
+                                            }
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -168,6 +192,7 @@ export default function EventForm() {
                                             })
                                         }
                                     }}
+                                    disabled={{before: startOfToday()}}
                                 />
                             </FormControl>
                             <FormMessage />
