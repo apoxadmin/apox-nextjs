@@ -18,8 +18,8 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
 import React from "react"
 import { InputPassword } from "@/components/ui/input-password"
-import { createUser } from "@/lib/firebaseAuth"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { signupUser } from "@/lib/supabase/actions"
 
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
@@ -58,7 +58,8 @@ export default function SignUpPage() {
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        createUser(data)
+        // createUser(data)
+        signupUser(data)
         .then(() => {
             toast({
                 title: "You submitted the following values:",

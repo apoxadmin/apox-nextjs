@@ -2,6 +2,6 @@
 
 ## Stack
 - NextJS
-- Contentful (CMA/CDN)
+- Supabase
 - TailwindCSS
 - shadcn/ui

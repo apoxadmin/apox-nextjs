@@ -14,7 +14,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import TimeRangePicker from "@/components/ui/TimeRangePicker";
 import { createDoc } from "@/lib/contentfulCMA";
 import { toField } from "@/lib/contentfulClientUtils";
-import { useAuthContext } from "@/lib/firebaseAuth";
 
 const EVENT_TYPES: any = ['s/service', 'fel/fellowship', 'f/fundraising', 'fam/family'];
 
@@ -53,7 +52,7 @@ const formSchema = z.object({
   
 
 export default function EventForm() {
-    const { userData } = useAuthContext();
+    // const { userData } = useAuthContext();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -68,27 +67,26 @@ export default function EventForm() {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        createDoc('event', {
-            type: toField(values.type),
-            name: toField(values.name),
-            description: toField(values.description),
-            location: toField(values.location),
-            startDate: toField(values.dates.startDate),
-            endDate: toField(values.dates.endDate),
-            limit: toField(values.limit),
-            shifts: toField(values.shifts),
-            creator: toField({ sys: {
-                id: userData.id,
-                linkType: 'Entry',
-                type: 'User'
-            } })
-        })
-        .then(()=> console.log(values))
-        .catch(e => console.log(e));
+        // createDoc('event', {
+        //     type: toField(values.type),
+        //     name: toField(values.name),
+        //     description: toField(values.description),
+        //     location: toField(values.location),
+        //     startDate: toField(values.dates.startDate),
+        //     endDate: toField(values.dates.endDate),
+        //     limit: toField(values.limit),
+        //     shifts: toField(values.shifts),
+        //     creator: toField({ sys: {
+        //         id: userData.id,
+        //         linkType: 'Entry',
+        //         type: 'User'
+        //     } })
+        // })
+        // .then(()=> console.log(values))
+        // .catch(e => console.log(e));
     }
     return <div className="w-full max-w-md text-gray-800">
         <Form {...form}>
-            {JSON.stringify(userData)}
             <form 
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col space-y-8"
