@@ -14,7 +14,7 @@ export const InputPassword = ({ className, type, showPassword, setShowPassword, 
       <input
         type={type}
         className={cn(
-          "grow focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+          "min-w-0 flex-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         value={value}

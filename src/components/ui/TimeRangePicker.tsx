@@ -5,20 +5,25 @@ import React, { useEffect } from "react";
 
 
 export function TimePicker({ value, onChange }: { value: Date, onChange: (date: Date) => void }) {
+    const [hoursInternal, setHoursInternal] = React.useState<number>(0);
     const [hoursCache, setHoursCache] = React.useState<number>(null);
 
     const [minutesCache, setMinutesCache] = React.useState<number>(null);
 
     const [meridian, setMeridian] = React.useState<'AM'|'PM'>('AM');
 
-    const setHours = (hours: number) => {
-        const hours24 = meridian == 'AM' ? hours : hours + 12;
+    const setHours = () => {
+        const hours24 = meridian == 'AM' ? hoursInternal%12 : hoursInternal%12 + 12;
         onChange(set(value, { hours: hours24 }));
     }
 
     const setMinutes = (minutes: number) => {
         onChange(set(value, { minutes: minutes }));
     }
+
+    React.useEffect(() => {
+        setHours();
+    }, [hoursInternal, meridian]);
 
     return (
         <div
@@ -33,17 +38,17 @@ export function TimePicker({ value, onChange }: { value: Date, onChange: (date: 
                             if (!hoursCache) {
                                 if (e.key != '0') {
                                     const num = parseInt(e.key);
-                                    setHours(num);
+                                    setHoursInternal(num);
                                     setHoursCache(num);
                                 }
                             }
                             else {
                                 const timeString = parseInt(hoursCache.toString() + e.key);
                                 if (timeString <= 12) {
-                                    setHours(timeString);
+                                    setHoursInternal(timeString);
                                     setHoursCache(timeString);
                                 } else if (e.key != '0') {
-                                    setHours(parseInt(e.key));
+                                    setHoursInternal(parseInt(e.key));
                                     setHoursCache(parseInt(e.key));
                                 }
                             }
@@ -53,7 +58,7 @@ export function TimePicker({ value, onChange }: { value: Date, onChange: (date: 
                     contentEditable
                     suppressContentEditableWarning
                 >
-                    {value ? getHours(value) == 0 ? '12' : getHours(value) % 12 : '――'}
+                    {value ? (getHours(value) % 12 == 0 ? '12' : getHours(value) % 12) : '――'}
                 </span>
                 :
                 <span role="textbox" 

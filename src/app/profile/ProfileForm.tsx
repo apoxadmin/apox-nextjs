@@ -1,11 +1,9 @@
 'use client'
 
-import { useAuthContext } from "@/lib/firebaseAuth"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import React from "react"
-import { getProfile } from "@/lib/contenfulCDN"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -18,10 +16,11 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { updateDoc } from "@/lib/contentfulCMA"
-import { toField } from "@/lib/contentfulClientUtils"
 import { toast } from "@/components/ui/use-toast"
 import DatePickerMonthYear from "@/components/ui/date-picker-month-year"
+import { cookies } from "next/headers"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { SkeletonCard } from "@/components/ui/skeleton-card"
 
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
@@ -32,71 +31,53 @@ const formSchema = z.object({
         message: "Email must be at least 5 characters.",
     }).email("Invalid email."),
     phoneNumber: z.string().regex(phoneRegex, "Invalid phone number."),
-    major: z.string().min(1, "Major must be at least 1 character").optional(),
-    linkedIn: z.string().min(1, "LinkedIn must be at least 1 character").optional(),
-    instagram: z.string().min(1, "Instagram must be at least 1 character").optional(),
-    facebook: z.string().min(1, "Facebook must be at least 1 character").optional(),
-    birthday: z.date().optional(),
-    address: z.string().min(1, "Address must be at least 1 character").optional(),
+    major: z.string().min(1, "Major must be at least 1 character").optional().or(z.literal('')),
+    linkedin: z.string().min(1, "LinkedIn must be at least 1 character").optional().or(z.literal('')),
+    instagram: z.string().min(1, "Instagram must be at least 1 character").optional().or(z.literal('')),
+    facebook: z.string().min(1, "Facebook must be at least 1 character").optional().or(z.literal('')),
+    birthday: z.date().nullable(),
+    address: z.string().min(1, "Address must be at least 1 character").optional().or(z.literal('')),
 });
 
 export default function ProfileForm() {
-    const { user } = useAuthContext();
     const [userData, setUserData] = React.useState<any>(null);
+    const supabase = createClientComponentClient();
 
     const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            'email': '',
-            'phoneNumber': '',
-            'major': '',
-            'linkedIn': '',
-            'instagram': '',
-            'facebook': '',
-            'address': ''
-        }
+        resolver: zodResolver(formSchema)
     });
-    
-    React.useEffect(() => {
-        async function fetchUser() {
-            const userData: any = await getProfile(await user.getIdToken());
-            setUserData(userData);
-            form.setValue('email', userData['email']);
-            form.setValue('phoneNumber', userData['phoneNumber']);
-            form.setValue('major', userData['major']);
-            form.setValue('linkedIn', userData['linkedIn']);
-            form.setValue('instagram', userData['instagram']);
-            form.setValue('facebook', userData['facebook']);
-            form.setValue('birthday', userData['birthday']);
-            form.setValue('address', userData['address']);
-        }
 
-        fetchUser();
+    React.useEffect(() => {
+        async function fetchUserData() {
+            const { data, error } = await supabase.auth.getUser();
+            const result = await supabase.from('users').select().eq('uid', data.user.id).maybeSingle();
+            const user = result.data;
+            if (user != null) {
+                setUserData(user);
+                form.setValue('email', user['email']);
+                form.setValue('phoneNumber', user['phoneNumber']);
+                form.setValue('major', user['major']);
+                form.setValue('linkedin', user['linkedin']);
+                form.setValue('instagram', user['instagram']);
+                form.setValue('facebook', user['facebook']);
+                form.setValue('birthday', user['birthday']);
+                form.setValue('address', user['address']);
+            }
+        }
+        fetchUserData();
+        
     }, [])
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        
-        for (const value in values) {
-            if (values[value] == undefined) {
-                delete values[value];
-            }
-            else {
-                values[value] = toField(values[value])
-            }
-        }
-        updateDoc({ content_type: 'user' }, values)
-        .then(() => {
-            toast({
-                title: "You updated your profile!",
-            });
-        })
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log(values);
+        console.log(userData)
+        const { error } = await supabase.from('users').update(values).eq('id', userData.id);
     }
 
-    return (
-        <Form {...form}>
+    return <>
+        {
+            userData ? <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-8">
                 <FormField
                     control={form.control}
@@ -179,7 +160,7 @@ export default function ProfileForm() {
                 />
                 <FormField
                     control={form.control}
-                    name="linkedIn"
+                    name="linkedin"
                     render={({ field }) => (
                         <FormItem>
                         <FormLabel>LinkedIn</FormLabel>
@@ -224,6 +205,7 @@ export default function ProfileForm() {
                 />
                 <Button className="self-center" type="submit">Update profile</Button>
             </form>
-        </Form>
-    )
+        </Form> : <SkeletonCard />
+        }
+    </>
 }

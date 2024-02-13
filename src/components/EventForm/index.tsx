@@ -12,10 +12,10 @@ import DatePickerForm from "@/components/ui/date-picker";
 import { getHours, getMinutes, isBefore, set, startOfToday } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import TimeRangePicker from "@/components/ui/TimeRangePicker";
-import { createDoc } from "@/lib/contentfulCMA";
-import { toField } from "@/lib/contentfulClientUtils";
+import React from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-const EVENT_TYPES: any = ['s/service', 'fel/fellowship', 'f/fundraising', 'fam/family'];
+const EVENT_TYPES: any = ['service', 'fellowship', 'fundraising', 'family'];
 
 const formSchema = z.object({
     type: z.enum(EVENT_TYPES, {
@@ -44,7 +44,7 @@ const formSchema = z.object({
         message: "Limit cannot be negative."
     }),
     shiftsEnabled: z.boolean(),
-    shifts: z.object({ startDate: z.date().default(startOfToday()), endDate: z.date().default(startOfToday()) }).array()
+    shifts: z.object({ startDate: z.date().default(startOfToday()), endDate: z.date().default(startOfToday()) }).array().default([])
     .refine((array) => array.every(({ startDate, endDate}) => isBefore(startDate, endDate)), {
         message: 'Ending times must be after starting times.',
     })
@@ -52,7 +52,21 @@ const formSchema = z.object({
   
 
 export default function EventForm() {
-    // const { userData } = useAuthContext();
+    const [userData, setUserData] = React.useState<any>(null);
+    const supabase = createClientComponentClient();
+
+    React.useEffect(() => {
+        async function fetchUserData() {
+            const { data, error } = await supabase.auth.getUser();
+            const result = await supabase.from('users').select().eq('uid', data.user.id).maybeSingle();
+            const user = result.data;
+            if (user != null) {
+                setUserData(user);
+            }
+        }
+        fetchUserData();
+        
+    }, [])
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -66,24 +80,32 @@ export default function EventForm() {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // createDoc('event', {
-        //     type: toField(values.type),
-        //     name: toField(values.name),
-        //     description: toField(values.description),
-        //     location: toField(values.location),
-        //     startDate: toField(values.dates.startDate),
-        //     endDate: toField(values.dates.endDate),
-        //     limit: toField(values.limit),
-        //     shifts: toField(values.shifts),
-        //     creator: toField({ sys: {
-        //         id: userData.id,
-        //         linkType: 'Entry',
-        //         type: 'User'
-        //     } })
-        // })
-        // .then(()=> console.log(values))
-        // .catch(e => console.log(e));
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log(values.type);
+        const eventTypeResponse = await supabase.from('event_types').select().eq('name', values.type).maybeSingle();
+
+        if (eventTypeResponse.error) {
+            console.error("Invalid event type.");
+            return;
+        }
+
+        const eventTypeKey = eventTypeResponse.data.id;
+
+        const eventResponse = await supabase.from('events').insert({
+            type: eventTypeKey,
+            name: values.name,
+            description: values.description,
+            location: values.location,
+            startDate: values.dates.startDate,
+            endDate: values.dates.endDate,
+            limit: values.limit,
+            shifts: values?.shifts,
+            creator: userData.id
+        })
+        
+        if (eventResponse.error) {
+            console.error('Could not create event: ', eventResponse.error);
+        }
     }
     return <div className="w-full max-w-md text-gray-800">
         <Form {...form}>
@@ -107,7 +129,7 @@ export default function EventForm() {
                                             <SelectLabel>Event Types</SelectLabel>
                                             {
                                                 EVENT_TYPES.map((eventType: string, i: number) => {
-                                                    const name = eventType.charAt(0).toUpperCase() + eventType.split('/')[1].slice(1);
+                                                    const name = eventType.charAt(0).toUpperCase() + eventType.slice(1);
                                                     return <SelectItem key={i} value={eventType}>{name}</SelectItem>
                                                 }) 
                                             }
@@ -181,7 +203,7 @@ export default function EventForm() {
                                             form.setValue('dates', { 
                                                 startDate: set(newDate, { hours: getHours(startDate), minutes: getMinutes(startDate) }),
                                                 endDate: set(newDate, { hours: getHours(endDate), minutes: getMinutes(endDate) }) 
-                                            })
+                                            });
                                         }
                                         else {
                                             form.setValue('dates', { 
@@ -204,6 +226,7 @@ export default function EventForm() {
                         <FormItem>
                             <FormLabel>Time Range</FormLabel>
                             <FormControl>
+                                
                                 <TimeRangePicker value={field.value} onChange={field.onChange}/>
                             </FormControl>
                             <FormMessage />

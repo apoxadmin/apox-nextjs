@@ -18,8 +18,8 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
 import React from "react"
 import { InputPassword } from "@/components/ui/input-password"
-import { createUser, signInUser } from "@/lib/firebaseAuth"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
@@ -38,6 +38,7 @@ const FormSchema = z.object({
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = React.useState(false);
+    const supabase = createClientComponentClient();
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -48,7 +49,10 @@ export default function LoginPage() {
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        signInUser(data.email, data.password)
+        supabase.auth.signInWithPassword({
+            email: data.email,
+            password: data.password
+        })
         .then(() => {
             toast({
                 title: "You submitted the following values:",
@@ -62,8 +66,9 @@ export default function LoginPage() {
       }
 
     return (
-        <main className="flex min-h-screen flex-col items-center space-y-8 p-24">
-            <div className="w-full max-w-lg">
+        <main className="flex min-h-screen flex-col items-center space-y-8 py-24">
+            <div className="flex flex-col items-center w-full max-w-md">
+                <h1>Login Page</h1>
                 <Form {...form}>
                     <form 
                         onSubmit={form.handleSubmit(onSubmit)} 
@@ -97,9 +102,6 @@ export default function LoginPage() {
                                         onChange={field.onChange}
                                     />
                                 </FormControl>
-                                <FormDescription>
-                                    At least 8 characters.
-                                </FormDescription>
                                 <FormMessage />
                                 </FormItem>
                             )}

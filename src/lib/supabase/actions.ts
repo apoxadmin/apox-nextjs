@@ -1,55 +1,65 @@
 'use server'
 
-import { type CookieOptions, createServerClient } from '@supabase/ssr'
-import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import createAdmin from '@/lib/supabase/admin'
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers"
+import { adminClient } from "./admin";
 
-export async function createClientCookie(cookieStore: ReturnType<typeof cookies>) {
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: '', ...options })
-        },
-      },
+export async function createUser(data) {
+    
+    // Check user's role
+    const cookieStore = cookies();
+    const supabaseServer = createServerComponentClient({ cookies: () => cookieStore });
+    const user = (await supabaseServer.auth.getUser()).data.user;
+    const userRoleKey = (await supabaseServer.from('users').select().eq('uid', user.id).maybeSingle()).data.role;
+    if (userRoleKey == null) {
+        return Promise.reject('No user role.');
     }
-  )
-}
+    
+    const userRole = (await supabaseServer.from('roles').select().eq('id', userRoleKey).maybeSingle()).data;
+    if (userRole == null) {
+        return Promise.reject('Invalid user role.');
+    }
+    
+    const privileged = userRole.privileged;
+    if (!privileged) {
+        return Promise.reject('Not a privileged user.');
+    }
 
-export async function signupUser(formData: any) {
-    const supabase = createAdmin()
+    // Check valid signup request
 
-    let { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
+    if (!data.standing) {
+        return Promise.reject('No standing specified');
+    }
+
+    const standingResponse = await supabaseServer.from('standings').select().eq('name', data.standing).maybeSingle();
+
+    if (standingResponse.error) {
+        return Promise.reject('No standing specified');
+    }
+
+    const standing = standingResponse.data.id;
+
+    // Create authenticated user
+    const supabaseAdmin = adminClient;
+
+    const authResponse = await supabaseAdmin.auth.admin.createUser({
+        email: data.email,
+        password: data.password
     });
 
-    if (error) {
-        return Promise.reject(error);
+    if (authResponse.error) {
+        return Promise.reject('Failed to authenticate user.');
     }
 
-    const uid = data.user.id;
-    let res = await supabase.from('users').insert({
-        uid: uid,
-        name: formData.name,
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        pledgeTerm: formData.pledgeTerm
-    })
+    // Create user record
+    data.standing = standing;
+    delete data.password;
 
-    if (res.error) {
-        console.log('hi')
-        console.log(res.error);
-        await supabase.auth.admin.deleteUser(uid)
+    const userResponse = await supabaseAdmin.from('users').insert(data);
+
+    if (userResponse.error) {
+        await supabaseAdmin.auth.admin.deleteUser(authResponse.data.user.id);
+        console.log(userResponse.error);
+        return Promise.reject('Failed to create user.');
     }
 }

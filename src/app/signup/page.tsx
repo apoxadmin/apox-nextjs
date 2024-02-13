@@ -19,7 +19,7 @@ import { toast } from "@/components/ui/use-toast"
 import React from "react"
 import { InputPassword } from "@/components/ui/input-password"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { signupUser } from "@/lib/supabase/actions"
+import { createUser } from "@/lib/supabase/actions"
 
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
@@ -58,23 +58,29 @@ export default function SignUpPage() {
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        // createUser(data)
-        signupUser(data)
+        createUser(data)
         .then(() => {
-            toast({
-                title: "You submitted the following values:",
-                description: (
-                    <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                        <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                    </pre>
-                ),
-            });
+            console.log('Success!')
         })
+        .catch((error) => {
+            console.error(error);
+        })
+        // signupUser(data)
+        // .then(() => {
+        //     toast({
+        //         title: "You submitted the following values:",
+        //         description: (
+        //             <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+        //                 <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        //             </pre>
+        //         ),
+        //     });
+        // })
       }
 
     return (
         <main className="flex min-h-screen flex-col items-center space-y-8 p-24">
-            <div className="w-full max-w-lg">
+            <div className="flex flex-col items-center w-full max-w-lg">
                 <Form {...form}>
                     <form 
                         onSubmit={form.handleSubmit(onSubmit)} 
