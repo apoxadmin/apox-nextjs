@@ -77,7 +77,7 @@ export default function EventCalendar({ focusDate }: { focusDate: Date }) {
                                 <DialogTrigger asChild>
                                 <div className={
                                     cn(
-                                        "flex flex-col overflow-hidden md:rounded-lg p-[3px] md:p-2 md:hover:z-50 md:hover:shadow-xl md:hover:outline md:outline-1 outline-gray-400 hover:cursor-pointer transition-all ease-in-out delay-50 duration-200",
+                                        "flex flex-col space-y-[1px] overflow-hidden md:rounded-lg p-[3px] md:p-1 md:hover:z-50 md:hover:shadow-xl md:hover:outline md:outline-1 outline-gray-400 hover:cursor-pointer transition-all ease-in-out delay-50 duration-200",
                                         dateFns.isSameMonth(focusDate, day) ? 'bg-white' : 'bg-gray-200 text-gray-400',
                                         dateFns.isSameDay(day, today) && 'bg-sky-200'
                                     )
@@ -90,7 +90,7 @@ export default function EventCalendar({ focusDate }: { focusDate: Date }) {
                                             return (
                                                 <div key={i} className={
                                                     cn(
-                                                        "flex space-x-1 text-xs rounded",
+                                                        "flex space-x-1 px-1 text-xs rounded",
                                                         dateFns.isSameDay(day, today) ? 'bg-sky-50' : 'bg-gray-100'
                                                     )
                                                 }>

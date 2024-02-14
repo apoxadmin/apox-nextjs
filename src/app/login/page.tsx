@@ -67,7 +67,7 @@ export default function LoginPage() {
 
     return (
         <main className="flex min-h-screen flex-col items-center space-y-8 py-24">
-            <div className="flex flex-col items-center w-full max-w-md">
+            <div className="flex flex-col space-y-8 items-center w-full max-w-md">
                 <h1>Login Page</h1>
                 <Form {...form}>
                     <form 

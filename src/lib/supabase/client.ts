@@ -11,6 +11,13 @@ export async function signUpEvent(eventId: number) {
     if (user == null)
         return;
 
+    // Get event limit
+    const eventData = (await supabase.from('events').select('limit, users!event_user_joins ( id )').eq('id', eventId).maybeSingle()).data;
+
+    if (eventData.users && eventData.users.length == eventData.limit && eventData.limit != 0) {
+        return Promise.reject(`Event is capped at ${eventData.limit}.`);
+    }
+
     const userData = (await supabase.from('users').select('id').eq('uid', user.id).maybeSingle()).data;
 
     const { error } = await supabase.from('event_user_joins').insert({

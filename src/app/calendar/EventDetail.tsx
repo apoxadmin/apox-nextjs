@@ -69,15 +69,33 @@ export default function EventDetail({ userData, event }) {
         <div className="space-x-2">
             {
                 userData && attendees.map(a => a.id).includes(userData.id) ? 
-                <Button onClick={() => { leaveEvent(event.id); setAttendees(attendees.filter(a => a.id != userData.id))}}>Leave</Button>
+                <Button onClick={() => { 
+                    leaveEvent(event.id); 
+                    setAttendees(attendees.filter(a => a.id != userData.id));
+                }}>
+                    Leave
+                </Button>
                 :
-                userData && <Button onClick={() => { signUpEvent(event.id); setAttendees([...attendees, { name: userData.name, id: userData.id }]) }}>Sign up</Button>
+                userData && <Button onClick={() => { 
+                    signUpEvent(event.id)
+                    .then(() => {
+                        setAttendees([...attendees, { name: userData.name, id: userData.id }]);
+                    })
+                }}>
+                    Sign up
+                </Button>
             }
             
             {
-                attendees.map(a => a.id).includes(userData.id) && (
-                userData && chairs.map(a => a.id).includes(userData.id) ? 
-                <Button onClick={() => { unchairEvent(event.id); setChairs(chairs.filter(a => a.id != userData.id))}}>Unchair</Button>
+                userData && attendees.map(a => a.id).includes(userData.id) && chairs.map(a => a.id).includes(userData.id) ? 
+                <Button onClick={() => { 
+                    leaveEvent(event.id);
+                    setAttendees(attendees.filter(a => a.id != userData.id));
+                    unchairEvent(event.id); 
+                    setChairs(chairs.filter(a => a.id != userData.id));
+                }}>
+                    Unchair
+                </Button>
                 :
                 userData && <Button onClick={() => { 
                     chairEvent(event.id)
@@ -85,7 +103,6 @@ export default function EventDetail({ userData, event }) {
                         setChairs([...chairs, { name: userData.name, id: userData.id }]);
                     })
                 }}>Chair</Button>
-                )
             }
         </div>
     </div>
