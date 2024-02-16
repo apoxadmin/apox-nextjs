@@ -38,7 +38,7 @@ export default function CalendarPage() {
                     {dateFns.format(dateFns.startOfToday(), 'PPPP')}
                 </h1>
             </div>
-            <div className="md:w-[160px] flex items-center justify-between space-x-2 md:space-x-4 bg-gray-100 rounded-full">
+            <div className="md:w-[160px] flex items-center justify-between md:space-x-2 md:space-x-4 px-4 py-2 md:p-0 bg-gray-100 rounded-full">
                 <IoIosArrowBack 
                     className="hidden md:block text-xl hover:cursor-pointer hover:text-gray-500 bg-gray-200 p-1 md:w-[25px] md:h-[25px] rounded-l-full"
                     onClick={() => setFocusDate(dateFns.addMonths(focusDate, -1))} 
