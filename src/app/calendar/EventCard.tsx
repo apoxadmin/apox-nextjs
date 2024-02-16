@@ -29,7 +29,7 @@ export default function EventCard({ userData, event }) {
     return (
     <Dialog>
         <DialogTrigger asChild>
-            <Card className="hover:shadow-lg hover:scale-105 transition delay-50 duration-200 ease-in-out">
+            <Card className="hover:shadow-lg hover:outline outline-1 outline-indigo-500 transition delay-50 duration-200 ease-in-out">
                 <CardHeader>
                     <div className="flex flex-col md:flex-row w-full justify-between items-center">
                         <CardTitle className="text-lg md:text-2xl">{event.name}</CardTitle>

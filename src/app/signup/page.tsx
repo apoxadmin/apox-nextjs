@@ -36,7 +36,7 @@ const FormSchema = z.object({
         message: "Password must be at least 8 characters"
     }),
     phoneNumber: z.string().regex(phoneRegex, "Invalid phone number."),
-    pledgeTerm: z.string().min(2, "Pledge term must be 2 characters.").max(2, "Pledge term must be 2 characters."),
+    pledgeTerm: z.string(),
     standing: z.enum(STANDING, {
         required_error: "Standing is required."
     })

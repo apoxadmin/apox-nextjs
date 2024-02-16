@@ -57,7 +57,7 @@ export default function EventCalendar({ focusDate }: { focusDate: Date }) {
                         end: dateFns.endOfWeek(today, { weekStartsOn: 0 })
                     }).map((day, i) => (
                         <div key={i} className="py-2 md:py-0">
-                            <h1 className="text-xs md:text-base text-center text-gray-500">
+                            <h1 className="text-xs md:text-base text-center text-gray-400">
                                 {dateFns.format(day, 'E').toUpperCase()}
                             </h1>
                         </div>
@@ -79,25 +79,25 @@ export default function EventCalendar({ focusDate }: { focusDate: Date }) {
                                     cn(
                                         "flex flex-col space-y-[1px] overflow-hidden md:rounded-lg p-[3px] md:p-1 md:hover:z-50 md:hover:shadow-xl md:hover:outline md:outline-1 outline-gray-400 hover:cursor-pointer transition-all ease-in-out delay-50 duration-200",
                                         dateFns.isSameMonth(focusDate, day) ? 'bg-white' : 'bg-gray-200 text-gray-400',
-                                        dateFns.isSameDay(day, today) && 'bg-sky-200'
+                                        dateFns.isSameDay(day, today) && 'bg-indigo-200'
                                     )
                                 }>
                                     
                                     <p className="text-xs md:text-base">{dateFns.getDate(day)}</p>
                                     {
-                                        dayEvents.slice(0, 2).map((event, i) => {
+                                        dayEvents.slice(0, 3).map((event, i) => {
                                             const eventLabel = event.event_types.name[0].toUpperCase();
                                             return (
                                                 <div key={i} className={
                                                     cn(
-                                                        "flex space-x-1 px-1 text-xs rounded",
-                                                        dateFns.isSameDay(day, today) ? 'bg-sky-50' : 'bg-gray-100'
+                                                        "flex space-x-1 px-1 rounded",
+                                                        dateFns.isSameDay(day, today) ? 'bg-indigo-50' : 'bg-gray-100'
                                                     )
                                                 }>
-                                                    <h1 className="font-bold">
+                                                    <h1 className="text-[0.7rem] font-bold">
                                                         {eventLabel}
                                                     </h1>
-                                                    <h1 className="truncate">
+                                                    <h1 className="text-[0.7rem] truncate">
                                                         {event.name}
                                                     </h1>
                                                 </div>
@@ -105,7 +105,7 @@ export default function EventCalendar({ focusDate }: { focusDate: Date }) {
                                         })
                                     }
                                     <h1 className="font-bold text-xs text-center">
-                                        { dayEvents.length > 1 && '...' }
+                                        { dayEvents.length > 3 && '. . .' }
                                     </h1>
                                 </div>
                                 </DialogTrigger>
