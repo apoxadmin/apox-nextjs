@@ -54,7 +54,7 @@ import { Button } from "../ui/button";
 
         <DrawerContent className="h-1/2">
           <Command>
-            <CommandInput className="text-lg" placeholder="Type a command or search..." />
+            <CommandInput className="text-[16px]" placeholder="Type a command or search..." />
             <CommandList>
                 <CommandEmpty>No results found.</CommandEmpty>
                 <CommandGroup heading="Suggestions">
