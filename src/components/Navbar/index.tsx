@@ -84,7 +84,7 @@ export default function Navbar() {
     return (
         <div className="flex items-center justify-between p-4 md:px-8 w-full border-b-[2px] shadow-sm z-10">
             <img className="h-[30px]" src="/logo.png" />
-            <div className="flex items-center space-x-4 md:space-x-8">
+            <div className="hidden md:flex items-center space-x-4 md:space-x-8">
                 <Input 
                     placeholder="Search"
                     onClick={() => { setSearchOpen(true)}}
@@ -92,6 +92,12 @@ export default function Navbar() {
                     className="h-[28px] hover:cursor-pointer hover:ring-2 hover:ring-indigo-400 focus:!ring-transparent shadow-sm hover:drop-shadow-md text-xs max-w-[150px] md:max-w-[200px] transition ease-in-out delay-50 duration-200"/>
                 <FaUserCircle className="text-3xl text-indigo-400 hover:cursor-pointer hover:text-indigo-300"/>
             </div>
+            <Input 
+                placeholder="Search"
+                onClick={() => { setSearchOpen(true)}}
+                readOnly
+                className="md:hidden h-[28px] hover:cursor-pointer hover:ring-2 hover:ring-indigo-400 focus:!ring-transparent shadow-sm hover:drop-shadow-md text-xs max-w-[150px] md:max-w-[200px] transition ease-in-out delay-50 duration-200"/>
+            <FaUserCircle className="md:hidden text-3xl text-indigo-400 hover:cursor-pointer hover:text-indigo-300"/>
             <DrawerDialogDemo searchOpen={searchOpen} setSearchOpen={setSearchOpen} />
             {/* <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
                     <CommandInput placeholder="Type a command or search..." />
