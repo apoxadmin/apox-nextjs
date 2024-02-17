@@ -54,24 +54,24 @@ import { Button } from "../ui/button";
 
         <DrawerContent className="h-1/2">
           <Command>
-            <CommandInput placeholder="Type a command or search..." />
-                <CommandList>
-                    <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup heading="Suggestions">
-                    <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
-                        <IoCalendarNumberOutline className="text-base"/>
-                        <h1>Calendar</h1>
-                    </CommandItem>
-                    <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
-                        <FaRegUser className="text-base"/>
-                        <h1>Members</h1>
-                    </CommandItem>
-                    <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
-                        <FaWpforms className="text-base"/>
-                        <h1>Event Request Form</h1>
-                    </CommandItem>
-                    </CommandGroup>
-                </CommandList>
+            <CommandInput className="text-lg" placeholder="Type a command or search..." />
+            <CommandList>
+                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandGroup heading="Suggestions">
+                <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <IoCalendarNumberOutline className="text-base"/>
+                    <h1>Calendar</h1>
+                </CommandItem>
+                <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <FaRegUser className="text-base"/>
+                    <h1>Members</h1>
+                </CommandItem>
+                <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <FaWpforms className="text-base"/>
+                    <h1>Event Request Form</h1>
+                </CommandItem>
+                </CommandGroup>
+            </CommandList>
           </Command>
         </DrawerContent>
       </Drawer>
