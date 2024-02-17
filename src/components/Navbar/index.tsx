@@ -1,7 +1,7 @@
 'use client'
 
 import { Input } from "@/components/ui/input";
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { FaRegUser } from "react-icons/fa6";
 import React from "react";
 import { FaWpforms } from "react-icons/fa";
@@ -51,17 +51,28 @@ import { Button } from "../ui/button";
    
     return (
       <Drawer open={searchOpen} onOpenChange={setSearchOpen}>
-        <DrawerTrigger asChild>
-          <Button variant="outline">Edit Profile</Button>
-        </DrawerTrigger>
+
         <DrawerContent className="h-1/2">
-          <DrawerHeader className="text-left">
-            <DrawerTitle>Edit profile</DrawerTitle>
-            <DrawerDescription>
-              Make changes to your profile here. Click save when you're done.
-            </DrawerDescription>
-          </DrawerHeader>
-          
+          <Command>
+            <CommandInput placeholder="Type a command or search..." />
+                <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup heading="Suggestions">
+                    <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
+                        <IoCalendarNumberOutline className="text-base"/>
+                        <h1>Calendar</h1>
+                    </CommandItem>
+                    <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
+                        <FaRegUser className="text-base"/>
+                        <h1>Members</h1>
+                    </CommandItem>
+                    <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
+                        <FaWpforms className="text-base"/>
+                        <h1>Event Request Form</h1>
+                    </CommandItem>
+                    </CommandGroup>
+                </CommandList>
+          </Command>
         </DrawerContent>
       </Drawer>
     )

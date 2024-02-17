@@ -70,8 +70,10 @@ export default function EventDetail({ userData, event }) {
             {
                 userData && attendees.map(a => a.id).includes(userData.id) ? 
                 <Button onClick={() => { 
-                    leaveEvent(event.id); 
+                    leaveEvent(event.id);
                     setAttendees(attendees.filter(a => a.id != userData.id));
+                    unchairEvent(event.id);
+                    setChairs(chairs.filter(a => a.id != userData.id));
                 }}>
                     Leave
                 </Button>
@@ -89,15 +91,13 @@ export default function EventDetail({ userData, event }) {
             {
                 userData && attendees.map(a => a.id).includes(userData.id) && chairs.map(a => a.id).includes(userData.id) ? 
                 <Button onClick={() => { 
-                    leaveEvent(event.id);
-                    setAttendees(attendees.filter(a => a.id != userData.id));
-                    unchairEvent(event.id); 
+                    unchairEvent(event.id);
                     setChairs(chairs.filter(a => a.id != userData.id));
                 }}>
                     Unchair
                 </Button>
                 :
-                userData && <Button onClick={() => { 
+                userData && attendees.map(a => a.id).includes(userData.id) && <Button onClick={() => { 
                     chairEvent(event.id)
                     .then(() => {
                         setChairs([...chairs, { name: userData.name, id: userData.id }]);
