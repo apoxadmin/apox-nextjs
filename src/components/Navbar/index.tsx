@@ -1,164 +1,24 @@
 'use client'
 
-import { Input } from "@/components/ui/input";
-import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { FaRegUser } from "react-icons/fa6";
 import React from "react";
-import { FaWpforms } from "react-icons/fa";
-import { IoCalendarNumberOutline } from "react-icons/io5";
-import { FaUserCircle } from "react-icons/fa";
-import { HiUser, HiUserGroup } from "react-icons/hi";
-import { FiLogOut } from "react-icons/fi";
-import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-  } from "@/components/ui/drawer";
-  import { useMediaQuery } from "@/hooks/use-media-query";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-
-  export function DrawerDialogDemo({ searchOpen, setSearchOpen }) {
-    const [open, setOpen] = React.useState(false);
-    const isDesktop = useMediaQuery("(min-width: 768px)");
-   
-    if (isDesktop) {
-      return (
-        <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-            <CommandInput className="text-base" placeholder="Type a command or search..." />
-            <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
-                <CommandGroup heading="Suggestions">
-                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <IoCalendarNumberOutline className="text-lg"/>
-                    <h1 className="text-base">Calendar</h1>
-                </CommandItem>
-                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <FaRegUser className="text-lg"/>
-                    <h1 className="text-base">Members</h1>
-                </CommandItem>
-                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <FaWpforms className="text-lg"/>
-                    <h1 className="text-base">Event Request Form</h1>
-                </CommandItem>
-                </CommandGroup>
-            </CommandList>
-        </CommandDialog>
-      )
-    }
-   
-    return (
-      <Drawer open={searchOpen} onOpenChange={setSearchOpen}>
-
-        <DrawerContent className="h-1/2">
-          <Command>
-            <CommandInput className="text-[16px]" placeholder="Type a command or search..." />
-            <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
-                <CommandGroup heading="Suggestions">
-                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <IoCalendarNumberOutline className="text-lg"/>
-                    <h1 className="text-base">Calendar</h1>
-                </CommandItem>
-                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <FaRegUser className="text-base"/>
-                    <h1 className="text-base">Members</h1>
-                </CommandItem>
-                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <FaWpforms className="text-base"/>
-                    <h1 className="text-base">Event Request Form</h1>
-                </CommandItem>
-                </CommandGroup>
-            </CommandList>
-          </Command>
-        </DrawerContent>
-      </Drawer>
-    )
-  }
-
-function ProfileButton({ className }: { className?: string }) {
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger className={
-                cn("outline-none", className)
-            }>
-                <FaUserCircle className="text-3xl text-indigo-400 hover:cursor-pointer hover:text-indigo-300"/>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel className="text-indigo-500">
-                    My Account
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem className="flex items-center space-x-2">
-                        <HiUser className="text-lg text-gray-600"/>
-                        <h1 className="text-gray-600">My Profile</h1>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="flex items-center space-x-2">
-                        <HiUserGroup className="text-lg text-gray-600"/>
-                        <h1 className="text-gray-600">My Family</h1>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem className="flex items-center space-x-2">
-                        <FiLogOut className="text-lg text-gray-600"/>
-                        <h1 className="text-gray-600">Log out</h1>
-                    </DropdownMenuItem>
-                </DropdownMenuGroup>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
-}
+import NavbarAuthComponents from "./NavbarAuthComponents";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function Navbar() {
-    const [searchOpen, setSearchOpen] = React.useState<boolean>(false);
-    const isDesktop = useMediaQuery("(min-width: 768px)");
+    const supabase = createClientComponentClient();
+    const [user, setUser] = React.useState<any>(null);
+
+    React.useEffect(() => {
+        async function fetchUser() {
+            setUser((await supabase.auth.getUser()).data.user);
+        }
+        fetchUser();
+    })
+    
     return (
-        <div className="flex items-center justify-between p-4 md:px-8 w-full border-b-[2px] shadow-sm z-10">
+        <div className="sticky top-0 z-25 flex items-center justify-between p-4 md:px-8 w-full border-b-[2px] shadow-sm z-10 bg-white">
             <img className="h-[30px]" src="/logo.png" />
-            
-            <div className="hidden md:flex items-center space-x-4 md:space-x-8">
-                <Input 
-                    placeholder="Search"
-                    onClick={() => { setSearchOpen(true)}}
-                    readOnly
-                    className="h-[32px] hover:cursor-pointer hover:ring-2 ring-indigo-400 focus:!ring-transparent shadow-sm hover:drop-shadow-md text-sm max-w-[150px] md:max-w-[400px] transition ease-in-out delay-50 duration-200"/>
-                <ProfileButton />
-            </div>
-            <Input 
-                placeholder="Search"
-                onClick={() => { setSearchOpen(true)}}
-                readOnly
-                className="md:hidden h-[28px] hover:cursor-pointer hover:ring-2 hover:ring-indigo-400 focus:!ring-transparent shadow-sm hover:drop-shadow-md text-xs max-w-[150px] md:max-w-[200px] transition ease-in-out delay-50 duration-200"/>
-            <ProfileButton className="md:hidden"/>
-            <DrawerDialogDemo searchOpen={searchOpen} setSearchOpen={setSearchOpen} />
-            {/* <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-                    <CommandInput placeholder="Type a command or search..." />
-                    <CommandList>
-                        <CommandEmpty>No results found.</CommandEmpty>
-                        <CommandGroup heading="Suggestions">
-                        <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
-                            <IoCalendarNumberOutline className="text-base"/>
-                            <h1>Calendar</h1>
-                        </CommandItem>
-                        <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
-                            <FaRegUser className="text-base"/>
-                            <h1>Members</h1>
-                        </CommandItem>
-                        <CommandItem className="flex space-x-2 text-neutral-400 transition ease-in-out delay-50 duration-200">
-                            <FaWpforms className="text-base"/>
-                            <h1>Event Request Form</h1>
-                        </CommandItem>
-                        </CommandGroup>
-                    </CommandList>
-                </CommandDialog> */}
+            { user && <NavbarAuthComponents /> }
         </div>
-    )
+    );
 }

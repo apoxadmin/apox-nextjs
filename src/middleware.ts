@@ -10,16 +10,28 @@ export async function middleware(req) {
   // Refresh session if expired - required for Server Components
   await supabase.auth.getSession();
 
-  const user = await supabase.auth.getUser();
+  const user = (await supabase.auth.getUser()).data.user;
 
   const pathname = req.nextUrl.pathname;
 
-  if (pathname != '/' && !user) {
+  console.log(pathname);
+
+  if (pathname != '/' && pathname != '/login' && !user) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  if (pathname == '/login' && user) {
-    return NextResponse.redirect(new URL('/calendar', req.url));
+  if (pathname == '/panel') {
+    const userData = (await supabase.from('users').select('roles ( name )').eq('uid', user.id).single()).data;
+    if (!userData.roles) {
+      return NextResponse.redirect(new URL('/calendar', req.url));
+    }
+  }
+
+  if (pathname == '/bulkadd') {
+    const userData: any = (await supabase.from('users').select('roles ( privileged )').eq('uid', user.id).single()).data;
+    if (!userData.roles || !userData.roles.privileged) {
+      return NextResponse.redirect(new URL('/calendar', req.url));
+    }
   }
 
   return res
@@ -35,6 +47,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|logo.png).*)',
   ],
 }

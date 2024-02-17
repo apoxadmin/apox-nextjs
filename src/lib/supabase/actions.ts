@@ -26,33 +26,35 @@ export async function createUser(data) {
     }
 
     // Check valid signup request
+    let standing = null;
 
-    if (!data.standing) {
-        return Promise.reject('No standing specified');
+    if (data.standing) {
+        const standingResponse = await supabaseServer.from('standings').select().eq('name', data.standing).maybeSingle();
+
+        if (standingResponse.error) {
+            return Promise.reject('No standing specified');
+        }
+
+        standing = standingResponse.data.id;
     }
-
-    const standingResponse = await supabaseServer.from('standings').select().eq('name', data.standing).maybeSingle();
-
-    if (standingResponse.error) {
-        return Promise.reject('No standing specified');
-    }
-
-    const standing = standingResponse.data.id;
 
     // Create authenticated user
     const supabaseAdmin = adminClient;
 
     const authResponse = await supabaseAdmin.auth.admin.createUser({
         email: data.email,
-        password: data.password
+        password: data.password,
+        email_confirm: true
     });
 
     if (authResponse.error) {
+        console.log(authResponse.error);
         return Promise.reject('Failed to authenticate user.');
     }
 
     // Create user record
     data.standing = standing;
+    data.uid = authResponse.data.user.id;
     delete data.password;
 
     const userResponse = await supabaseAdmin.from('users').insert(data);

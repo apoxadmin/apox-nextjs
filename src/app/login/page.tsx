@@ -20,6 +20,8 @@ import React from "react"
 import { InputPassword } from "@/components/ui/input-password"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { navigate } from "@/lib/actions"
+import { useAuth } from "@/lib/AuthProvider"
 
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
@@ -54,14 +56,10 @@ export default function LoginPage() {
             password: data.password
         })
         .then(() => {
-            toast({
-                title: "You submitted the following values:",
-                description: (
-                    <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                        <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                    </pre>
-                ),
-            });
+            navigate('/calendar');
+        })
+        .catch((error) => {
+            console.log(error);
         })
       }
 
