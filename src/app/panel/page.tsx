@@ -14,7 +14,7 @@ export default function PanelPage() {
         userData ? 
         <div className="flex flex-col overflow-y-hidden space-y-8 w-full p-8">
             <h1 className="text-center text-2xl">{stringToCapital(userData.roles.name)}</h1>
-            <div className="h-full overflow-y-scroll bg-white rounded-lg drop-shadow-lg">
+            <div className="h-full overflow-y-scroll bg-white rounded-lg shadow-lg">
                 {
                     userData.roles.name == 'membership vice president' && <MVPPage />
                 }
