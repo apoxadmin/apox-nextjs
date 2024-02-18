@@ -120,7 +120,7 @@ export default function EventForm() {
                             <FormLabel>Event Type</FormLabel>
                             <FormControl>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <SelectTrigger className="flex items-center justify-between p-2 rounded-md border text-sm w-[180px]">
+                                    <SelectTrigger className="flex items-center justify-between p-2 rounded-md border text-base w-full sm:max-w-[250px]">
                                         <SelectValue placeholder="Select an event type" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -147,7 +147,7 @@ export default function EventForm() {
                         <FormItem>
                             <FormLabel>Event Name</FormLabel>
                             <FormControl>
-                                <Input placeholder="Ex: Beach Cleanup" {...field}/>
+                                <Input className="text-base" placeholder="Ex: Beach Cleanup" {...field}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -160,7 +160,7 @@ export default function EventForm() {
                         <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
-                                <Textarea 
+                                <Textarea className="text-base" 
                                     placeholder="What we'll be doing..."
                                     {...field}
                                 />
@@ -176,7 +176,7 @@ export default function EventForm() {
                         <FormItem>
                             <FormLabel>Location</FormLabel>
                             <FormControl>
-                                <Textarea 
+                                <Textarea className="text-base" 
                                     placeholder="Where the event takes place..."
                                     {...field}
                                 />
@@ -192,7 +192,7 @@ export default function EventForm() {
                         <FormItem className="flex flex-col">
                             <FormLabel>Date</FormLabel>
                             <FormControl>
-                                <DatePickerForm 
+                                <DatePickerForm className="text-base" 
                                     value={field.value} 
                                     onChange={(newDate) => {
                                         field.onChange(newDate);
@@ -239,7 +239,7 @@ export default function EventForm() {
                         <FormItem>
                             <FormLabel>Person Limit</FormLabel>
                             <FormControl>
-                                <Input {...field}/>
+                                <Input className="text-base" {...field}/>
                             </FormControl>
                             <FormDescription>
                                 Leave as 0 or empty for unlimited.
@@ -255,7 +255,7 @@ export default function EventForm() {
                         <div className="flex items-center space-x-2">
                             <FormLabel className="">Are there shifts?</FormLabel>
                             <FormControl>
-                                <Checkbox 
+                                <Checkbox className="text-base" 
                                     checked={field.value}
                                     onCheckedChange={(value) => {
                                         field.onChange(value);
@@ -283,17 +283,12 @@ export default function EventForm() {
                                         <div key={i} className="flex items-center w-full space-x-2">
                                             <TimeRangePicker value={value} onChange={(dateRange) => {
                                                 const shifts = field.value;
-                                                console.log('change time');
-                                                console.log(shifts);
                                                 shifts[i] = dateRange;
                                                 form.setValue('shifts', shifts);
                                             }}/>
                                             <Button type="button" onClick={_ => {
                                                     const shifts = field.value;
-                                                    console.log('splice')
-                                                    console.log(shifts);
                                                     const sub = shifts.splice(i, 1);
-                                                    console.log(sub);
                                                     form.setValue('shifts', shifts);
                                                 }}
                                                 className="bg-red-700 hover:bg-red-600"
@@ -308,7 +303,7 @@ export default function EventForm() {
                             <FormMessage />
                             <Button 
                                 type="button" 
-                                onClick={_ => { console.log('hi'); field.onChange([...field.value, { startDate: form.getValues('day') ?? startOfToday(), endDate: form.getValues('day') ?? startOfToday() }]) }}
+                                onClick={_ => { field.onChange([...field.value, { startDate: form.getValues('day') ?? startOfToday(), endDate: form.getValues('day') ?? startOfToday() }]) }}
                                 className="bg-green-700 hover:bg-green-600"
                             >
                                 Add shift

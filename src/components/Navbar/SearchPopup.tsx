@@ -45,7 +45,7 @@ export function SearchPopup({ searchOpen, setSearchOpen }) {
                     <FaRegUser className="text-lg"/>
                     <h1 className="text-base">Members</h1>
                 </CommandItem>
-                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                <CommandItem onSelect={() => { navigate('/request'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                     <FaWpforms className="text-lg"/>
                     <h1 className="text-base">Event Request Form</h1>
                 </CommandItem>
@@ -75,7 +75,7 @@ export function SearchPopup({ searchOpen, setSearchOpen }) {
                     <FaRegUser className="text-base"/>
                     <h1 className="text-base">Members</h1>
                 </CommandItem>
-                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                <CommandItem onSelect={() => { navigate('/request'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                     <FaWpforms className="text-base"/>
                     <h1 className="text-base">Event Request Form</h1>
                 </CommandItem>
