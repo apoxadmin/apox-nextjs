@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import MVPPage from "./mvp";
 import Navbar from "@/components/Navbar";
 import FellowshipPage from "./fellowship";
+import ServicePage from "./service";
 
 export default function PanelPage() {
     const { userData } = useAuth();
@@ -23,7 +24,7 @@ export default function PanelPage() {
                     userData.roles.name == 'fellowship vice president' && <FellowshipPage />
                 }
                 {
-                    userData.roles.name == 'service vice president' && <FellowshipPage />
+                    userData.roles.name == 'service vice president' && <ServicePage />
                 }
             </div>
         </div>
