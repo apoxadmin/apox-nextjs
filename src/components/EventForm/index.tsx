@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import TimeRangePicker from "@/components/ui/TimeRangePicker";
 import React from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useToast } from "@/components/ui/use-toast";
 
 const EVENT_TYPES: any = ['service', 'fellowship', 'fundraising', 'family'];
 
@@ -54,6 +55,7 @@ const formSchema = z.object({
 export default function EventForm() {
     const [userData, setUserData] = React.useState<any>(null);
     const supabase = createClientComponentClient();
+    const { toast } = useToast();
 
     React.useEffect(() => {
         async function fetchUserData() {
@@ -103,7 +105,16 @@ export default function EventForm() {
         })
         
         if (eventResponse.error) {
-            console.error('Could not create event: ', eventResponse.error);
+            toast({
+                title: 'Error',
+                description: 'Event could not be created.'
+            })
+        }
+        else {
+            toast({
+                title: 'Success!',
+                description: 'You requested a new event.'
+            })
         }
     }
     return <div className="w-full max-w-md text-gray-800">
