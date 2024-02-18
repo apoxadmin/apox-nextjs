@@ -4,7 +4,7 @@ import { EventReviewCard, EventReviewDialog } from "./EventCards";
 
 
 
-export default function FellowshipPage() {
+export default function ServicePage() {
     const supabase = createClientComponentClient();
     const [events, setEvents] = React.useState<Array<any>>([]);
     const [focusEvent, setFocusEvent] = React.useState<any>(null);
@@ -12,7 +12,7 @@ export default function FellowshipPage() {
 
     React.useEffect(() => {
         async function fetchEvents() {
-            const eventList = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('event_types.name', 'fellowship').eq('reviewed', false)).data;
+            const eventList = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('event_types.name', 'service').eq('reviewed', false)).data;
             setEvents(eventList);
         }
         fetchEvents()
@@ -29,7 +29,7 @@ export default function FellowshipPage() {
                 }}
                 open={dialogOpen}
                 onOpenChange={setDialogOpen} />
-            <h1 className="text-center text-xl pt-4 bg-white w-full">Unreviewed Fellowships</h1>
+            <h1 className="text-center text-xl pt-4 bg-white w-full">Unreviewed Service Events</h1>
             {
                     events?.map((event, i) => {
                         return (

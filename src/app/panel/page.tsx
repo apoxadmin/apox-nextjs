@@ -22,6 +22,9 @@ export default function PanelPage() {
                 {
                     userData.roles.name == 'fellowship vice president' && <FellowshipPage />
                 }
+                {
+                    userData.roles.name == 'service vice president' && <FellowshipPage />
+                }
             </div>
         </div>
         :
