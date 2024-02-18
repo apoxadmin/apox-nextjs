@@ -157,10 +157,10 @@ export default function SignUpPage() {
                                 <FormItem>
                                 <FormLabel>Pledge Term</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Ex: BZ" type="text" {...field} />
+                                    <Input placeholder="Ex: Beta Eta" type="text" {...field} />
                                 </FormControl>
                                 <FormDescription>
-                                    Use the 2 letter term.
+                                    Use the full term name.
                                 </FormDescription>
                                 <FormMessage />
                                 </FormItem>
