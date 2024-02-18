@@ -65,21 +65,21 @@ export default function LoginPage() {
 
     return (
         <main className="flex min-h-screen flex-col items-center space-y-8 py-24">
-            <div className="flex flex-col space-y-8 items-center w-full max-w-md">
+            <div className="flex flex-col space-y-8 items-center w-full max-w-md px-8">
                 <h1>Login Page</h1>
                 <Form {...form}>
                     <form 
                         onSubmit={form.handleSubmit(onSubmit)} 
-                        className="flex flex-col w-2/3 space-y-6"
+                        className="flex flex-col w-full md:w-2/3 space-y-6"
                     >
                         <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel className="text-base">Email</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="you@email.com" type="email" {...field} />
+                                    <Input className="text-base" placeholder="you@email.com" type="email" {...field} />
                                 </FormControl>
                                 <FormMessage />
                                 </FormItem>
@@ -90,7 +90,7 @@ export default function LoginPage() {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                <FormLabel>Password</FormLabel>
+                                <FormLabel className="text-base">Password</FormLabel>
                                 <FormControl>
                                     <InputPassword 
                                         showPassword={showPassword}
@@ -98,6 +98,7 @@ export default function LoginPage() {
                                         type={ showPassword ? "text" : "password" }
                                         value={field.value}
                                         onChange={field.onChange}
+                                        className="text-base"
                                     />
                                 </FormControl>
                                 <FormMessage />
