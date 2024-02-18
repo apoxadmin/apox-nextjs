@@ -13,9 +13,11 @@ import { HiUser, HiUserGroup } from "react-icons/hi";
 import { FiLogOut } from "react-icons/fi";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { navigate } from "@/lib/actions";
+import { useAuth } from "@/lib/AuthProvider";
 
 export default function ProfileButton({ className }: { className?: string }) {
     const supabase = createClientComponentClient();
+    const { userData } = useAuth();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger className={
@@ -25,7 +27,7 @@ export default function ProfileButton({ className }: { className?: string }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel className="text-indigo-500">
-                    My Account
+                    { userData?.name }
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
@@ -41,10 +43,12 @@ export default function ProfileButton({ className }: { className?: string }) {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => {
+                        console.log('signed out');
                             supabase.auth.signOut();
+                            
                             navigate('/login');
                         }}
-                        className="flex items-center space-x-2">
+                        className="flex items-center space-x-2 hover:!cursor-pointer">
                         <FiLogOut className="text-lg text-gray-600"/>
                         <h1 className="text-gray-600">Log out</h1>
                     </DropdownMenuItem>

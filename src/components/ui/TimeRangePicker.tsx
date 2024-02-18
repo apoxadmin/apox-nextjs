@@ -5,12 +5,12 @@ import React, { useEffect } from "react";
 
 
 export function TimePicker({ value, onChange }: { value: Date, onChange: (date: Date) => void }) {
-    const [hoursInternal, setHoursInternal] = React.useState<number>(0);
-    const [hoursCache, setHoursCache] = React.useState<number>(null);
+    const [hoursInternal, setHoursInternal] = React.useState<number>(getHours(value));
+    const [hoursCache, setHoursCache] = React.useState<number>(getHours(value));
 
-    const [minutesCache, setMinutesCache] = React.useState<number>(null);
+    const [minutesCache, setMinutesCache] = React.useState<number>(getMinutes(value));
 
-    const [meridian, setMeridian] = React.useState<'AM'|'PM'>('AM');
+    const [meridian, setMeridian] = React.useState<'AM'|'PM'>(getHours(value) < 12 ? 'AM' : 'PM');
 
     const setHours = () => {
         const hours24 = meridian == 'AM' ? hoursInternal%12 : hoursInternal%12 + 12;
@@ -24,6 +24,10 @@ export function TimePicker({ value, onChange }: { value: Date, onChange: (date: 
     React.useEffect(() => {
         setHours();
     }, [hoursInternal, meridian]);
+
+    // React.useEffect(() => {
+    //     setMeridian(getHours(value) < 12 ? 'AM' : 'PM')
+    // }, [value])
 
     return (
         <div

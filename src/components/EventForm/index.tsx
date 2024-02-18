@@ -81,7 +81,6 @@ export default function EventForm() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values.type);
         const eventTypeResponse = await supabase.from('event_types').select().eq('name', values.type).maybeSingle();
 
         if (eventTypeResponse.error) {

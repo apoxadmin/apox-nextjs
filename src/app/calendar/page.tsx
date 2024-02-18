@@ -31,7 +31,7 @@ export default function CalendarPage() {
     }, [focusDate]);
 
     return (
-    <div className="flex flex-col h-full items-center divide-y md:divide-y-0 md:space-y-4 bg-gray-100 md:p-4">
+    <div className="flex flex-col grow items-center divide-y md:divide-y-0 md:space-y-4 bg-gray-100 md:p-4">
         <div className="flex items-center justify-between w-full p-4 bg-white rounded shadow-md">
             <div className="flex items-center space-x-4">
                 <h1 className="text-xs md:text-sm">
@@ -80,7 +80,7 @@ export default function CalendarPage() {
                     }
                 </div>
             </div>
-            <Swiper className="h-full flex bg-white rounded shadow-md flex-1"
+            <Swiper className="flex bg-white rounded shadow-md flex-1"
                 runCallbacksOnInit={false}
                 initialSlide={1}
                 speed={150}

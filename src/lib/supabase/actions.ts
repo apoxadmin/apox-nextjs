@@ -65,3 +65,29 @@ export async function createUser(data) {
         return Promise.reject('Failed to create user.');
     }
 }
+
+async function updateEventField(client, data) {
+    const id = data.id;
+    delete data.id;
+    delete data.eventType;
+    console.log('Data: ', data);
+    const { error } = await client.from('events').update(data).eq('id', id);
+    if (error) {
+        console.error(error);
+        Promise.reject(error);
+    }
+}
+
+export async function updateEvent(data) {
+    const cookieStore = cookies();
+    const supabaseServer = createServerComponentClient({ cookies: () => cookieStore });
+    const user = (await supabaseServer.auth.getUser()).data.user;
+    const userData = (await supabaseServer.from('users').select('*, roles ( id, name )').eq('uid', user.id).maybeSingle()).data;
+    if (userData.roles == null) {
+        return Promise.reject('No user role.');
+    }
+
+    if (data.eventType == 'fellowship' && userData.roles.name == 'fellowship vice president') {
+        updateEventField(supabaseServer, data);
+    }
+}
