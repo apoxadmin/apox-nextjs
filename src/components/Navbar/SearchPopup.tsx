@@ -37,7 +37,7 @@ export function SearchPopup({ searchOpen, setSearchOpen }) {
             <CommandList>
                 <CommandEmpty>No results found.</CommandEmpty>
                 <CommandGroup heading="Suggestions">
-                <CommandItem onClick={() => { navigate('/calendar') }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                <CommandItem onSelect={() => { navigate('/calendar'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                     <IoCalendarNumberOutline className="text-lg"/>
                     <h1 className="text-base">Calendar</h1>
                 </CommandItem>
@@ -49,7 +49,7 @@ export function SearchPopup({ searchOpen, setSearchOpen }) {
                     <FaWpforms className="text-lg"/>
                     <h1 className="text-base">Event Request Form</h1>
                 </CommandItem>
-                <CommandItem onClick={() => { navigate('/panel') }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                <CommandItem onSelect={() => { navigate('/panel'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                     <FaChessKnight className="text-base"/>
                     <h1 className="text-base">ExComm Panel</h1>
                 </CommandItem>
@@ -67,7 +67,7 @@ export function SearchPopup({ searchOpen, setSearchOpen }) {
             <CommandList>
                 <CommandEmpty>No results found.</CommandEmpty>
                 <CommandGroup heading="Suggestions">
-                <CommandItem onClick={() => { navigate('/calendar') }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                <CommandItem onSelect={() => { navigate('/calendar'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                     <IoCalendarNumberOutline className="text-lg"/>
                     <h1 className="text-base">Calendar</h1>
                 </CommandItem>
@@ -79,7 +79,7 @@ export function SearchPopup({ searchOpen, setSearchOpen }) {
                     <FaWpforms className="text-base"/>
                     <h1 className="text-base">Event Request Form</h1>
                 </CommandItem>
-                <CommandItem onClick={() => { navigate('/panel') }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                <CommandItem onSelect={() => { navigate('/panel'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                     <FaChessKnight className="text-base"/>
                     <h1 className="text-base">ExComm Panel</h1>
                 </CommandItem>
