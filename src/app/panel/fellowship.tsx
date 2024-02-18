@@ -16,14 +16,14 @@ import React from "react";
 
 function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEvent }) {
     return (
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 p-4">
             <div className="flex flex-col space-y-2">
                 <Label>
                     Event Name
                 </Label>
-                <div className="flex space-x-2">
-                    <Input value={cachedEvent?.name} onChange={(e) => setCachedEvent({ ...cachedEvent, name: e.target.value })} />
-                    <Button onClick={() => {
+                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0">
+                    <Input className="text-base" value={cachedEvent?.name} onChange={(e) => setCachedEvent({ ...cachedEvent, name: e.target.value })} />
+                    <Button className="w-min" onClick={() => {
                         updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, name: cachedEvent.name });
                         setEvent({ ...focusEvent, event: cachedEvent });
                         }}>
@@ -35,8 +35,8 @@ function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEvent }) 
                 <Label>
                     Description
                 </Label>
-                <div className="flex space-x-2">
-                    <Input value={cachedEvent?.description} onChange={(e) => setCachedEvent({ ...cachedEvent, description: e.target.value })} />
+                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0">
+                    <Input className="text-base" value={cachedEvent?.description} onChange={(e) => setCachedEvent({ ...cachedEvent, description: e.target.value })} />
                     <Button onClick={() => {
                         updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, description: cachedEvent.description });
                         setEvent({ ...focusEvent, event: cachedEvent });
@@ -49,8 +49,8 @@ function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEvent }) 
                 <Label>
                     Location
                 </Label>
-                <div className="flex space-x-2">
-                    <Input value={cachedEvent?.location} onChange={(e) => setCachedEvent({ ...cachedEvent, location: e.target.value })} />
+                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0">
+                    <Input className="text-base" value={cachedEvent?.location} onChange={(e) => setCachedEvent({ ...cachedEvent, location: e.target.value })} />
                     <Button onClick={() => {
                         updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, location: cachedEvent.location });
                         setEvent({ ...focusEvent, event: cachedEvent });
@@ -63,8 +63,8 @@ function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEvent }) 
                 <Label>
                     Date
                 </Label>
-                <div className="flex space-x-2 justify-between">
-                    <DatePickerForm
+                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0 justify-between">
+                    <DatePickerForm className="text-base"
                         value={new Date(Date.parse(cachedEvent?.startDate))}
                         onChange={(newDate: Date) => {
                             setCachedEvent({ ...cachedEvent, startDate: setDayOfYear(cachedEvent?.startDate, getDayOfYear(newDate)), endDate: setDayOfYear(cachedEvent?.endDate, getDayOfYear(newDate)) });
@@ -82,7 +82,7 @@ function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEvent }) 
                 <Label>
                     Time
                 </Label>
-                <div className="flex space-x-2 justify-between">
+                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0 justify-between">
                     <TimeRangePicker
                         value={{ startDate: new Date(Date.parse(cachedEvent?.startDate)), endDate: new Date(Date.parse(cachedEvent?.endDate)) }}
                         onChange={({ startDate, endDate }: { startDate: Date, endDate: Date }) => {
@@ -97,12 +97,12 @@ function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEvent }) 
                     </Button>
                 </div>
             </div>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 md:space-y-0 space-y-2">
                 <Label>
                     Limit
                 </Label>
-                <div className="flex space-x-2">
-                    <Input type="number" value={cachedEvent?.limit} onChange={(e) => setCachedEvent({ ...cachedEvent, limit: e.target.value })} />
+                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0">
+                    <Input className="text-base" type="number" value={cachedEvent?.limit} onChange={(e) => setCachedEvent({ ...cachedEvent, limit: e.target.value })} />
                     <Button onClick={() => {
                         updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, limit: cachedEvent.limit });
                         setEvent({ ...focusEvent, event: cachedEvent });
@@ -111,7 +111,7 @@ function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEvent }) 
                     </Button>
                 </div>
             </div>
-            <div className="flex flex-col items-center space-y-2">
+            <div className="flex flex-col space-y-2 md:space-y-0 items-center space-y-2">
                 <Label>
                     Approved
                 </Label>
@@ -161,7 +161,7 @@ function EventReviewDialog({ focusEvent, setEvent, ...props }) {
 
     return (
         <Drawer {...props}>
-            <DrawerContent className="h-3/4 p-4">
+            <DrawerContent className="h-3/4">
                 <ScrollArea className="border-none">
                     <DrawerHeader>
                         <DrawerTitle>
