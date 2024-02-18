@@ -26,10 +26,9 @@ export default function RootLayout({
               <Navbar />
               {children}
             </main>
-            
+            <Toaster />
           </AuthProvider>
-          
-          <Toaster />
+        
       </body>
     </html>
   );

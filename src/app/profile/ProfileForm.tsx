@@ -16,11 +16,12 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
+import { toast, useToast } from "@/components/ui/use-toast"
 import DatePickerMonthYear from "@/components/ui/date-picker-month-year"
 import { cookies } from "next/headers"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { SkeletonCard } from "@/components/ui/skeleton-card"
+import { useAuth } from "@/lib/AuthProvider"
 
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
@@ -40,39 +41,49 @@ const formSchema = z.object({
 });
 
 export default function ProfileForm() {
-    const [userData, setUserData] = React.useState<any>(null);
+    const { toast } = useToast();
     const supabase = createClientComponentClient();
+    const { userData } = useAuth();
 
     const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema)
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: '',
+            phoneNumber: '',
+            major: '',
+            linkedin: '',
+            instagram: '',
+            facebook: '',
+            birthday: null,
+            address: ''
+        }
     });
 
     React.useEffect(() => {
-        async function fetchUserData() {
-            const { data, error } = await supabase.auth.getUser();
-            const result = await supabase.from('users').select().eq('uid', data.user.id).maybeSingle();
-            const user = result.data;
-            if (user != null) {
-                setUserData(user);
-                form.setValue('email', user['email']);
-                form.setValue('phoneNumber', user['phoneNumber']);
-                form.setValue('major', user['major']);
-                form.setValue('linkedin', user['linkedin']);
-                form.setValue('instagram', user['instagram']);
-                form.setValue('facebook', user['facebook']);
-                form.setValue('birthday', user['birthday']);
-                form.setValue('address', user['address']);
-            }
+        if (userData != null) {
+            form.setValue('email', userData['email']);
+            form.setValue('phoneNumber', userData['phoneNumber']);
+            form.setValue('major', userData['major']);
+            form.setValue('linkedin', userData['linkedin']);
+            form.setValue('instagram', userData['instagram']);
+            form.setValue('facebook', userData['facebook']);
+            form.setValue('birthday', userData['birthday']);
+            form.setValue('address', userData['address']);
         }
-        fetchUserData();
         
-    }, [])
+    }, [userData])
 
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
-        console.log(userData)
+        // console.log(values);
+        // console.log(userData)
         const { error } = await supabase.from('users').update(values).eq('id', userData.id);
+        if (!error) {
+            toast({
+                title: 'Success!',
+                description: 'Your changes were saved.'
+            })
+        }
     }
 
     return <>

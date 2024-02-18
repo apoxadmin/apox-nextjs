@@ -31,7 +31,10 @@ export default function ProfileButton({ className }: { className?: string }) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem className="flex items-center space-x-2">
+                    <DropdownMenuItem onClick={() => {
+                        navigate('/profile');
+                    }}
+                        className="flex items-center space-x-2">
                         <HiUser className="text-lg text-gray-600"/>
                         <h1 className="text-gray-600">My Profile</h1>
                     </DropdownMenuItem>
