@@ -97,7 +97,7 @@ export default function EventDetail({ userData, event }) {
                     Unchair
                 </Button>
                 :
-                userData && attendees.map(a => a.id).includes(userData.id) && <Button onClick={() => { 
+                userData && (chairs.length == 0 || (chairs.length == 1 && attendees.length > 5)) && attendees.map(a => a.id).includes(userData.id) && <Button onClick={() => { 
                     chairEvent(event.id)
                     .then(() => {
                         setChairs([...chairs, { name: userData.name, id: userData.id }]);

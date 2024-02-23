@@ -22,7 +22,7 @@ export default function RootLayout({
       <link rel="icon" href="/logo.png" sizes="any" />
       <body className={inter.className}>
           <AuthProvider>
-            <main className="flex flex-col min-h-[calc(100dvh)] bg-gray-100">
+            <main className="flex flex-col h-screen bg-gray-100">
               <Navbar />
               {children}
             </main>

@@ -114,7 +114,7 @@ export default function EventCalendar({ focusDate }: { focusDate: Date }) {
                                         </h1>
                                     </div>
                                     </DialogTrigger>
-                                    <DialogContent className="overflow-y-scroll max-h-screen bg-gray-100">
+                                    <DialogContent className="max-h-[80vh] overflow-y-scroll bg-gray-100">
                                         <DialogHeader>
                                             <DialogTitle>
                                                 {dateFns.format(day, 'PPPP')}

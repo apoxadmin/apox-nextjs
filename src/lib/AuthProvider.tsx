@@ -2,6 +2,7 @@
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React, { useEffect } from "react";
+import { navigate } from "./actions";
 
 const initial = { session: null, user: null, userData: null };
 export const AuthContext = React.createContext(initial);
@@ -22,6 +23,9 @@ export function AuthProvider({ children }) {
                     .data;
             }
             setState({ session: session, user: session?.user ?? null, userData });
+            if (!session) {
+                navigate('/login');
+            }
         });
 
         async function getAuth() {

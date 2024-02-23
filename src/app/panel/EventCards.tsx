@@ -20,7 +20,7 @@ export function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEv
                 <Label>
                     Event Name
                 </Label>
-                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0">
+                <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8">
                     <Input className="text-base" value={cachedEvent?.name} onChange={(e) => setCachedEvent({ ...cachedEvent, name: e.target.value })} />
                     <Button className="w-min" onClick={() => {
                         updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, name: cachedEvent.name });
@@ -34,7 +34,7 @@ export function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEv
                 <Label>
                     Description
                 </Label>
-                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0">
+                <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8">
                     <Input className="text-base" value={cachedEvent?.description} onChange={(e) => setCachedEvent({ ...cachedEvent, description: e.target.value })} />
                     <Button onClick={() => {
                         updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, description: cachedEvent.description });
@@ -48,7 +48,7 @@ export function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEv
                 <Label>
                     Location
                 </Label>
-                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0">
+                <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8">
                     <Input className="text-base" value={cachedEvent?.location} onChange={(e) => setCachedEvent({ ...cachedEvent, location: e.target.value })} />
                     <Button onClick={() => {
                         updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, location: cachedEvent.location });
@@ -62,7 +62,7 @@ export function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEv
                 <Label>
                     Date
                 </Label>
-                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0 justify-between">
+                <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8 justify-between">
                     <DatePickerForm className="text-base"
                         value={new Date(Date.parse(cachedEvent?.startDate))}
                         onChange={(newDate: Date) => {
@@ -81,7 +81,7 @@ export function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEv
                 <Label>
                     Time
                 </Label>
-                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0 justify-between">
+                <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8 justify-between">
                     <TimeRangePicker
                         value={{ startDate: new Date(Date.parse(cachedEvent?.startDate)), endDate: new Date(Date.parse(cachedEvent?.endDate)) }}
                         onChange={({ startDate, endDate }: { startDate: Date, endDate: Date }) => {
@@ -100,7 +100,7 @@ export function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEv
                 <Label>
                     Limit
                 </Label>
-                <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-0">
+                <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8">
                     <Input className="text-base" type="number" value={cachedEvent?.limit} onChange={(e) => setCachedEvent({ ...cachedEvent, limit: e.target.value })} />
                     <Button onClick={() => {
                         updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, limit: cachedEvent.limit });
@@ -110,7 +110,7 @@ export function EventReviewForm({ focusEvent, setEvent, cachedEvent, setCachedEv
                     </Button>
                 </div>
             </div>
-            <div className="flex flex-col space-y-2 md:space-y-0 items-center space-y-2">
+            <div className="flex flex-col space-y-2 items-center space-y-2 pt-6">
                 <Label>
                     Approved
                 </Label>

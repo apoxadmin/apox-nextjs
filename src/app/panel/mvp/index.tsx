@@ -19,39 +19,37 @@ export default function MVPPage() {
     }, [])
 
     return (
-        <div>
-            <Table className="overflow-y-scroll">
-                <TableHeader className="sticky top-0 bg-white">
-                    <TableRow className="outline outline-1 outline-gray-500">
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Phone Number</TableHead>
-                        <TableHead>Term</TableHead>
-                        <TableHead>Term Service</TableHead>
-                        <TableHead>Fundraising</TableHead>
-                        <TableHead>Violations</TableHead>
-                        <TableHead>Dues</TableHead>
-                        <TableHead>Flyering</TableHead>
-                        <TableHead>Standing</TableHead>
+        <Table className="h-full">
+            <TableHeader className="sticky top-0 bg-white">
+                <TableRow className="outline outline-1 outline-gray-500">
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Phone Number</TableHead>
+                    <TableHead>Term</TableHead>
+                    <TableHead>Term Service</TableHead>
+                    <TableHead>Fundraising</TableHead>
+                    <TableHead>Violations</TableHead>
+                    <TableHead>Dues</TableHead>
+                    <TableHead>Flyering</TableHead>
+                    <TableHead>Standing</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody className="bg-gray-100">
+                {users.map((data, i) => (
+                    <TableRow key={i}>
+                        <TableCell>{data['name']}</TableCell>
+                        <TableCell>{data['email']}</TableCell>
+                        <TableCell>{data['phoneNumber']}</TableCell>
+                        <TableCell>{data['pledgeTerm']}</TableCell>
+                        <TableCell>{data['serviceHoursTerm']}</TableCell>
+                        <TableCell>{data['fundraising']}</TableCell>
+                        <TableCell>{data['violations']}</TableCell>
+                        <TableCell>{data['dues']}</TableCell>
+                        <TableCell>{data['flyering']}</TableCell>
+                        <TableCell>{data['standing'] ? data['standing']['name'] : 'none'}</TableCell>
                     </TableRow>
-                </TableHeader>
-                <TableBody className="bg-gray-100">
-                    {users.map((data, i) => (
-                        <TableRow key={i}>
-                            <TableCell>{data['name']}</TableCell>
-                            <TableCell>{data['email']}</TableCell>
-                            <TableCell>{data['phoneNumber']}</TableCell>
-                            <TableCell>{data['pledgeTerm']}</TableCell>
-                            <TableCell>{data['serviceHoursTerm']}</TableCell>
-                            <TableCell>{data['fundraising']}</TableCell>
-                            <TableCell>{data['violations']}</TableCell>
-                            <TableCell>{data['dues']}</TableCell>
-                            <TableCell>{data['flyering']}</TableCell>
-                            <TableCell>{data['standing'] ? data['standing']['name'] : 'none'}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </div>
+                ))}
+            </TableBody>
+        </Table>
     )
 }
