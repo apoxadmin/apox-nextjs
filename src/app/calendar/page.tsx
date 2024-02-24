@@ -4,19 +4,17 @@ import * as dateFns from 'date-fns';
 import EventCalendar from './EventCalendar';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import React from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
-import Image from 'next/image';
-import Navbar from '@/components/Navbar';
+import { createClient } from '@/utils/supabase/client';
 
 export default function CalendarPage() {
     const [focusDate, setFocusDate] = React.useState<Date>(dateFns.startOfToday());
     const [todaysEvents, setTodaysEvents] = React.useState<Array<any>>([]);
     const [focusMonths, setFocusMonths ] = React.useState<Array<Date>>([dateFns.subMonths(dateFns.startOfToday(), 1), dateFns.startOfToday(), dateFns.addMonths(dateFns.startOfToday(), 1)]);
-
+    const supabase = createClient();
+    
     React.useEffect(() => {
-        const supabase = createClientComponentClient();
         async function getEvents() {
             const events = (await supabase.from('events').select('name, description, location, startDate, endDate, limit, shifts, creator, event_types ( name, abbreviation )').eq('reviewed', true).gte('startDate', dateFns.startOfToday().toISOString()).lte('endDate', dateFns.endOfToday().toISOString())).data;
             if (events) {

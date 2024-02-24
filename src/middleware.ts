@@ -1,50 +1,20 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
-import { NextResponse } from 'next/server'
+import { type NextRequest } from "next/server";
+import { updateSession } from "@/utils/supabase/middleware";
 
-export async function middleware(req) {
-  const res = NextResponse.next();
-
-  // Create a Supabase client configured to use cookies
-  const supabase = createMiddlewareClient({ req, res });
-
-  // Refresh session if expired - required for Server Components
-  await supabase.auth.getSession();
-
-  const user = (await supabase.auth.getUser()).data.user;
-
-  const pathname = req.nextUrl.pathname;
-
-  if (pathname != '/' && pathname != '/login' && !user) {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
-
-  if (pathname == '/panel') {
-    const userData = (await supabase.from('users').select('roles ( name )').eq('uid', user.id).single()).data;
-    if (!userData.roles) {
-      return NextResponse.redirect(new URL('/calendar', req.url));
-    }
-  }
-
-  if (pathname == '/bulkadd') {
-    const userData: any = (await supabase.from('users').select('roles ( privileged )').eq('uid', user.id).single()).data;
-    if (!userData.roles || !userData.roles.privileged) {
-      return NextResponse.redirect(new URL('/calendar', req.url));
-    }
-  }
-
-  return res
+export async function middleware(request: NextRequest) {
+  return await updateSession(request);
 }
 
-// Ensure the middleware is only called for relevant paths.
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
+     * Match all request paths except:
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - images - .svg, .png, .jpg, .jpeg, .gif, .webp
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|logo.png).*)',
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
-}
+};

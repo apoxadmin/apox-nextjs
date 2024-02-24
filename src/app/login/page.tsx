@@ -1,4 +1,4 @@
-"use client"
+'use client'
  
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -22,6 +22,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { navigate } from "@/lib/actions"
 import { useAuth } from "@/lib/AuthProvider"
+import { login } from "@/utils/supabase/authServerActions"
 
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
@@ -40,7 +41,6 @@ const FormSchema = z.object({
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = React.useState(false);
-    const supabase = createClientComponentClient();
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -51,22 +51,13 @@ export default function LoginPage() {
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        supabase.auth.signInWithPassword({
-            email: data.email,
-            password: data.password
-        })
-        .then(() => {
-            navigate('/calendar');
-        })
-        .catch((error) => {
-            console.log(error);
-        })
+        login({ email: data.email, password: data.password});
       }
 
     return (
         <main className="flex min-h-screen flex-col items-center space-y-8 py-24">
             <div className="flex flex-col space-y-8 items-center w-full max-w-md px-8">
-                <h1>Login Page</h1>
+                <h1 className="text-xl font-medium">Login Page</h1>
                 <Form {...form}>
                     <form 
                         onSubmit={form.handleSubmit(onSubmit)} 

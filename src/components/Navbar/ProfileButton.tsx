@@ -1,3 +1,5 @@
+'use client'
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,13 +13,21 @@ import { cn } from "@/lib/utils";
 import { FaUserCircle } from "react-icons/fa";
 import { HiUser, HiUserGroup } from "react-icons/hi";
 import { FiLogOut } from "react-icons/fi";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { navigate } from "@/lib/actions";
-import { useAuth } from "@/lib/AuthProvider";
+import { getMyUser } from "@/utils/supabase/userServerActions";
+import React from "react";
+import { logout } from "@/utils/supabase/authServerActions";
 
 export default function ProfileButton({ className }: { className?: string }) {
-    const supabase = createClientComponentClient();
-    const { userData } = useAuth();
+    const [userData, setUserData] = React.useState<any>();
+
+    React.useEffect(() => {
+        async function fetchUserData() {
+            setUserData(await getMyUser());
+        }
+        fetchUserData();
+    }, [])
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger className={
@@ -46,10 +56,7 @@ export default function ProfileButton({ className }: { className?: string }) {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => {
-                        console.log('signed out');
-                            supabase.auth.signOut();
-                            
-                            navigate('/login');
+                            logout();
                         }}
                         className="flex items-center space-x-2 hover:!cursor-pointer">
                         <FiLogOut className="text-lg text-gray-600"/>

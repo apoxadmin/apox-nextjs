@@ -22,6 +22,8 @@ import { cookies } from "next/headers"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { SkeletonCard } from "@/components/ui/skeleton-card"
 import { useAuth } from "@/lib/AuthProvider"
+import { createClient } from "@/utils/supabase/client"
+import { getMyUser } from "@/utils/supabase/userServerActions"
 
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
@@ -42,8 +44,8 @@ const formSchema = z.object({
 
 export default function ProfileForm() {
     const { toast } = useToast();
-    const supabase = createClientComponentClient();
-    const { userData } = useAuth();
+    const supabase = createClient();
+    const [userData, setUserData] = React.useState<any>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -60,6 +62,14 @@ export default function ProfileForm() {
     });
 
     React.useEffect(() => {
+        async function fetchUserData() {
+            setUserData(await getMyUser());
+        }
+        fetchUserData();
+    }, []);
+
+    React.useEffect(() => {
+        
         if (userData != null) {
             form.setValue('email', userData['email']);
             form.setValue('phoneNumber', userData['phoneNumber']);
@@ -90,6 +100,7 @@ export default function ProfileForm() {
         {
             userData ? <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-8">
+                <h1 className="text-2xl md:text-4xl font-medium text-center">{userData?.name}</h1>
                 <FormField
                     control={form.control}
                     name="email"
