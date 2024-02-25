@@ -55,9 +55,9 @@ export default function LoginPage() {
 
     return (
         <ScrollArea>
-            <main className="flex min-h-screen flex-col items-center space-y-8 py-24">
+            <main className="flex min-h-screen flex-col items-center space-y-8 py-10 md:py-24">
                 <div className="flex flex-col space-y-8 items-center w-full max-w-md px-8 md:py-16 md:shadow-xl rounded-xl md:bg-white">
-                    <img className="h-[100px]" src="/logo.png" />
+                    <img className="h-[70px] md:h-[100px]" src="/logo.png" />
                     <Form {...form}>
                         <form 
                             onSubmit={form.handleSubmit(onSubmit)} 
