@@ -16,12 +16,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { toast, useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 import DatePickerMonthYear from "@/components/ui/date-picker-month-year"
-import { cookies } from "next/headers"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { SkeletonCard } from "@/components/ui/skeleton-card"
-import { useAuth } from "@/lib/AuthProvider"
 import { createClient } from "@/utils/supabase/client"
 import { getMyUser } from "@/utils/supabase/userServerActions"
 

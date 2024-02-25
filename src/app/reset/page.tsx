@@ -20,47 +20,69 @@ import { InputPassword } from "@/components/ui/input-password"
 import { login } from "@/utils/supabase/authServerActions"
 import { toast } from "@/components/ui/use-toast"
 import Link from "next/link"
+import { SupabaseAuthClient } from "@supabase/supabase-js/dist/module/lib/SupabaseAuthClient"
+import { createClient } from "@/utils/supabase/client"
+import { navigate } from "@/lib/actions"
+import PasswordChangeForm from "@/components/PasswordChangeForm"
  
 const FormSchema = z.object({
     email: z.string().min(5, {
         message: "Email must be at least 5 characters.",
-    }).email("Invalid email."),
-    password: z.string().min(8, {
-        message: "Password must be at least 8 characters"
-    }),
+    }).email("Invalid email.")
 });
 
-export default function LoginPage() {
-    const [showPassword, setShowPassword] = React.useState(false);
+export default function ResetPage() {
+    const supabase = createClient();
+    const [showReset, setShowReset] = React.useState<boolean>(false);
+
+    React.useEffect(() => {
+        supabase.auth.onAuthStateChange(async (event, session) => {
+            if (session) {
+                console.log('reset');
+                setShowReset(true);
+            }
+        })
+    }, []);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            email: "",
-            password: ""
+            email: ""
         },
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        login({ email: data.email, password: data.password})
+        supabase.auth.resetPasswordForEmail(data.email, {
+            redirectTo: (process?.env?.NEXT_PUBLIC_SITE_URL ?? process?.env?.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000/') + 'reset'
+        })
+        .then(() => {
+            toast({
+                title: 'Reset sent! ✉️',
+                description: 'Check your email.'
+            });
+        })
         .catch(() => {
             toast({
                 variant: 'destructive',
-                title: 'Uh oh! User does not exist.',
-                description: 'Incorrect email or password.'
-            })
-        })
+                title: 'Too many requests! ⚠️',
+                description: 'Try again in a bit.'
+            });
+        });
       }
 
     return (
         <main className="flex min-h-screen flex-col items-center space-y-8 py-24">
             <div className="flex flex-col space-y-8 items-center w-full max-w-md px-8 md:py-16 md:shadow-xl rounded-xl md:bg-white">
                 <img className="h-[100px]" src="/logo.png" />
-                <Form {...form}>
+                {
+                    showReset ? <PasswordChangeForm redirect/> : <Form {...form}>
                     <form 
                         onSubmit={form.handleSubmit(onSubmit)} 
-                        className="flex flex-col w-full md:w-2/3 space-y-6"
-                    >
+                        className="flex flex-col items-center w-full md:w-2/3 space-y-6"
+                    >   
+                        <div className="flex flex-col items-center">
+                            <h1 className="text-lg font-medium">Reset Password</h1>
+                        </div>
                         <FormField
                             control={form.control}
                             name="email"
@@ -74,32 +96,10 @@ export default function LoginPage() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel className="text-base">Password</FormLabel>
-                                <FormControl>
-                                    <InputPassword 
-                                        showPassword={showPassword}
-                                        setShowPassword={setShowPassword} 
-                                        type={ showPassword ? "text" : "password" }
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        className="text-base"
-                                    />
-                                </FormControl>
-                                <div className="flex">
-                                    <Link className="text-sm text-neutral-500 hover:text-neutral-300 transition ease-in-out delay-50 duration-200" href="/reset">Forgot Password?</Link>
-                                </div>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit" className="self-center rounded-full w-full bg-indigo-600 hover:bg-indigo-300">Login</Button>
+                        <Button type="submit" className="self-center rounded-full w-full bg-indigo-600 hover:bg-indigo-300">Send to email</Button>
                     </form>
                 </Form>
+                }
             </div>
         </main>
     )

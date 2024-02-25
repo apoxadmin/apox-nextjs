@@ -1,3 +1,5 @@
+'use client'
+
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import React from "react";
 import { EventReviewCard, EventReviewDialog } from "./EventCards";
@@ -15,7 +17,7 @@ export default function FellowshipPage() {
             const eventList = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('event_types.name', 'fellowship').eq('reviewed', false)).data;
             setEvents(eventList);
         }
-        fetchEvents()
+        fetchEvents();
     }, [])
 
     return (

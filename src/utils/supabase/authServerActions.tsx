@@ -19,6 +19,9 @@ export async function login(loginData: LoginDataSchema) {
         revalidatePath('/calendar', 'layout');
         redirect('/calendar');
     }
+    else {
+        return Promise.reject(new Error('User does not exist.'));
+    }
 }
 
 export async function logout() {

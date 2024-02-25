@@ -1,12 +1,12 @@
-import { createClientServer } from "@/utils/supabase/server"
+import { createClientServer } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import CalendarPage from "./CalendarPage";
+import SettingsPage from "./SettingsPage";
 
-export default async function ProtectedCalendar() {
+export default async function ProtectedSettingsPage() {
     const supabase = createClientServer();
     const { error, data } = await supabase.auth.getUser();
     if (error || !data?.user)
         redirect('/login');
 
-    return <CalendarPage />
+    return <SettingsPage />
 }

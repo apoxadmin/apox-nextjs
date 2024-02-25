@@ -97,9 +97,14 @@ export default function TrackingPage() {
             setEvents(events.filter(event => event.id != focusEvent.id));
             setDialogEnabled(false);
             setFocusEvent(null);
+            toast({
+                title: "Successfully tracked!",
+                description: "Thanks for your leadership! 🥰"
+            })
         })
         .catch((error) => {
             toast({
+                variant: 'destructive',
                 title: "Could not track event!",
                 description: error.message
             })
@@ -131,7 +136,7 @@ export default function TrackingPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-[repeat(auto-fit,_40%)] w-full justify-center gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,_40%)] w-full justify-center md:gap-4">
                 {
                     events.map((event, i) => <EventTrackCard key={i} event={event} onClick={() => { setFocusEvent(event); setDialogEnabled(true); setTrackedUsers(event.users_events); setFlakeIns([]); }}/>)
                 }
@@ -212,7 +217,7 @@ export default function TrackingPage() {
                     </div>
 
                     <AlertDialog open={alertEnabled} onOpenChange={setAlertEnabled}>
-                        <AlertDialogContent className="flex flex-col space-y-4">
+                        <AlertDialogContent className="flex flex-col space-y-4 items-center">
                             <AlertDialogHeader>
                                 <AlertDialogTitle>
                                     Did you upload to our Collaborative Drive? 👀
@@ -227,11 +232,11 @@ export default function TrackingPage() {
                             <div className="flex justify-center">
                                 <a className="text-white bg-indigo-500 rounded-full hover:shadow-xl hover:bg-indigo-400 py-2 px-4 transition ease-in-out delay-50 duration-200" href={driveLink} target="_blank">Access the Collaborative Drive</a>
                             </div>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>
+                            <AlertDialogFooter className="flex flex-col space-y-2 md:space-y-0 items-center">
+                                <AlertDialogCancel className="w-full order-last md:order-first">
                                     No... 😢
                                 </AlertDialogCancel>
-                                <AlertDialogAction onClick={track}>
+                                <AlertDialogAction onClick={track} className="w-full bg-green-600 hover:bg-green-500">
                                     YES 🥰 Click to track!
                                 </AlertDialogAction>
                             </AlertDialogFooter>

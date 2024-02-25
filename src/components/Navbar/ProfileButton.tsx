@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { FaUserCircle } from "react-icons/fa";
 import { HiUser, HiUserGroup } from "react-icons/hi";
+import { IoMdSettings } from "react-icons/io";
 import { FiLogOut } from "react-icons/fi";
 import { navigate } from "@/lib/actions";
 import { getMyUser } from "@/utils/supabase/userServerActions";
@@ -51,6 +52,16 @@ export default function ProfileButton({ className }: { className?: string }) {
                     <DropdownMenuItem className="flex items-center space-x-2">
                         <HiUserGroup className="text-lg text-gray-600"/>
                         <h1 className="text-gray-600">My Family</h1>
+                    </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => {
+                        navigate('/settings');
+                    }}
+                        className="flex items-center space-x-2">
+                        <IoMdSettings className="text-lg text-gray-600"/>
+                        <h1 className="text-gray-600">Settings</h1>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
