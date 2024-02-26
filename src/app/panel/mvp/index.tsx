@@ -272,7 +272,7 @@ export default function MVPPage() {
                     className="max-w-sm"
                 />
             </div>
-            <div className="w-full overflow-x-scroll">
+            <div className="w-full relative overflow-x-scroll">
                 <Table className="">
                     <TableHeader className="sticky top-[-1px] bg-indigo-100">
                         {table.getHeaderGroups().map((headerGroup) => (
