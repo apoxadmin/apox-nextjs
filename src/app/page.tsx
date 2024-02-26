@@ -18,7 +18,7 @@ export default function Home() {
                 <h1 className={
                     cn(
                         cinzel.className,
-                        'text-4xl text-indigo-700'
+                        'text-2xl md:text-4xl text-indigo-700'
                     )
                 }>
                     Alpha Phi Omega
@@ -26,7 +26,7 @@ export default function Home() {
                 <h1 className={
                     cn(
                         cinzel.className,
-                        'text-2xl text-indigo-700'
+                        'text-xl sm: text-2xl text-indigo-700'
                     )
                 }>
                     Chi Chapter
