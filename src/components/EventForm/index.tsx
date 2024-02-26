@@ -17,6 +17,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import { Label } from "../ui/label";
 import { createEvent } from "@/lib/supabase/client";
+import { navigate } from "@/lib/actions";
 
 const EVENT_TYPES: any = ['service', 'fellowship', 'fundraising', 'family', 'active credit', 'pledge credit', 'chapter meeting', 'pledge meeting'];
 
@@ -90,7 +91,8 @@ export default function EventForm() {
             toast({
                 title: 'Success!',
                 description: 'You requested a new event.'
-            })
+            });
+            navigate('/calendar');
         })
         .catch(() => {
             toast({
