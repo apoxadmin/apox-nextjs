@@ -15,8 +15,9 @@ import TimeRangePicker from "@/components/ui/TimeRangePicker";
 import React from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useToast } from "@/components/ui/use-toast";
+import { Label } from "../ui/label";
 
-const EVENT_TYPES: any = ['service', 'fellowship', 'fundraising', 'family'];
+const EVENT_TYPES: any = ['service', 'fellowship', 'fundraising', 'family', 'active credit', 'pledge credit', 'chapter meeting', 'pledge meeting'];
 
 const formSchema = z.object({
     type: z.enum(EVENT_TYPES, {
@@ -45,7 +46,7 @@ const formSchema = z.object({
         message: "Limit cannot be negative."
     }),
     shiftsEnabled: z.boolean(),
-    shifts: z.object({ startDate: z.date().default(startOfToday()), endDate: z.date().default(startOfToday()) }).array().default([])
+    shifts: z.object({ startDate: z.date().default(startOfToday()), endDate: z.date().default(startOfToday()), limit: z.number().nonnegative() }).array().default([])
     .refine((array) => array.every(({ startDate, endDate}) => isBefore(startDate, endDate)), {
         message: 'Ending times must be after starting times.',
     })
@@ -139,7 +140,11 @@ export default function EventForm() {
                                             <SelectLabel>Event Types</SelectLabel>
                                             {
                                                 EVENT_TYPES.map((eventType: string, i: number) => {
-                                                    const name = eventType.charAt(0).toUpperCase() + eventType.slice(1);
+                                                    const names = eventType.split(' ');
+                                                    for (let i = 0; i < names.length; i++) {
+                                                        names[i] = names[i].charAt(0).toUpperCase() + names[i].slice(1);
+                                                    }
+                                                    const name = names.join(' ');
                                                     return <SelectItem key={i} value={eventType}>{name}</SelectItem>
                                                 }) 
                                             }
@@ -271,7 +276,7 @@ export default function EventForm() {
                                     onCheckedChange={(value) => {
                                         field.onChange(value);
                                         if (value && form.getValues('shifts').length == 0) {
-                                            form.setValue('shifts', [ { startDate: form.getValues('day') ?? startOfToday(), endDate: form.getValues('day') ?? startOfToday() } ]);
+                                            form.setValue('shifts', [ { startDate: form.getValues('day') ?? startOfToday(), endDate: form.getValues('day') ?? startOfToday(), limit: 0 } ]);
                                         }
                                     }}
                                 />
@@ -291,22 +296,42 @@ export default function EventForm() {
                                 <div className="flex flex-col w-full space-y-2">
                                     {field.value.map(
                                         (value, i) => 
-                                        <div key={i} className="flex items-center w-full space-x-2">
-                                            <TimeRangePicker value={value} onChange={(dateRange) => {
-                                                const shifts = field.value;
-                                                shifts[i] = dateRange;
-                                                form.setValue('shifts', shifts);
-                                            }}/>
-                                            <Button type="button" onClick={_ => {
-                                                    const shifts = field.value;
-                                                    const sub = shifts.splice(i, 1);
-                                                    form.setValue('shifts', shifts);
-                                                }}
-                                                className="bg-red-700 hover:bg-red-600"
-                                            >
-                                                Del
+                                        <div key={i} className="flex flex-col space-y-2 w-full outline outline-1 rounded-lg outline-neutral-200 p-2">
+                                            <div className="flex items-center w-full space-x-2 justify-between">
+                                                <TimeRangePicker
+                                                    value={{ startDate: value.startDate, endDate: value.endDate }}
+                                                    onChange={(dateRange) => {
+                                                        const shifts = field.value;
+                                                        shifts[i] = { ...dateRange, limit: value.limit };
+                                                        form.setValue('shifts', shifts);
+                                                    }}
+                                                />
+                                                <Button type="button" onClick={_ => {
+                                                        const shifts = field.value;
+                                                        shifts.splice(i, 1);
+                                                        form.setValue('shifts', shifts);
+                                                    }}
+                                                    className="bg-red-700 hover:bg-red-600"
+                                                >
+                                                    Delete
                                                 </Button>
-                                            {}
+                                            </div>
+                                            <div className="flex flex-col space-y-1">
+                                                <Label>Shift Limit</Label>
+                                                <Input
+                                                    className="text-base"
+                                                    placeholder="Ex: 4"
+                                                    defaultValue={0}
+                                                    value={value.limit ?? ''}
+                                                    type="number"
+                                                    onChange={(e) => {
+                                                        const shifts = field.value;
+                                                        shifts[i] = { ...value, limit: e.target.value ? parseInt(e.target.value) : null };
+                                                        form.setValue('shifts', shifts);
+                                                    }}
+                                                />
+                                                <h1 className="text-sm">Set to 0 for unlimited.</h1>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -314,7 +339,7 @@ export default function EventForm() {
                             <FormMessage />
                             <Button 
                                 type="button" 
-                                onClick={_ => { field.onChange([...field.value, { startDate: form.getValues('day') ?? startOfToday(), endDate: form.getValues('day') ?? startOfToday() }]) }}
+                                onClick={_ => { field.onChange([...field.value, { startDate: form.getValues('day') ?? startOfToday(), endDate: form.getValues('day') ?? startOfToday(), limit: 0 }]) }}
                                 className="bg-green-700 hover:bg-green-600"
                             >
                                 Add shift

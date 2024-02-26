@@ -92,7 +92,7 @@ export default function TrackingPage() {
 
     function track() {
         const allUsers = trackedUsers.concat(flakeIns);
-        trackEvent(focusEvent.id, allUsers)
+        trackEvent(focusEvent, allUsers)
         .then(() => {
             setEvents(events.filter(event => event.id != focusEvent.id));
             setDialogEnabled(false);
@@ -136,7 +136,7 @@ export default function TrackingPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,_40%)] w-full justify-center md:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,_40%)] xl:grid-cols-[repeat(auto-fit,_30%)] w-full justify-center md:gap-4">
                 {
                     events.map((event, i) => <EventTrackCard key={i} event={event} onClick={() => { setFocusEvent(event); setDialogEnabled(true); setTrackedUsers(event.users_events); setFlakeIns([]); }}/>)
                 }

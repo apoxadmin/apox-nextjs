@@ -14,7 +14,7 @@ export default async function PanelPage() {
 
     const authData = await supabase.auth.getUser();
     if (authData.error || !authData.data?.user)
-        redirect('/calendar');
+        redirect('/login');
     const userQuery = await supabase.from('users').select('roles!users_role_fkey (name)').eq('uid', authData.data.user.id).maybeSingle();
     if (userQuery.error || !userQuery.data || !userQuery.data.roles)
         redirect('/calendar');

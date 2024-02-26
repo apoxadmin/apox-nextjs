@@ -21,7 +21,7 @@ export default function FellowshipPage() {
     }, [])
 
     return (
-        <div className="flex flex-col space-y-4 pb-4 px-4">
+        <div className="flex flex-col items-center space-y-4 pb-4 px-4">
             <EventReviewDialog 
                 focusEvent={focusEvent}
                 setEvent={(newEvent) => { 
@@ -29,19 +29,24 @@ export default function FellowshipPage() {
                     newEvents[newEvent.i] = newEvent.event;
                     setEvents(newEvents);
                 }}
+                events={events}
+                setEvents={setEvents}
                 open={dialogOpen}
-                onOpenChange={setDialogOpen} />
-            <h1 className="text-center text-xl pt-4 bg-white w-full">Unreviewed Fellowships</h1>
+                onOpenChange={setDialogOpen}
+                closeDialog={() => { setDialogOpen(false); }}
+            />
+            <h1 className="text-center text-xl pt-4 w-full font-medium underline">Unreviewed Fellowships</h1>
             {
+                    events.length > 0 ?
                     events?.map((event, i) => {
                         return (
                             <EventReviewCard 
                                 key={i}
                                 event={event}
-                                
                                 onClick={() => { setFocusEvent({ event, i }); setDialogOpen(true); }}/>
                         )
                     })
+                    : <h1 className="text-center text-neutral-500">Nothing here yet!</h1>
                 }
         </div>
     )

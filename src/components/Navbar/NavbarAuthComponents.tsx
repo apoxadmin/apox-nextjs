@@ -4,7 +4,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { Input } from "@/components/ui/input";
 import ProfileButton from "@/components/Navbar/ProfileButton";
 import React from "react";
-import { SearchPopup } from "./SearchPopup";
+import SearchPopup from "./SearchPopup";
 import { createClient } from "@/utils/supabase/client";
 
 export default function NavbarAuthComponents() {

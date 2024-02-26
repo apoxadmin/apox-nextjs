@@ -31,7 +31,7 @@ export function TimePicker({ value, onChange }: { value: Date, onChange: (date: 
 
     return (
         <div
-            className="bg-white flex items-center space-x-2 h-10 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+            className="w-[100px] bg-white flex justify-end items-center space-x-2 h-10 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
         >
             <div className="flex items-center">
                 <span role="textbox"

@@ -68,7 +68,7 @@ export default function CalendarPage() {
             </div>
         </div>
         <div className="flex w-full flex-1 lg:space-x-4">
-            <div className="hidden bg-white lg:flex flex-col space-y-4 p-6 rounded shadow-md">
+            {/* <div className="hidden bg-white lg:flex flex-col space-y-4 p-6 rounded shadow-md">
                 <h1 className="text-center text-xs md:text-sm">
                     Today's Events
                 </h1>
@@ -86,15 +86,12 @@ export default function CalendarPage() {
                                             {event.name}
                                         </h1>
                                     </div>
-                                    <h1 className="line-clamp-1">
-                                        {event.description}
-                                    </h1>
                                 </div>
                             )
                         })
                     }
                 </div>
-            </div>
+            </div> */}
             {
                 /*
                 For 3-month calendar swipe

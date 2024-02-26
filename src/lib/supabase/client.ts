@@ -1,7 +1,9 @@
 'use server'
 
 import { createClientComponentClient, createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { intervalToDuration } from "date-fns";
 import { cookies } from "next/headers";
+import { adminClient } from "./admin";
 
 export async function signUpEvent(eventId: number) {
     const cookieStore = cookies();
@@ -15,18 +17,22 @@ export async function signUpEvent(eventId: number) {
     const eventData = (await supabase.from('events').select('limit, users!event_user_joins ( id )').eq('id', eventId).maybeSingle()).data;
 
     if (eventData.users && eventData.users.length == eventData.limit && eventData.limit != 0) {
-        return Promise.reject(`Event is capped at ${eventData.limit}.`);
+        return Promise.reject(new Error('Event is capped at ${eventData.limit}.'));
     }
 
     const userData = (await supabase.from('users').select('id').eq('uid', user.id).maybeSingle()).data;
 
     if (eventData.users.filter((user) => user.id == userData.id).length > 0)
-        return Promise.reject(`Already signed up.`);
+        return Promise.reject(new Error('Already signed up.'));
 
     const { error } = await supabase.from('event_user_joins').insert({
         user_id: userData.id,
         event_id: eventId
     });
+
+    if (error) {
+        return Promise.reject(error);
+    }
 }
 
 export async function leaveEvent(eventId: number) {
@@ -40,6 +46,10 @@ export async function leaveEvent(eventId: number) {
     const userData = (await supabase.from('users').select('id').eq('uid', user.id).maybeSingle()).data;
 
     const { error } = await supabase.from('event_user_joins').delete().eq('event_id', eventId).eq('user_id', userData.id);
+
+    if (error) {
+        return Promise.reject(error);
+    }
 }
 
 export async function getAttendees(eventId: number) {
@@ -103,6 +113,10 @@ export async function unchairEvent(eventId: number) {
     const userData = (await supabase.from('users').select('id').eq('uid', user.id).maybeSingle()).data;
 
     const { error } = await supabase.from('chair_joins').delete().eq('event_id', eventId).eq('user_id', userData.id);
+
+    if (error) {
+        return Promise.reject(error);
+    }
 }
 
 export async function getMyEvents(tracked: boolean = false, finished: boolean = false, trackable: boolean = false) {
@@ -176,21 +190,54 @@ export default async function getLatestDrive() {
     return drive_link;
 }
 
-export async function trackEvent(eventId, users) {
+export async function trackEvent(event, users) {
     if (users.length < 5)
         return Promise.reject(new Error('Not enough attendees for chairing.'));
 
     const cookieStore = cookies();
     const supabase = createServerComponentClient({ cookies: () => cookieStore });
-    const update_data = users.map(user => { return { event_id: eventId, user_id: user.id, attended: true } });
+    const userAuth = await supabase.auth.getUser();
+    const update_data = users.map(user => { return { event_id: event.id, user_id: user.id, attended: true } });
 
     const updateData = await supabase.from('event_user_joins').upsert(update_data, { ignoreDuplicates: false, onConflict: 'user_id, event_id' });
 
     if (updateData.error)
         return Promise.reject(new Error('Could not update attendee status.'));
 
-    const updateEvent = await supabase.from('events').update({ tracked: true }).eq('id', eventId);
+    const updateEvent = await supabase.from('events').update({ tracked: true }).eq('id', event.id);
 
     if (updateEvent.error)
         return Promise.reject(new Error('Could update event status.'));
+
+    // Update chairing credit
+    const chairData = await supabase.from('users').select('chairing').eq('uid', userAuth.data.user.id).maybeSingle();
+
+    const pastValue = chairData.data.chairing;
+    const newValue = pastValue + 1;
+    const chairUpdate = await supabase.from('users').update({ chairing: newValue }).eq('uid', userAuth.data.user.id);
+    if (chairUpdate.error) {
+        return Promise.reject(chairUpdate.error);
+    }
+
+    const eventType = event.event_types.name;
+    let updateField: string;
+    if (eventType == 'fellowship')
+        updateField = 'fellowship';
+    else if (eventType == 'family')
+        updateField = 'familyCredit';
+    else if (eventType == 'service')
+        updateField = 'serviceHoursTerm';
+
+    const hours = intervalToDuration({ start: event.startDate, end: event.endDate });
+    for (const user of users) {
+        const updateUser = await adminClient.from('users').select().eq('id', user.id).maybeSingle();
+        const pastValue = updateUser.data[updateField];
+        const newValue = pastValue + hours.hours;
+        let data = {};
+        data[updateField] = newValue;
+        const res = await adminClient.from('users').update(data).eq('id', user.id);
+        if (res.error) {
+            return Promise.reject(res.error);
+        }
+    }
 }

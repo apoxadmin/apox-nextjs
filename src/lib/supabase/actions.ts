@@ -66,15 +66,14 @@ export async function createUser(data) {
     }
 }
 
-async function updateEventField(client, data) {
+export async function updateEventField(client, data) {
     const id = data.id;
     delete data.id;
     delete data.eventType;
-    console.log('Data: ', data);
     const { error } = await client.from('events').update(data).eq('id', id);
     if (error) {
         console.error(error);
-        Promise.reject(error);
+        return Promise.reject(error);
     }
 }
 
@@ -88,6 +87,29 @@ export async function updateEvent(data) {
     }
 
     if (data.eventType == 'fellowship' && userData.roles.name == 'fellowship vice president') {
-        updateEventField(supabaseServer, data);
+        return updateEventField(supabaseServer, data);
+    }
+
+    if (data.eventType == 'service' && userData.roles.name == 'service vice president') {
+        return updateEventField(supabaseServer, data);
+    }
+
+    if (data.shifts) {
+        const shiftData = { id: data.id, shifts: data.shifts };
+        return updateEventField(supabaseServer, shiftData);
+    }
+}
+
+export async function deleteEvent(data) {
+    const cookieStore = cookies();
+    const supabaseServer = createServerComponentClient({ cookies: () => cookieStore });
+    const user = (await supabaseServer.auth.getUser()).data.user;
+    const userData = (await supabaseServer.from('users').select('*, roles ( id, name )').eq('uid', user.id).maybeSingle()).data;
+    if (data.event_types.name == 'fellowship' && userData.roles.name == 'fellowship vice president') {
+        await adminClient.from('events').delete().eq('id', data.id);
+    }
+
+    if (data.event_types.name == 'service' && userData.roles.name == 'service vice president') {
+        await adminClient.from('events').delete().eq('id', data.id);
     }
 }
