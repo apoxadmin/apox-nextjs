@@ -257,7 +257,7 @@ export default function TrackingPage() {
                             </Table>
                         }
                         {
-                            (!shifts || shifts.length == 0) && flakeIns.length > 0 && <UserSearchbar attendees={focusEvent?.users_events} flakeIns={flakeIns} setFlakeIns={setFlakeIns} />
+                            (!shifts || shifts.length == 0) && <UserSearchbar attendees={focusEvent?.users_events} flakeIns={flakeIns} setFlakeIns={setFlakeIns} />
                         }
                         {
                             (!shifts || shifts.length == 0) && flakeIns.length > 0 &&
