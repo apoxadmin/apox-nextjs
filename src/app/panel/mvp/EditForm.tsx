@@ -1,6 +1,10 @@
+import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
+import { updateUser } from "@/lib/supabase/client";
+import { stringToCapital } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -27,7 +31,7 @@ const formSchema = z.object({
     standing: z.enum(STANDING_TYPES)
 });
 
-export default function EditForm({ i, user }) {
+export default function EditForm({ i, user, users, setUsers }) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -55,13 +59,40 @@ export default function EditForm({ i, user }) {
             form.setValue('violations', user.violations);
             form.setValue('dues', user.dues);
             form.setValue('flyering', user.flyering);
-            form.setValue('standing', user.standing);
+            form.setValue('standing', user.standing?.name);
         }
     }, [user]);
 
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        updateUser(user.id, values)
+        .then(() => {
+            let newUsers = [...users];
+            newUsers = newUsers.map((userData) => {
+                if (userData.id == user.id) {
+                    return { id: user.id, ...values, standing: stringToCapital(values.standing) };
+                }
+                else {
+                    return userData;
+                }
+            });
+            setUsers(newUsers);
+            toast({
+                title: 'Success!',
+                description: 'Your changes were saved.'
+            })
+        })
+        .catch(() => {
+            toast({
+                variant: 'destructive',
+                title: 'Failed to update.',
+                description: 'Try again?'
+            })
+        })
+    }
+
     return (
         <Form {...form}>
-            <form className="flex flex-col space-y-4 pb-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4 pb-8">
             <FormField
                 control={form.control}
                 name="name"
@@ -229,6 +260,9 @@ export default function EditForm({ i, user }) {
                     </FormItem>
                 )}
             />
+            <Button>
+                Update
+            </Button>
             </form>
         </Form>
     )

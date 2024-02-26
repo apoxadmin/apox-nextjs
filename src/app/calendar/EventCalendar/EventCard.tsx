@@ -10,7 +10,7 @@ import {
   } from "@/components/ui/card"
 import { endOfToday, format, isBefore, subDays } from "date-fns";
 import React from "react";
-import { chairEvent, leaveEvent, signUpEvent, unchairEvent } from "@/lib/supabase/client";
+import { chairEvent, leaveEvent, leaveShift, signUpEvent, signUpShift, unchairEvent } from "@/lib/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { createClient } from "@/utils/supabase/client";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -21,10 +21,26 @@ import { updateEvent } from "@/lib/supabase/actions";
 const DEBUG = true;
 
 function EventCardDetail({ event, chairs, attendees, userData, setAttendees, setChairs }) {
-    const [shiftUsers, setShiftUsers] = React.useState<Array<any>>([]);
+    const [allShifts, setAllShifts] = React.useState<Array<any>>([]);
+    const supabase = createClient();
 
     React.useEffect(() => {
-        setShiftUsers(event?.shifts?.map((shift) => shift.users));
+        async function fetchShifts() {
+            const shift_joins = await supabase.from('shift_user_joins').select('index, users(*)').eq('event_id', event.id);
+            if (shift_joins.data) {
+                const newShifts = Array(event?.shifts.length).fill([]);
+                for (let i = 0; i < shift_joins.data.length; i++) {
+                    const shiftData: any = shift_joins.data[i];
+                    const newShift = [...newShifts[shift_joins.data[i].index]];
+                    newShift.push(shiftData.users)
+                    newShifts[shift_joins.data[i].index] = newShift;
+                }
+                setAllShifts(newShifts);
+            }
+        }
+        if (event?.shifts?.length > 0) {
+            fetchShifts();
+        }
     }, [event]);
 
     return (
@@ -61,7 +77,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                         onClick={() => { 
                             signUpEvent(event.id)
                             .then(() => {
-                                setAttendees([...attendees, { name: userData.name, id: userData.id }]);
+                                setAttendees([...attendees, { name: userData?.name, id: userData?.id }]);
                             })
                         }}
                         className="bg-emerald-600 hover:bg-emerald-500"
@@ -114,53 +130,59 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                     }
                 </div>
             </div>
-            {/* {
-                userData && event?.shifts?.length > 0 &&
-                <div className="flex flex-col space-y-4 w-full">
+            {
+                userData && allShifts.length > 0 &&
+                <div className="flex flex-col items-center space-y-4 w-full">
                     <h1 className="text-center font-bold">
                         Shifts:
                     </h1>
                     {
-                        event?.shifts.map((shift, i) => {
+                        allShifts.map((usersInShift, i) => {
                             return (
-                                <div key={i} className="flex flex-col items-center space-y-2 outline outline-1 outline-neutral-200 py-2 rounded-lg ">
-                                    <h1>
-                                        {format(shift?.startDate, 'p')} - {format(shift.endDate, 'p')}
-                                    </h1>
-                                    <h1>
-                                        {`${shiftUsers[i]?.length ?? 0} / ${shift?.limit}`}
+                                <div key={i} className="flex flex-col items-center space-y-1">
+                                    <h1 className="font-medium">
+                                    {format(event?.shifts?.at(i).startDate, 'p')} - {format(event?.shifts?.at(i).endDate, 'p')}
                                     </h1>
                                     {
-                                        shiftUsers[i]?.map((user, i) => {
+                                        allShifts[i].map((user, j) => {
                                             return (
-                                                <div key={i}>
-                                                    {user?.name}
+                                                <div key={j}>
+                                                    {user.name}
                                                 </div>
                                             )
                                         })
                                     }
                                     {
-                                        attendees.map(a => a.id).includes(userData.id) && !shiftUsers[i]?.map(user => user.id).includes(userData.id) && (shift?.limit == 0 || !shift?.users || (shift?.users?.length < shift?.limit)) &&
+                                        !allShifts[i].map(user => user.id).includes(userData.id) ? attendees?.map(a => a.id).includes(userData?.id) && (event?.shifts?.at(i).limit == 0 || usersInShift.length < event?.shifts?.at(i).limit) &&
                                         <Button
                                             className="bg-emerald-600 hover:bg-emerald-500"
                                             onClick={() => {
-                                                const newShift = {...shift };
-                                                if (newShift.users) {
-                                                    newShift.users.push({ id: userData.id, name: userData.name });
-                                                }
-                                                else {
-                                                    newShift.users = [{ id: userData.id, name: userData.name }];
-                                                }
-                                                const shifts = event?.shifts;
-                                                shifts[i] = newShift;
-
-                                                updateEvent({ id: event.id, shifts: shifts })
+                                                signUpShift(event.id, i)
                                                 .then(() => {
-                                                    setShiftUsers(shifts.map(shift => shift.users));
+                                                    const shifts = [...allShifts[i]];
+                                                    shifts.push(userData);
+                                                    const allShiftsNew = [...allShifts];
+                                                    allShiftsNew[i] = shifts;
+                                                    setAllShifts(allShiftsNew);
                                                 });
                                             }}
                                         >
                                             Sign up
+                                        </Button>
+                                        :
+                                        <Button
+                                            className="bg-red-600 hover:bg-red-500"
+                                            onClick={() => {
+                                                leaveShift(event.id, i)
+                                                .then(() => {
+                                                    const shifts = [...allShifts[i]].filter(user => user.id != userData.id);
+                                                    const allShiftsNew = [...allShifts];
+                                                    allShiftsNew[i] = shifts;
+                                                    setAllShifts(allShiftsNew);
+                                                });
+                                            }}
+                                        >
+                                            Leave
                                         </Button>
                                     }
                                 </div>
@@ -168,7 +190,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                         })
                     }
                 </div>
-            } */}
+            }
         </div>
     )
 }

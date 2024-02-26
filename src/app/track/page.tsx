@@ -17,6 +17,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import Link from "next/link";
 import { toast } from "@/components/ui/use-toast";
+import { createClient } from "@/utils/supabase/client";
 
 function EventTrackCard({ event, onClick }: { event: any, onClick?: any }) {
     return (
@@ -50,7 +51,9 @@ function UserTrackCard({ user, trackedUsers, setTrackedUsers }) {
             </TableCell>
             <TableCell className="text-right">
                 <Switch defaultChecked={true} onCheckedChange={(value) => {
-                    const userIsTracked = trackedUsers.filter((tracked) => tracked.id == user.id).length > 1;
+                    console.log('tracked users: ', trackedUsers);
+                    const userIsTracked = trackedUsers.filter((tracked) => tracked.id == user.id).length >= 1;
+                    // console.log(trackedUsers.filter((tracked) => tracked.id == user.id).length >= 1)
                     if (value && !userIsTracked) {
                         setTrackedUsers([...trackedUsers, user]);
                     } else if (userIsTracked) {
@@ -89,10 +92,15 @@ export default function TrackingPage() {
     const [flakeIns, setFlakeIns] = React.useState<Array<any>>([]);
     const [driveLink, setDriveLink] = React.useState<any>();
     const [alertEnabled, setAlertEnabled] = React.useState<boolean>(false);
+    const [shifts, setShifts] = React.useState<Array<any>>([]);
+    const [trackedUserShifts, setTrackedUserShifts] = React.useState<Array<any>>([]);
+    const [flakeInShifts, setFlakeInShifts] = React.useState<Array<any>>([]);
+
+    const supabase = createClient();
 
     function track() {
         const allUsers = trackedUsers.concat(flakeIns);
-        trackEvent(focusEvent, allUsers)
+        trackEvent(focusEvent.id, allUsers)
         .then(() => {
             setEvents(events.filter(event => event.id != focusEvent.id));
             setDialogEnabled(false);
@@ -123,6 +131,26 @@ export default function TrackingPage() {
         }
         getEvents();
     }, []);
+
+    React.useEffect(() => {
+        async function fetchShifts() {
+            const shiftsRes = await supabase.from('shift_user_joins').select('index, users(*)').eq('event_id', focusEvent.id);
+            if (shiftsRes.data) {
+                const newShifts = Array(focusEvent?.shifts.length).fill([]);
+                for (let i = 0; i < shiftsRes.data.length; i++) {
+                    const shiftData: any = shiftsRes.data[i];
+                    const newShift = [...newShifts[shiftsRes.data[i].index]];
+                    newShift.push(shiftData.users)
+                    newShifts[shiftsRes.data[i].index] = newShift;
+                }
+                setShifts(newShifts);
+                setTrackedUserShifts(newShifts);
+                setFlakeInShifts(Array(focusEvent?.shifts.length).fill([]));
+            }
+        }
+        if (focusEvent)
+            fetchShifts();
+    }, [focusEvent]);
 
     return (
         <div className="flex flex-col items-center space-y-4 py-8 px-6 md:p-24">
@@ -164,55 +192,105 @@ export default function TrackingPage() {
                         <div className="flex justify-center">
                             <a className="text-white bg-indigo-500 rounded-full hover:shadow-xl hover:bg-indigo-400 py-2 px-4 transition ease-in-out delay-50 duration-200" href={driveLink} target="_blank">Upload to the Collaborative Drive</a>
                         </div>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableCell className="text-neutral-400">
-                                        Name
-                                    </TableCell>
-                                    <TableCell className="text-right text-neutral-400">
-                                        Attended
-                                    </TableCell>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {
-                                    focusEvent?.users_events.map((user, i) => {
-                                        return (
-                                            <UserTrackCard key={i} user={user} trackedUsers={trackedUsers} setTrackedUsers={setTrackedUsers} />
-                                        )
-                                    })
-                                }
-                            </TableBody>
-                        </Table>
-                        <UserSearchbar attendees={focusEvent?.users_events} flakeIns={flakeIns} setFlakeIns={setFlakeIns} />
                         {
-                            flakeIns.length > 0 &&
+                            shifts && shifts.length > 0 ?
+                            shifts.map((shift, i) => {
+                                return (
+                                    <div key={i} className="flex flex-col items-center">
+                                        <h1>{format(focusEvent.shifts[i].startDate, 'p')} - {format(focusEvent.shifts[i].endDate, 'p')}</h1>
+                                        <Table>
+                                            <TableHeader>
+                                                
+                                                <TableRow>
+                                                    <TableCell className="text-neutral-400">
+                                                        Name
+                                                    </TableCell>
+                                                    <TableCell className="text-right text-neutral-400">
+                                                        Attended
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableHeader>
+                                            
+                                            <TableBody>
+                                                {
+                                                    shift.map((user, j) => {
+                                                        return (
+                                                            <UserTrackCard key={j} user={user} trackedUsers={trackedUserShifts[i]} setTrackedUsers={(newUser) => {
+                                                                // const newAllShifts = [...trackedUserShifts];
+                                                                // const newShifts = [...newAllShifts[i]];
+                                                                // newShifts[j] = newUser;
+                                                                // newAllShifts[i] = newShifts;
+                                                                console.log(trackedUserShifts);
+                                                                console.log(newUser);
+                                                                // newShifts[i][j] = newUser;
+                                                                // setShifts(newShifts);
+                                                            }} />
+                                                        )
+                                                    })
+                                                }
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                )
+                            })
+                            :
                             <Table>
                                 <TableHeader>
                                     <TableRow>
                                         <TableCell className="text-neutral-400">
-                                            Flake-In
+                                            Name
                                         </TableCell>
-                                        <TableCell className="text-neutral-400 text-right">
-                                            Remove
+                                        <TableCell className="text-right text-neutral-400">
+                                            Attended
                                         </TableCell>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {
-                                        flakeIns.map((user, i) => {
+                                        focusEvent?.users_events.map((user, i) => {
                                             return (
-                                                <FlakeInCard key={i} user={user} flakeIns={flakeIns} setFlakeIns={setFlakeIns}/>
+                                                <UserTrackCard key={i} user={user} trackedUsers={trackedUsers} setTrackedUsers={setTrackedUsers} />
                                             )
                                         })
                                     }
                                 </TableBody>
                             </Table>
                         }
+                        
+                        {
+                            (!shifts || shifts.length == 0) && flakeIns.length > 0 &&
+                            <>
+                                <UserSearchbar attendees={focusEvent?.users_events} flakeIns={flakeIns} setFlakeIns={setFlakeIns} />
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableCell className="text-neutral-400">
+                                                Flake-In
+                                            </TableCell>
+                                            <TableCell className="text-neutral-400 text-right">
+                                                Remove
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {
+                                            flakeIns.map((user, i) => {
+                                                return (
+                                                    <FlakeInCard key={i} user={user} flakeIns={flakeIns} setFlakeIns={setFlakeIns}/>
+                                                )
+                                            })
+                                        }
+                                    </TableBody>
+                                </Table>
+                            </>
+                        }
 
                         <div className="flex justify-center">
-                            <Button onClick={() => { setAlertEnabled(true); }}>Track Event</Button>
+                            <Button
+                                onClick={() => { setAlertEnabled(true); }}
+                            >
+                                Track Event
+                            </Button>
                         </div>
                     </div>
 

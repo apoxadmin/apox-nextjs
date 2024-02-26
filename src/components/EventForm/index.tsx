@@ -16,6 +16,7 @@ import React from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import { Label } from "../ui/label";
+import { createEvent } from "@/lib/supabase/client";
 
 const EVENT_TYPES: any = ['service', 'fellowship', 'fundraising', 'family', 'active credit', 'pledge credit', 'chapter meeting', 'pledge meeting'];
 
@@ -83,40 +84,20 @@ export default function EventForm() {
         },
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        const eventTypeResponse = await supabase.from('event_types').select().eq('name', values.type).maybeSingle();
-
-        if (eventTypeResponse.error) {
-            console.error("Invalid event type.");
-            return;
-        }
-
-        const eventTypeKey = eventTypeResponse.data.id;
-
-        const eventResponse = await supabase.from('events').insert({
-            type: eventTypeKey,
-            name: values.name,
-            description: values.description,
-            location: values.location,
-            startDate: values.dates.startDate,
-            endDate: values.dates.endDate,
-            limit: values.limit,
-            shifts: values?.shifts,
-            creator: userData.id
-        })
-        
-        if (eventResponse.error) {
-            toast({
-                title: 'Error',
-                description: 'Event could not be created.'
-            })
-        }
-        else {
+    function onSubmit(values: z.infer<typeof formSchema>) {
+        createEvent(values)
+        .then(() => {
             toast({
                 title: 'Success!',
                 description: 'You requested a new event.'
             })
-        }
+        })
+        .catch(() => {
+            toast({
+                title: 'Error',
+                description: 'Event could not be created.'
+            })
+        })
     }
     return <div className="w-full max-w-md text-gray-800">
         <Form {...form}>

@@ -1,9 +1,117 @@
 'use server'
 
-import { createClientComponentClient, createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { intervalToDuration } from "date-fns";
 import { cookies } from "next/headers";
 import { adminClient } from "./admin";
+
+export async function updateUser(userId, data) {
+    const cookieStore = cookies();
+    const supabaseServer = createServerComponentClient({ cookies: () => cookieStore });
+    const user = (await supabaseServer.auth.getUser()).data.user;
+    const userData = (await supabaseServer.from('users').select('*, roles ( id, name, privileged )').eq('uid', user.id).maybeSingle()).data;
+    if (userData.roles == null) {
+        return Promise.reject(new Error('No user role.'));
+    }
+
+    if (!userData.roles.privileged) {
+        return Promise.reject(new Error('Unprivileged.'))
+    }
+
+    const standingValue = (await supabaseServer.from('standings').select().eq('name', data.standing).maybeSingle()).data;
+    
+    const updateData = {...data, standing: standingValue.id };
+    const { error } = await adminClient.from('users').update(updateData).eq('id', userId);
+    if (error) {
+        return Promise.reject(new Error('Could not update data.'))
+    }
+}
+
+export async function createEvent(data) {
+    const cookieStore = cookies();
+    const supabase = createServerComponentClient({ cookies: () => cookieStore });
+    const user = (await supabase.auth.getUser()).data.user;
+    if (user == null) {
+        return Promise.reject(new Error('Unauthenticated'));
+    }
+
+    const userData = (await supabase.from('users').select('id, roles(*)').eq('uid', user.id).maybeSingle()).data;
+
+    const eventTypeResponse = await supabase.from('event_types').select().eq('name', data.type).maybeSingle();
+
+    if (eventTypeResponse.error) {
+        return Promise.reject(new Error('Invalid event type.'));
+    }
+
+    const eventTypeKey = eventTypeResponse.data.id;
+
+    const eventResponse = await supabase.from('events').insert({
+        type: eventTypeKey,
+        name: data.name,
+        description: data.description,
+        location: data.location,
+        startDate: data.dates.startDate,
+        endDate: data.dates.endDate,
+        limit: data.limit,
+        shifts: data?.shifts,
+        creator: userData.id,
+        reviewed: Boolean(userData.roles)
+    });
+
+    if (eventResponse.error) {
+        return Promise.reject(new Error('Could not create event.'));
+    }
+}
+
+export async function signUpShift(eventId: number, shiftIndex: number) {
+    const cookieStore = cookies();
+    const supabase = createServerComponentClient({ cookies: () => cookieStore });
+    const user = (await supabase.auth.getUser()).data.user;
+
+    if (user == null)
+        return;
+
+    const userData = (await supabase.from('users').select('id').eq('uid', user.id).maybeSingle()).data;
+
+    const eventData = (await supabase.from('events').select('shifts').eq('id', eventId).maybeSingle()).data;
+
+    if (eventData.shifts?.length == 0) {
+        return Promise.reject(new Error('No shifts available.'));
+    }
+
+    if (eventData.shifts?.length <= shiftIndex) {
+        return Promise.reject(new Error('Shift out of range'));
+    }
+
+    // Check if shift is full
+    const shiftData = (await supabase.from('shift_joins').select('length').eq('index', shiftIndex).eq('event_id', eventId)).data;
+    if (shiftData && shiftData.length >= eventData.shifts?.length) {
+        return Promise.reject(new Error('Shift is full'));
+    }
+
+    // Add user to shift_join
+    const { error } = await supabase.from('shift_user_joins').insert({ event_id: eventId, user_id: userData.id, index: shiftIndex });
+    if (error) {
+        return Promise.reject(new Error('Shift could not be added'));
+    }
+}
+
+export async function leaveShift(eventId: number, shiftIndex: number) {
+    const cookieStore = cookies();
+    const supabase = createServerComponentClient({ cookies: () => cookieStore });
+    const user = (await supabase.auth.getUser()).data.user;
+
+    if (user == null)
+        return;
+
+    const userData = (await supabase.from('users').select('id').eq('uid', user.id).maybeSingle()).data;
+
+    // Add user to shift_join
+    const { error } = await supabase.from('shift_user_joins').delete().eq('event_id', eventId).eq('user_id', userData.id).eq('index', shiftIndex);
+    if (error) {
+        return Promise.reject(new Error('Shift could not be removed'));
+    }
+}
 
 export async function signUpEvent(eventId: number) {
     const cookieStore = cookies();
@@ -14,10 +122,11 @@ export async function signUpEvent(eventId: number) {
         return;
 
     // Get event limit
-    const eventData = (await supabase.from('events').select('limit, users!event_user_joins ( id )').eq('id', eventId).maybeSingle()).data;
+    const eventRes = (await supabase.from('events').select('limit, users!event_user_joins ( id )').eq('id', eventId).maybeSingle());
+    const eventData = eventRes.data;
 
     if (eventData.users && eventData.users.length == eventData.limit && eventData.limit != 0) {
-        return Promise.reject(new Error('Event is capped at ${eventData.limit}.'));
+        return Promise.reject(new Error(`Event is capped at ${eventData.limit}.`));
     }
 
     const userData = (await supabase.from('users').select('id').eq('uid', user.id).maybeSingle()).data;
@@ -190,21 +299,21 @@ export default async function getLatestDrive() {
     return drive_link;
 }
 
-export async function trackEvent(event, users) {
+export async function trackEvent(eventId, users, usersInShifts=null) {
     if (users.length < 5)
         return Promise.reject(new Error('Not enough attendees for chairing.'));
 
     const cookieStore = cookies();
     const supabase = createServerComponentClient({ cookies: () => cookieStore });
     const userAuth = await supabase.auth.getUser();
-    const update_data = users.map(user => { return { event_id: event.id, user_id: user.id, attended: true } });
+    const update_data = users.map(user => { return { event_id: eventId, user_id: user.id, attended: true } });
 
     const updateData = await supabase.from('event_user_joins').upsert(update_data, { ignoreDuplicates: false, onConflict: 'user_id, event_id' });
 
     if (updateData.error)
         return Promise.reject(new Error('Could not update attendee status.'));
 
-    const updateEvent = await supabase.from('events').update({ tracked: true }).eq('id', event.id);
+    const updateEvent = await supabase.from('events').update({ tracked: true }).eq('id', eventId);
 
     if (updateEvent.error)
         return Promise.reject(new Error('Could update event status.'));
@@ -219,7 +328,14 @@ export async function trackEvent(event, users) {
         return Promise.reject(chairUpdate.error);
     }
 
-    const eventType = event.event_types.name;
+    const eventRes = await supabase.from('events').select('event_types (*), startDate, endDate, shifts').eq('id', eventId).maybeSingle();
+    if (eventRes.error) {
+        return Promise.reject(eventRes.error);
+    }
+    const eventData = eventRes.data;
+    const eventTypeData: any = eventData.event_types
+
+    const eventType = eventTypeData.name;
     let updateField: string;
     if (eventType == 'fellowship')
         updateField = 'fellowship';
@@ -227,17 +343,43 @@ export async function trackEvent(event, users) {
         updateField = 'familyCredit';
     else if (eventType == 'service')
         updateField = 'serviceHoursTerm';
+    else {
+        return Promise.reject(new Error('Event cannot be tracked'));
+    }
 
-    const hours = intervalToDuration({ start: event.startDate, end: event.endDate });
-    for (const user of users) {
-        const updateUser = await adminClient.from('users').select().eq('id', user.id).maybeSingle();
-        const pastValue = updateUser.data[updateField];
-        const newValue = pastValue + hours.hours;
-        let data = {};
-        data[updateField] = newValue;
-        const res = await adminClient.from('users').update(data).eq('id', user.id);
-        if (res.error) {
-            return Promise.reject(res.error);
+    if (eventData.shifts && eventData.shifts.length == 0) {
+        const hours = intervalToDuration({ start: eventData.startDate, end: eventData.endDate });
+        for (const user of users) {
+            const updateUser = await adminClient.from('users').select().eq('id', user.id).maybeSingle();
+            const pastValue = updateUser.data[updateField];
+            const newValue = pastValue + hours.hours;
+            let data = {};
+            data[updateField] = newValue;
+            const res = await adminClient.from('users').update(data).eq('id', user.id);
+            if (res.error) {
+                return Promise.reject(res.error);
+            }
+        }
+    } else {
+        for (let i = 0; i < eventData.shifts.length; i++) {
+            const hours = intervalToDuration({ start: eventData.shifts[i].startDate, end: eventData.shifts[i].endDate });
+            const shiftRes = await supabase.from('shift_user_joins').select('event_user_joins ( users(*) )').eq('index', i).eq('event_id', eventId);
+            if (shiftRes.data) {
+                const shiftUsers = shiftRes.data.map(join => {
+                    const eventJoin: any = join.event_user_joins;
+                    return eventJoin.users;
+                });
+                for (const user of shiftUsers) {
+                    const pastValue = user[updateField];
+                    const newValue = pastValue + hours.hours;
+                    let data = {};
+                    data[updateField] = newValue;
+                    const res = await adminClient.from('users').update(data).eq('id', user.id);
+                    if (res.error) {
+                        return Promise.reject(res.error);
+                    }
+                }
+            }
         }
     }
 }

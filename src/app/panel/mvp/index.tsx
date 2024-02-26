@@ -34,6 +34,7 @@ import EditForm from "./EditForm";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
+import { stringToCapital } from "@/lib/utils";
 
 export default function MVPPage() {
     const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -243,9 +244,9 @@ export default function MVPPage() {
 
     React.useEffect(() => {
         async function fetchUsers() {
-            let userList: any = (await supabase.from('users').select('*, roles ( name, shorthand ), standing ( name )')).data;
+            let userList: any = (await supabase.from('users').select('*, roles ( name, shorthand ), standing ( name )').order('name')).data;
             userList = userList.map(user => {
-                return { ...user, standing: userList.standing?.name || 'None' };
+                return { ...user, standing: stringToCapital(user.standing?.name) || 'None' };
             });
             setUsers(userList);
         }
@@ -347,7 +348,7 @@ export default function MVPPage() {
                             </SheetHeader>
                             <ScrollArea>
                                 <div className="px-4">
-                                <EditForm user={editUser} i={editUserI} />
+                                <EditForm user={editUser} i={editUserI} users={users} setUsers={setUsers} />
                                 </div>
                             </ScrollArea>
                         </SheetContent>
@@ -365,7 +366,7 @@ export default function MVPPage() {
                         </DrawerHeader>
                         <ScrollArea>
                             <div className="px-4">
-                            <EditForm user={editUser} i={editUserI} />
+                            <EditForm user={editUser} i={editUserI} users={users} setUsers={setUsers} />
                             </div>
                         </ScrollArea>
                     </DrawerContent>
