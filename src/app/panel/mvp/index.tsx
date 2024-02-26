@@ -50,10 +50,6 @@ export default function MVPPage() {
         data: users,
         columns: [
             {
-                accessorKey: 'id',
-                header: 'ID'
-            },
-            {
                 accessorKey: 'name',
                 header: ({ column }) => {
                     return (
@@ -97,6 +93,40 @@ export default function MVPPage() {
                             <h1 className="text-left w-full">Term</h1>
                         </Button>
                     )
+                }
+            },
+            {
+                accessorKey: 'chairing',
+                header: ({ column }) => {
+                    return (
+                        <Button
+                            variant="outline"
+                            className="w-full text-left p-0 bg-indigo-100 hover:bg-indigo-100 hover:text-indigo-300"
+                            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                        >
+                            <h1 className="text-right w-full">Chairing</h1>
+                        </Button>
+                    )
+                },
+                cell: ({ row }) => {
+                    return <div className="text-right">{row.getValue('chairing')}</div>
+                }
+            },
+            {
+                accessorKey: 'fellowship',
+                header: ({ column }) => {
+                    return (
+                        <Button
+                            variant="outline"
+                            className="w-full text-left p-0 bg-indigo-100 hover:bg-indigo-100 hover:text-indigo-300"
+                            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                        >
+                            <h1 className="text-right w-full">Fellowship</h1>
+                        </Button>
+                    )
+                },
+                cell: ({ row }) => {
+                    return <div className="text-right">{row.getValue('fellowship')}</div>
                 }
             },
             {
