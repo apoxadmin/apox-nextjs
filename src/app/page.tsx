@@ -15,7 +15,7 @@ const cinzel = Cinzel({ subsets: ["latin"] });
 export default function Home() {
     return (
         <ScrollArea>
-            <main className="flex max-h-screen flex-col items-center space-y-8 py-10 md:p-24">
+            <main className="flex max-h-screen flex-col items-center space-y-4 py-4 md:p-24">
                 <div className="flex flex-col items-center">
                     <h1 className={
                         cn(
