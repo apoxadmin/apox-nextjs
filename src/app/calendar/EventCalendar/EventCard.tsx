@@ -32,7 +32,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                 for (let i = 0; i < shift_joins.data.length; i++) {
                     const shiftData: any = shift_joins.data[i];
                     const newShift = [...newShifts[shift_joins.data[i].index]];
-                    newShift.push(shiftData.users)
+                    newShift.push(shiftData?.users)
                     newShifts[shift_joins.data[i].index] = newShift;
                 }
                 setAllShifts(newShifts);
@@ -241,10 +241,10 @@ export default function EventCard({ userData, event }) {
         async function fetchChairsAttendees() {
             const chairsResponse = await supabase.from('chair_joins').select('users (*)').eq('event_id', event.id);
             if (chairsResponse.data)
-                setChairs(chairsResponse.data?.map(join => join.users));
+                setChairs(chairsResponse.data?.map(join => join?.users));
             const attendeesResponse = await supabase.from('event_user_joins').select('users (*)').eq('event_id', event.id);
             if (attendeesResponse.data)
-                setAttendees(attendeesResponse.data?.map(join => join.users));
+                setAttendees(attendeesResponse.data?.map(join => join?.users));
         }
         fetchChairsAttendees();
     }, []);

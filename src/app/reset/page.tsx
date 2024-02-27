@@ -52,8 +52,9 @@ export default function ResetPage() {
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
+        console.log((process.env.NEXT_PUBLIC_SITE_URL ?? process?.env?.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000/') + 'reset')
         supabase.auth.resetPasswordForEmail(data.email, {
-            redirectTo: (process?.env?.NEXT_PUBLIC_SITE_URL ?? process?.env?.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000/') + 'reset'
+            redirectTo: (process.env.NEXT_PUBLIC_SITE_URL ?? process?.env?.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000/') + 'reset'
         })
         .then(() => {
             toast({

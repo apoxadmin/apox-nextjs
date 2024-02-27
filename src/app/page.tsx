@@ -1,76 +1,78 @@
-'use client'
-
-import EventForm from "@/components/EventForm";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { FaPenToSquare } from "react-icons/fa6";
 import Autoplay from "embla-carousel-autoplay";
 import { Cinzel } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { createClientServer } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 const cinzel = Cinzel({ subsets: ["latin"] });
 
-export default function Home() {
+export default async function Home() {
+    const supabase = createClientServer();
+    const { error, data } = await supabase.auth.getUser();
+
     return (
-        <ScrollArea>
-            <main className="flex max-h-screen flex-col items-center space-y-4 py-4 md:p-24">
-                <div className="flex flex-col items-center">
-                    <h1 className={
-                        cn(
-                            cinzel.className,
-                            'text-2xl md:text-4xl text-indigo-700'
-                        )
-                    }>
-                        Alpha Phi Omega
-                    </h1>
-                    <h1 className={
-                        cn(
-                            cinzel.className,
-                            'text-xl sm: text-2xl text-indigo-700'
-                        )
-                    }>
-                        Chi Chapter
-                    </h1>
-                </div>
-                <Carousel
-                    opts={{
-                        align: 'start',
-                        loop: true
-                    }}
-                    plugins={[
-                        Autoplay({
-                            delay: 5000
-                        })
-                    ]}
-                >
-                    <CarouselContent>
-                        <CarouselItem className="flex justify-center">
-                            <img src="bleach.jpg" alt="bleach" className="h-[200px] md:h-[500px]"/>
-                        </CarouselItem>
-                        <CarouselItem className="flex justify-center">
-                        <img src="bestvps.jpg" alt="bleach" className="h-[200px] md:h-[500px]"/>
-                        </CarouselItem>
-                    </CarouselContent>
-                </Carousel>
-                <div className="flex space-x-1 text-sm md:text-base">
-                    <h1 className="italic text-neutral-400">
-                        sometimes you
-                    </h1>
-                    <h1 className="font-bold italic text-neutral-400">
-                        can
-                    </h1>
-                    <h1 className="italic text-neutral-400">
-                        capture greatness
-                    </h1>
-                </div>
+        <div className="-mt-20 grow justify-center flex flex-col items-center space-y-4">
+            <div className="flex flex-col items-center">
+                <h1 className={
+                    cn(
+                        cinzel.className,
+                        'text-2xl md:text-4xl text-indigo-700'
+                    )
+                }>
+                    Alpha Phi Omega
+                </h1>
+                <h1 className={
+                    cn(
+                        cinzel.className,
+                        'text-xl sm: text-2xl text-indigo-700'
+                    )
+                }>
+                    Chi Chapter
+                </h1>
+            </div>
+            {/* <Carousel
+                opts={{
+                    align: 'start',
+                    loop: true
+                }}
+                plugins={[
+                    Autoplay({
+                        delay: 5000
+                    })
+                ]}
+            >
+                <CarouselContent className="h-1/2">
+                    <CarouselItem className="flex justify-center">
+                        <img src="bleach.jpg" alt="bleach" className="object-contain" />
+                    </CarouselItem>
+                    <CarouselItem className="flex justify-center">
+                        <img src="bestvps.jpg" alt="bleach" className="object-contain" />
+                    </CarouselItem>
+                </CarouselContent>
+            </Carousel>
+            <div className="flex space-x-1 text-sm md:text-base">
+                <h1 className="italic text-neutral-400">
+                    sometimes you
+                </h1>
+                <h1 className="font-bold italic text-neutral-400">
+                    can
+                </h1>
+                <h1 className="italic text-neutral-400">
+                    capture greatness
+                </h1>
+            </div> */}
+            {
+                (error || !data.user) &&
                 <Link href="/login">
-                    <Button className="bg-indigo-600 hover:bg-indigo-500">
+                    <Button
+                        className={cn(cinzel.className, 'rounded-full bg-indigo-500 hover:bg-indigo-300')}>
                         Login
                     </Button>
                 </Link>
-            </main>
-        </ScrollArea>
+            }
+        </div>
     );
 }

@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <link rel="icon" href="/logo.png" sizes="any" />
       <body className={inter.className}>
-          <main className="flex flex-col h-screen bg-gray-100">
+          <main className="flex flex-col min-h-screen bg-gray-100">
             <Navbar />
             {children}
           </main>

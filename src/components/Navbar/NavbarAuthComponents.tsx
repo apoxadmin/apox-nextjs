@@ -18,14 +18,19 @@ export default function NavbarAuthComponents() {
                 <Link href="/calendar" className="text-nowrap hover:text-neutral-400">
                     Calendar
                 </Link>
-                <Link href="/members" className="text-nowrap hover:text-neutral-400">
-                    Members
+                <Link
+                    href="https://docs.google.com/forms/d/12b661PLFSB1OjCJdqfbWCkNwheecku7QL1mhI69AVno/edit"
+                    className="text-nowrap hover:text-neutral-400"
+                    target="_blank"
+                >
+                    Tracker Form
                 </Link>
-                <Link href="/request" className="text-nowrap hover:text-neutral-400">
-                    Request Event
-                </Link>
-                <Link href="/track" className="text-nowrap hover:text-neutral-400">
-                    Event Tracker
+                <Link
+                    href="https://docs.google.com/spreadsheets/d/18wH_HM7tL7dOlKdBX_Q5ajdV7g5sgi5bTzEkLhcy1G0/edit?usp=sharing"
+                    className="text-nowrap hover:text-neutral-400"
+                    target="_blank"
+                >
+                    Tracker Sheet
                 </Link>
             </div>
             <div className="flex space-x-8">
