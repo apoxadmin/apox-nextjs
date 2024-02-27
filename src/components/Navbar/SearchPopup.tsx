@@ -38,17 +38,17 @@ export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
                 <IoCalendarNumberOutline className="text-lg"/>
                 <h1 className="text-base">Calendar</h1>
             </CommandItem>
-            <CommandItem onSelect={() => { navigate('/members'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                <FaRegUser className="text-base"/>
-                <h1 className="text-base">Members</h1>
-            </CommandItem>
             <CommandItem onSelect={() => { navigate('/request'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                 <FaWpforms className="text-base"/>
                 <h1 className="text-base">Request Event</h1>
             </CommandItem>
+            <CommandItem onSelect={() => { navigate('https://docs.google.com/forms/d/12b661PLFSB1OjCJdqfbWCkNwheecku7QL1mhI69AVno/edit'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                <BsCalendar2CheckFill className="text-lg"/>
+                <h1 className="text-base">Tracker Form</h1>
+            </CommandItem>
             <CommandItem onSelect={() => { navigate('/track'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                 <BsCalendar2CheckFill className="text-lg"/>
-                <h1 className="text-base">Event Tracker</h1>
+                <h1 className="text-base">Tracker Sheet</h1>
             </CommandItem>
             {
                 user?.roles && <>

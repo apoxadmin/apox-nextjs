@@ -18,6 +18,9 @@ export default function NavbarAuthComponents() {
                 <Link href="/calendar" className="text-nowrap hover:text-neutral-400">
                     Calendar
                 </Link>
+                <Link href="/request" className="text-nowrap hover:text-neutral-400">
+                    Request Event
+                </Link>
                 <Link
                     href="https://docs.google.com/forms/d/12b661PLFSB1OjCJdqfbWCkNwheecku7QL1mhI69AVno/edit"
                     className="text-nowrap hover:text-neutral-400"
