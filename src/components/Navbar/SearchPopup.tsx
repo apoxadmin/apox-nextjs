@@ -28,6 +28,7 @@ import { navigate } from "@/lib/actions";
 import { FaChessKnight } from "react-icons/fa6";
 import { BsCalendar2CheckFill } from "react-icons/bs";
 import { createClient } from "@/utils/supabase/client";
+import Link from "next/link";
 
 export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
     return (
@@ -42,14 +43,24 @@ export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
                 <FaWpforms className="text-base"/>
                 <h1 className="text-base">Request Event</h1>
             </CommandItem>
-            <CommandItem onSelect={() => { navigate('https://docs.google.com/forms/d/12b661PLFSB1OjCJdqfbWCkNwheecku7QL1mhI69AVno/edit'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                <BsCalendar2CheckFill className="text-lg"/>
-                <h1 className="text-base">Tracker Form</h1>
-            </CommandItem>
-            <CommandItem onSelect={() => { navigate('/track'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                <BsCalendar2CheckFill className="text-lg"/>
-                <h1 className="text-base">Tracker Sheet</h1>
-            </CommandItem>
+            <Link
+                href="https://docs.google.com/forms/d/12b661PLFSB1OjCJdqfbWCkNwheecku7QL1mhI69AVno/edit"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <BsCalendar2CheckFill className="text-lg"/>
+                    <h1 className="text-base">Tracker Form</h1>
+                </CommandItem>
+            </Link>
+            <Link
+                href="https://docs.google.com/spreadsheets/d/18wH_HM7tL7dOlKdBX_Q5ajdV7g5sgi5bTzEkLhcy1G0/edit?usp=sharing"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <BsCalendar2CheckFill className="text-lg"/>
+                    <h1 className="text-base">Tracker Sheet</h1>
+                </CommandItem>
+            </Link>
             {
                 user?.roles && <>
                 <CommandSeparator />
