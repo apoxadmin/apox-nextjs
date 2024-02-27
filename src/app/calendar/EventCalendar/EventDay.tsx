@@ -5,6 +5,18 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, Dr
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
+const EVENT_COLORS = {
+    'chapter meeting': 'bg-red-100',
+    'pledge meeting': 'bg-violet-100',
+    'active credit': 'bg-rose-100',
+    'pledge credit': 'bg-yellow-100',
+    'fellowship': 'bg-indigo-100',
+    'service': 'bg-cyan-100',
+    'family': 'bg-orange-100',
+    'fundraising': 'bg-green-100',
+    'interchapter': 'bg-fuschia-100'
+}
+
 export function EventDayDesktop({ focusDate, day, events, today, userData }) {
     return (
         <Sheet>
@@ -29,7 +41,7 @@ export function EventDayDesktop({ focusDate, day, events, today, userData }) {
                                 <div key={i} className={
                                     cn(
                                         "flex space-x-1 px-1 rounded",
-                                        dateFns.isSameDay(day, today) ? 'bg-indigo-50' : 'bg-gray-100'
+                                        EVENT_COLORS[event.event_types.name]
                                     )
                                 }>
                                     <h1 className="text-[0.7rem] font-bold">
@@ -85,7 +97,7 @@ export function EventDayMobile({ focusDate, day, events, today, userData }) {
                     <p className="text-xs md:text-base">{dateFns.getDate(day)}</p>
                     {
                         events.slice(0, 3).map((event, i) => {
-                            const names = event.name.split(' ');
+                            const names = event.event_types.name.split(' ');
                             for (let i = 0; i < names.length; i++) {
                                 names[i] = names[i][0].toUpperCase();
                             }
@@ -94,7 +106,7 @@ export function EventDayMobile({ focusDate, day, events, today, userData }) {
                                 <div key={i} className={
                                     cn(
                                         "flex space-x-1 px-1 rounded",
-                                        dateFns.isSameDay(day, today) ? 'bg-indigo-50' : 'bg-gray-100'
+                                        `bg-${event.event_types.color}`
                                     )
                                 }>
                                     <h1 className="text-[0.7rem] font-bold">

@@ -61,6 +61,15 @@ export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
                     <h1 className="text-base">Tracker Sheet</h1>
                 </CommandItem>
             </Link>
+            <Link
+                href="https://docs.google.com/forms/d/e/1FAIpQLSffGJxd3b8ZcbAxPkmgGkK0aD7rRWZxe-6CVrQutVUBWHPQnA/viewform"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <BsCalendar2CheckFill className="text-lg"/>
+                    <h1 className="text-base">Outside Service</h1>
+                </CommandItem>
+            </Link>
             {
                 user?.roles && <>
                 <CommandSeparator />

@@ -105,7 +105,7 @@ export default function ProfileForm() {
                         <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                            <Input className="text-base" placeholder="Ex: you@email.com" type="email" {...field} />
+                            <Input className="text-base w-full" placeholder="Ex: you@email.com" type="email" {...field} />
                         </FormControl>
                         <FormDescription>
                         </FormDescription>
@@ -120,7 +120,7 @@ export default function ProfileForm() {
                         <FormItem>
                         <FormLabel>Phone Number</FormLabel>
                         <FormControl>
-                            <Input className="text-base" placeholder="Ex: (000) 000-0000" type="tel" {...field} />
+                            <Input className="text-base w-full" placeholder="Ex: (000) 000-0000" type="tel" {...field} />
                         </FormControl>
                         <FormDescription>
                         </FormDescription>
@@ -135,7 +135,7 @@ export default function ProfileForm() {
                         <FormItem>
                         <FormLabel>Major</FormLabel>
                         <FormControl>
-                            <Input className="text-base" placeholder="Ex: Biology" {...field} />
+                            <Input className="text-base w-full" placeholder="Ex: Biology" {...field} />
                         </FormControl>
                         <FormDescription>
                         </FormDescription>
@@ -184,7 +184,7 @@ export default function ProfileForm() {
                         <FormItem>
                         <FormLabel>LinkedIn</FormLabel>
                         <FormControl>
-                            <Input  className="text-base" {...field} />
+                            <Input  className="text-base w-full" {...field} />
                         </FormControl>
                         <FormDescription>
                         </FormDescription>
@@ -199,7 +199,7 @@ export default function ProfileForm() {
                         <FormItem>
                         <FormLabel>Instagram</FormLabel>
                         <FormControl>
-                            <Input  className="text-base" {...field} />
+                            <Input  className="text-base w-full" {...field} />
                         </FormControl>
                         <FormDescription>
                         </FormDescription>
@@ -214,7 +214,7 @@ export default function ProfileForm() {
                         <FormItem>
                         <FormLabel>Facebook</FormLabel>
                         <FormControl>
-                            <Input  className="text-base" {...field} />
+                            <Input  className="text-base w-full" {...field} />
                         </FormControl>
                         <FormDescription>
                         </FormDescription>
