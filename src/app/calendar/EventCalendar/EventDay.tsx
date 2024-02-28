@@ -96,7 +96,7 @@ export function EventDayMobile({ focusDate, day, events, today, userData }) {
                     
                     <p className="text-xs md:text-base">{dateFns.getDate(day)}</p>
                     {
-                        events.slice(0, 2).map((event, i) => {
+                        events.map((event, i) => {
                             const names = event.event_types.name.split(' ');
                             for (let i = 0; i < names.length; i++) {
                                 names[i] = names[i][0].toUpperCase();
