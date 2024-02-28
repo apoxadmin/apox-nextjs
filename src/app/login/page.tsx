@@ -71,7 +71,7 @@ export default function LoginPage() {
                                     <FormItem>
                                     <FormLabel className="text-base">Email</FormLabel>
                                     <FormControl>
-                                        <Input className="text-base" placeholder="Enter your email..." type="email" {...field} />
+                                        <Input className="text-base w-full" placeholder="Enter your email..." type="email" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
