@@ -54,6 +54,21 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                     <h1 className="text-neutral-500">Contact: {event?.users?.name}</h1>
                 }
                 <h1>{event?.description}</h1>
+                <div className="flex space-x-1">
+                    <h1 className="font-medium">
+                        Location:
+                    </h1>
+                    <h1>{event?.location}</h1>
+                </div>
+                
+                {
+                    event.limit > 0 && <div className="flex space-x-1">
+                        <h1 className="font-medium">Capacity: </h1>
+                        <h1>
+                            {`${attendees.length}/${event.limit}`}
+                        </h1>
+                        </div>
+                }
             </div>
             <div className="space-x-2">
                 {
@@ -212,7 +227,7 @@ function EventCardTrigger({ event, attendees }) {
                         <p>{event.location}</p>
                     </div>
                     {
-                        event.limit > 0 && `${attendees.length}/${event.limit}`
+                        event.limit > 0 && `Capacity: ${attendees.length}/${event.limit}`
                     }
                 </CardHeader>
             </div>
