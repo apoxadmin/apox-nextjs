@@ -105,11 +105,7 @@ export async function deleteEvent(data) {
     const supabaseServer = createServerComponentClient({ cookies: () => cookieStore });
     const user = (await supabaseServer.auth.getUser()).data.user;
     const userData = (await supabaseServer.from('users').select('*, roles ( id, name )').eq('uid', user.id).maybeSingle()).data;
-    if (data.event_types.name == 'fellowship' && userData.roles.name == 'fellowship vice president') {
-        await adminClient.from('events').delete().eq('id', data.id);
-    }
-
-    if (data.event_types.name == 'service' && userData.roles.name == 'service vice president') {
+    if (userData.roles) {
         await adminClient.from('events').delete().eq('id', data.id);
     }
 }

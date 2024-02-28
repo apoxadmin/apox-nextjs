@@ -20,6 +20,7 @@ import { createEvent } from "@/lib/supabase/client";
 import { navigate } from "@/lib/actions";
 
 const EVENT_TYPES: any = ['service', 'fellowship', 'fundraising', 'family', 'active credit', 'pledge credit', 'chapter meeting', 'pledge meeting'];
+const EVENT_TYPES_NORMAL: any = ['service', 'fellowship', 'fundraising', 'family', 'active credit', 'pledge credit'];
 
 const formSchema = z.object({
     type: z.enum(EVENT_TYPES, {
@@ -59,7 +60,7 @@ export default function EventForm() {
     React.useEffect(() => {
         async function fetchUserData() {
             const { data, error } = await supabase.auth.getUser();
-            const result = await supabase.from('users').select().eq('uid', data.user.id).maybeSingle();
+            const result = await supabase.from('users').select('*, roles(*)').eq('uid', data.user.id).maybeSingle();
             const user = result.data;
             if (user != null) {
                 setUserData(user);
@@ -111,21 +112,21 @@ export default function EventForm() {
                             <FormLabel>Event Type</FormLabel>
                             <FormControl>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <SelectTrigger className="flex items-center justify-between p-2 rounded-md border text-base w-full sm:max-w-[250px]">
+                                    <SelectTrigger className="flex items-center justify-between p-2 rounded-md border text-base">
                                         <SelectValue placeholder="Select an event type" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup className="text-start">
                                             <SelectLabel>Event Types</SelectLabel>
                                             {
-                                                EVENT_TYPES.map((eventType: string, i: number) => {
+                                                (userData?.roles ? EVENT_TYPES : EVENT_TYPES_NORMAL).map((eventType: string, i: number) => {
                                                     const names = eventType.split(' ');
                                                     for (let i = 0; i < names.length; i++) {
                                                         names[i] = names[i].charAt(0).toUpperCase() + names[i].slice(1);
                                                     }
                                                     const name = names.join(' ');
                                                     return <SelectItem key={i} value={eventType}>{name}</SelectItem>
-                                                }) 
+                                                })
                                             }
                                         </SelectGroup>
                                     </SelectContent>
@@ -142,7 +143,7 @@ export default function EventForm() {
                         <FormItem>
                             <FormLabel>Event Name</FormLabel>
                             <FormControl>
-                                <Input className="text-base" placeholder="Ex: Beach Cleanup" {...field}/>
+                                <Input className="text-base w-full" placeholder="Ex: Beach Cleanup" {...field}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -187,7 +188,7 @@ export default function EventForm() {
                         <FormItem className="flex flex-col">
                             <FormLabel>Date</FormLabel>
                             <FormControl>
-                                <DatePickerForm className="text-base" 
+                                <DatePickerForm className="text-base w-full" 
                                     value={field.value} 
                                     onChange={(newDate) => {
                                         field.onChange(newDate);
@@ -234,7 +235,7 @@ export default function EventForm() {
                         <FormItem>
                             <FormLabel>Person Limit</FormLabel>
                             <FormControl>
-                                <Input className="text-base" {...field}/>
+                                <Input className="text-base w-full" {...field}/>
                             </FormControl>
                             <FormDescription>
                                 Leave as 0 or empty for unlimited.
@@ -300,7 +301,6 @@ export default function EventForm() {
                                                 <Input
                                                     className="text-base"
                                                     placeholder="Ex: 4"
-                                                    defaultValue={0}
                                                     value={value.limit ?? ''}
                                                     type="number"
                                                     onChange={(e) => {

@@ -6,9 +6,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const EVENT_COLORS = {
-    'chapter meeting': 'bg-red-100',
-    'pledge meeting': 'bg-violet-100',
-    'active credit': 'bg-rose-100',
+    'chapter meeting': 'bg-red-100 outline outline-1 outline-red-700',
+    'pledge meeting': 'bg-yellow-100 outline outline-1 outline-yellow-700',
+    'active credit': 'bg-red-100',
     'pledge credit': 'bg-yellow-100',
     'fellowship': 'bg-cyan-100',
     'service': 'bg-lime-100',
