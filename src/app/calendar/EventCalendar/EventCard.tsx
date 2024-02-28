@@ -114,22 +114,26 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                     </Button>
                 }
             </div>
-            <div className="grid grid-cols-2 w-full">
-                <div className="flex flex-col items-center">
-                    <h1 className="font-bold">Chairs:</h1>
-                    
-                    {
-                        chairs?.map((chair, i) => <h1 key={i}>{chair.name}</h1>)
-                    }
-                    
+            {
+                !event.event_types.name.endsWith('meeting') &&
+                <div className="grid grid-cols-2 w-full">
+                    <div className="flex flex-col items-center">
+                        <h1 className="font-bold">Chairs:</h1>
+                        
+                        {
+                            chairs?.map((chair, i) => <h1 key={i}>{chair.name}</h1>)
+                        }
+                        
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <h1 className="font-bold">Attendees:</h1>
+                        {
+                            attendees?.map((attendee, i) => <h1 key={i}>{attendee.name}</h1>)
+                        }
+                    </div>
                 </div>
-                <div className="flex flex-col items-center">
-                    <h1 className="font-bold">Attendees:</h1>
-                    {
-                        attendees?.map((attendee, i) => <h1 key={i}>{attendee.name}</h1>)
-                    }
-                </div>
-            </div>
+            }
+            
             {
                 userData && allShifts.length > 0 &&
                 <div className="flex flex-col items-center space-y-4 w-full">
