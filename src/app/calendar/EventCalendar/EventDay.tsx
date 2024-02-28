@@ -10,8 +10,8 @@ const EVENT_COLORS = {
     'pledge meeting': 'bg-violet-100',
     'active credit': 'bg-rose-100',
     'pledge credit': 'bg-yellow-100',
-    'fellowship': 'bg-sky-100',
-    'service': 'bg-cyan-100',
+    'fellowship': 'bg-cyan-100',
+    'service': 'bg-lime-100',
     'family': 'bg-orange-100',
     'fundraising': 'bg-green-100',
     'interchapter': 'bg-fuschia-100'
