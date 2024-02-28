@@ -106,7 +106,7 @@ export function EventDayMobile({ focusDate, day, events, today, userData }) {
                                 <div key={i} className={
                                     cn(
                                         "flex space-x-1 px-1 rounded",
-                                        `bg-${event.event_types.color}`
+                                        EVENT_COLORS[event.event_types.name]
                                     )
                                 }>
                                     <h1 className="text-[0.7rem] font-bold">
