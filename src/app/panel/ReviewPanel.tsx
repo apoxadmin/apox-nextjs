@@ -4,6 +4,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import React from "react";
 import { EventReviewCard, EventReviewDialog } from "./EventCards";
 import { endOfToday, startOfToday } from "date-fns";
+import { stringToCapital } from "@/lib/utils";
 
 
 
@@ -41,7 +42,7 @@ export default function ReviewPanel({ eventTypes }: { eventTypes: Array<string> 
                 onOpenChange={setUnreviewedDialogOpen}
                 closeDialog={() => { setUnreviewedDialogOpen(false); }}
             />
-            <h1 className="text-center text-xl pt-4 w-full font-medium underline">Unreviewed { eventTypes.length == 1 ? eventTypes[0] : 'Events' }</h1>
+            <h1 className="text-center text-xl pt-4 w-full font-medium underline">Unreviewed { eventTypes.length == 1 ? stringToCapital(eventTypes[0]) : 'Events' }</h1>
             <div className="flex flex-col space-y-2 w-full max-w-sm">
             {
                     unreviewedEvents?.length > 0 ?
@@ -70,7 +71,7 @@ export default function ReviewPanel({ eventTypes }: { eventTypes: Array<string> 
                 onOpenChange={setUpcomingDialogOpen}
                 closeDialog={() => { setUpcomingDialogOpen(false); }}
             />
-            <h1 className="text-center text-xl pt-4 w-full font-medium underline">Upcoming { eventTypes.length == 1 ? eventTypes[0] : 'Events' }</h1>
+            <h1 className="text-center text-xl pt-4 w-full font-medium underline">Upcoming { eventTypes.length == 1 ? stringToCapital(eventTypes[0]) : 'Events' }</h1>
             <div className="flex flex-col space-y-2 w-full max-w-sm">
             {
                     upcomingEvents?.length > 0 ?

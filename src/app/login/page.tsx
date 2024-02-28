@@ -44,10 +44,11 @@ export default function LoginPage() {
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         login({ email: data.email, password: data.password})
-        .catch(() => {
+        .catch((error) => {
+            console.log(error);
             toast({
                 variant: 'destructive',
-                title: 'Uh oh! User does not exist.',
+                title: 'Error',
                 description: 'Incorrect email or password.'
             })
         })

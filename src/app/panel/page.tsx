@@ -10,6 +10,7 @@ import { createClientServer } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import FinancePage from "./finance";
 import PPPage from "./pp";
+import ICPage from "./ic";
 
 export default async function PanelPage() {
     const supabase = createClientServer();
@@ -44,6 +45,9 @@ export default async function PanelPage() {
                 }
                 {
                     roles.name == 'pledge parent' && <PPPage />
+                }
+                {
+                    roles.name == 'interchapter chair' && <ICPage />
                 }
             </div>
         </div>
