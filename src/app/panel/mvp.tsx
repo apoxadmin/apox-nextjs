@@ -1,4 +1,4 @@
-import ReviewPanel from "../ReviewPanel";
+import ReviewPanel from "./ReviewPanel";
 
 export default function MVPPage() {
     return (
