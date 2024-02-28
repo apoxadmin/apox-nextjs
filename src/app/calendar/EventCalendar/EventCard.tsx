@@ -226,8 +226,12 @@ function EventCardTrigger({ event, attendees }) {
                         <p className="font-medium">Location:</p>
                         <p>{event.location}</p>
                     </div>
+                    
                     {
-                        event.limit > 0 && `Capacity: ${attendees.length}/${event.limit}`
+                        event.limit > 0 && <div className="flex space-x-2 text-sm">
+                        <p className="font-medium">Capacity:</p>
+                        <p>{`${attendees.length}/${event.limit}`}</p>
+                        </div>
                     }
                 </CardHeader>
             </div>
