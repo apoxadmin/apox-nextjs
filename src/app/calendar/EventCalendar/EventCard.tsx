@@ -44,7 +44,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
     }, [event]);
 
     return (
-        <div className="flex flex-col items-center space-y-4">
+        <div className="flex flex-col items-center space-y-4 px-8">
             <div className="flex flex-col items-center space-y-1">
                 <h1 className="text-neutral-500 text-sm">{event.label}</h1>
                 <h1 className="text-lg md:text-2xl font-bold">{event?.name}</h1>
