@@ -31,12 +31,25 @@ import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { SiGooglesheets, SiGoogleforms } from "react-icons/si";
 import { MdOutlineMedicalServices } from "react-icons/md";
+import { MdCasino } from "react-icons/md";
+import { FaUber } from "react-icons/fa";
+import { FaGasPump } from "react-icons/fa";
+import { GiMoneyStack } from "react-icons/gi";
 
 export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
     return (
         <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Suggestions">
+            {
+                user?.roles && <>
+                <CommandSeparator />
+                <CommandItem onSelect={() => { navigate('/panel'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <FaChessKnight className="text-base"/>
+                    <h1 className="text-base">ExComm Panel</h1>
+                </CommandItem>
+                </>
+            }
             <CommandItem onSelect={() => { navigate('/calendar'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                 <IoCalendarNumberOutline className="text-lg"/>
                 <h1 className="text-base">Calendar</h1>
@@ -72,15 +85,42 @@ export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
                     <h1 className="text-base">Outside Service</h1>
                 </CommandItem>
             </Link>
-            {
-                user?.roles && <>
-                <CommandSeparator />
-                <CommandItem onSelect={() => { navigate('/panel'); setSearchOpen(false); }} className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <FaChessKnight className="text-base"/>
-                    <h1 className="text-base">ExComm Panel</h1>
+            <Link
+                href="https://forms.gle/PG2sms3xvExqKKHF8"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <GiMoneyStack className="text-lg"/>
+                    <h1 className="text-base">Regular Reimbursement</h1>
                 </CommandItem>
-                </>
-            }
+            </Link>
+            <Link
+                href="https://forms.gle/qeAW96j7RGaJcDFF9"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <FaGasPump className="text-lg"/>
+                    <h1 className="text-base">Gas Reimbursement</h1>
+                </CommandItem>
+            </Link>
+            <Link
+                href="https://forms.gle/2s1tB1fFPAYBHwDV6"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <FaUber className="text-lg"/>
+                    <h1 className="text-base">Uber/Lyft/Zipcar Reimbursement</h1>
+                </CommandItem>
+            </Link>
+            <Link
+                href="https://docs.google.com/spreadsheets/d/1L23dBnENkw42WH74zyYD-SJHFSCoZeVRsxQ06nkBsUs/edit?usp=sharing"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <MdCasino className="text-lg"/>
+                    <h1 className="text-base">FAMBLING</h1>
+                </CommandItem>
+            </Link>
             </CommandGroup>
         </CommandList>
     )

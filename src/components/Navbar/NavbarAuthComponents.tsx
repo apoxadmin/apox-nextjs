@@ -7,6 +7,7 @@ import React from "react";
 import SearchPopup from "./SearchPopup";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 export default function NavbarAuthComponents() {
     const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -21,27 +22,112 @@ export default function NavbarAuthComponents() {
                 <Link href="/request" className="text-nowrap hover:text-neutral-400 text-xs xl:text-sm transition ease-in-out delay-50 duration-200">
                     Request Event
                 </Link>
-                <Link
-                    href="https://docs.google.com/forms/d/12b661PLFSB1OjCJdqfbWCkNwheecku7QL1mhI69AVno/edit"
-                    className="text-nowrap hover:text-neutral-400 text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
-                    target="_blank"
-                >
-                    Tracker Form
-                </Link>
-                <Link
-                    href="https://docs.google.com/spreadsheets/d/18wH_HM7tL7dOlKdBX_Q5ajdV7g5sgi5bTzEkLhcy1G0/edit?usp=sharing"
-                    className="text-nowrap hover:text-neutral-400 text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
-                    target="_blank"
-                >
-                    Tracker Sheet
-                </Link>
-                <Link
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSffGJxd3b8ZcbAxPkmgGkK0aD7rRWZxe-6CVrQutVUBWHPQnA/viewform"
-                    className="text-nowrap hover:text-neutral-400 text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
-                    target="_blank"
-                >
-                    Outside Service
-                </Link>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <h1 className="hover:cursor-pointer text-nowrap hover:text-neutral-400 text-xs xl:text-sm transition ease-in-out delay-50 duration-200">
+                            Tracking
+                        </h1>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuGroup>
+                            <Link
+                                href="https://docs.google.com/forms/d/12b661PLFSB1OjCJdqfbWCkNwheecku7QL1mhI69AVno/edit"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                    Tracker Form
+                                </DropdownMenuItem>
+                            </Link>
+                            <Link
+                                href="https://docs.google.com/spreadsheets/d/18wH_HM7tL7dOlKdBX_Q5ajdV7g5sgi5bTzEkLhcy1G0/edit?usp=sharing"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                    Tracker Sheet
+                                </DropdownMenuItem>
+                            </Link>
+                        </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <h1 className="hover:cursor-pointer text-nowrap hover:text-neutral-400 text-xs xl:text-sm transition ease-in-out delay-50 duration-200">
+                            Other Links
+                        </h1>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>
+                            Service
+                        </DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                            <Link
+                                href="https://docs.google.com/forms/d/e/1FAIpQLSffGJxd3b8ZcbAxPkmgGkK0aD7rRWZxe-6CVrQutVUBWHPQnA/viewform"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                Outside Service
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel>
+                            Finance
+                        </DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                            <Link
+                                href="https://forms.gle/PG2sms3xvExqKKHF8"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                    Regular Reimbursement
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                            <Link
+                                href="https://forms.gle/qeAW96j7RGaJcDFF9"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                    Gas Reimbursement
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                            <Link
+                                href="https://forms.gle/2s1tB1fFPAYBHwDV6"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                    Uber/Lyft/Zipcar Reimbursement
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                            
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel>
+                            Membership
+                        </DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                            <Link
+                                href="https://docs.google.com/spreadsheets/d/1L23dBnENkw42WH74zyYD-SJHFSCoZeVRsxQ06nkBsUs/edit?usp=sharing"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                FAMBLING
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                        </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
             <div className="flex space-x-8">
                 <Input 
