@@ -12,17 +12,17 @@ export async function createUser(data) {
     const user = (await supabaseServer.auth.getUser()).data.user;
     const userRoleKey = (await supabaseServer.from('users').select().eq('uid', user.id).maybeSingle()).data.role;
     if (userRoleKey == null) {
-        return Promise.reject('No user role.');
+        return Promise.reject(new Error('No user role.'));
     }
     
     const userRole = (await supabaseServer.from('roles').select().eq('id', userRoleKey).maybeSingle()).data;
     if (userRole == null) {
-        return Promise.reject('Invalid user role.');
+        return Promise.reject(new Error('Invalid user role.'));
     }
     
     const privileged = userRole.privileged;
     if (!privileged) {
-        return Promise.reject('Not a privileged user.');
+        return Promise.reject(new Error('Not a privileged user.'));
     }
 
     // Check valid signup request
@@ -32,7 +32,7 @@ export async function createUser(data) {
         const standingResponse = await supabaseServer.from('standings').select().eq('name', data.standing).maybeSingle();
 
         if (standingResponse.error) {
-            return Promise.reject('No standing specified');
+            return Promise.reject(new Error('No standing specified'));
         }
 
         standing = standingResponse.data.id;
@@ -49,7 +49,7 @@ export async function createUser(data) {
 
     if (authResponse.error) {
         console.log(authResponse.error);
-        return Promise.reject('Failed to authenticate user.');
+        return Promise.reject(new Error('Failed to authenticate user.'));
     }
 
     // Create user record
