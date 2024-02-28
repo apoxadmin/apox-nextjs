@@ -32,7 +32,7 @@ export default function CalendarPage() {
     // Async fetch all events for today's column
     React.useEffect(() => {
         async function getEvents() {
-            const events = (await supabase.from('events').select('name, description, location, startDate, endDate, limit, shifts, creator, event_types ( name, abbreviation )').eq('reviewed', true).gte('startDate', dateFns.startOfToday().toISOString()).lte('endDate', dateFns.endOfToday().toISOString())).data;
+            const events = (await supabase.from('events').select('name, description, location, startDate, endDate, limit, shifts, creator, event_types ( name, abbreviation )').eq('reviewed', true).gte('startDate', dateFns.startOfToday().toISOString()).lte('endDate', dateFns.endOfToday().toISOString()).order('startDate')).data;
             if (events) {
                 setTodaysEvents(events);
             }

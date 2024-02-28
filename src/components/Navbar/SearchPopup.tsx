@@ -29,6 +29,8 @@ import { FaChessKnight } from "react-icons/fa6";
 import { BsCalendar2CheckFill } from "react-icons/bs";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
+import { SiGooglesheets, SiGoogleforms } from "react-icons/si";
+import { MdOutlineMedicalServices } from "react-icons/md";
 
 export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
     return (
@@ -48,7 +50,7 @@ export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
                 target="_blank"
             >
                 <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <BsCalendar2CheckFill className="text-lg"/>
+                    <SiGoogleforms className="text-lg"/>
                     <h1 className="text-base">Tracker Form</h1>
                 </CommandItem>
             </Link>
@@ -57,7 +59,7 @@ export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
                 target="_blank"
             >
                 <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <BsCalendar2CheckFill className="text-lg"/>
+                    <SiGooglesheets className="text-lg"/>
                     <h1 className="text-base">Tracker Sheet</h1>
                 </CommandItem>
             </Link>
@@ -66,7 +68,7 @@ export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
                 target="_blank"
             >
                 <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
-                    <BsCalendar2CheckFill className="text-lg"/>
+                    <MdOutlineMedicalServices className="text-lg"/>
                     <h1 className="text-base">Outside Service</h1>
                 </CommandItem>
             </Link>

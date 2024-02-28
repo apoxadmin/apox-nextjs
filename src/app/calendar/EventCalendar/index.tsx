@@ -22,7 +22,7 @@ export default function EventCalendar({ focusDate, userData }: { focusDate: Date
         setEndOfMonth(end);
 
         async function getEvents() {
-            const events = (await supabase.from('events').select('id, name, description, location, startDate, endDate, limit, shifts, users!events_creator_fkey ( name, email ), event_types ( name, abbreviation )').eq('reviewed', true).gte('startDate', start.toISOString()).lte('endDate', end.toISOString()));
+            const events = (await supabase.from('events').select('id, name, description, location, startDate, endDate, limit, shifts, users!events_creator_fkey ( name, email ), event_types ( name, abbreviation )').eq('reviewed', true).gte('startDate', start.toISOString()).lte('endDate', end.toISOString()).order('startDate'));
             if (events.data) {
                 setEvents(events.data);
             }
