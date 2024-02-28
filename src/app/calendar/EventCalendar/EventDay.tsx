@@ -45,7 +45,7 @@ export function EventDayDesktop({ focusDate, day, events, today, userData }) {
                                     )
                                 }>
                                     <h1 className="text-[0.7rem] font-bold">
-                                        {eventLabel}
+                                        {event.event_types.abbreviation.toUpperCase()}
                                     </h1>
                                     <h1 className="text-[0.7rem] truncate">
                                         {event.name}
