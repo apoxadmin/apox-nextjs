@@ -43,7 +43,7 @@ export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent
                     <Label>
                         Event Name
                     </Label>
-                    <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8">
+                    <div className="flex flex-col justify-between space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-8">
                         <Input className="text-base" value={cachedEvent?.name} onChange={(e) => setCachedEvent({ ...cachedEvent, name: e.target.value })} />
                         <Button className="w-min" onClick={() => {
                             updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, name: cachedEvent.name })
@@ -63,7 +63,7 @@ export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent
                     <Label>
                         Description
                     </Label>
-                    <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8">
+                    <div className="flex flex-col justify-between space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-8">
                         <Textarea className="text-base" value={cachedEvent?.description} onChange={(e) => setCachedEvent({ ...cachedEvent, description: e.target.value })} />
                         <Button onClick={() => {
                             updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, description: cachedEvent.description })
@@ -83,7 +83,7 @@ export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent
                     <Label>
                         Location
                     </Label>
-                    <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8">
+                    <div className="flex flex-col justify-between space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-8">
                         <Textarea className="text-base" value={cachedEvent?.location} onChange={(e) => setCachedEvent({ ...cachedEvent, location: e.target.value })} />
                         <Button onClick={() => {
                             updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, location: cachedEvent.location })
@@ -103,7 +103,7 @@ export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent
                     <Label>
                         Date
                     </Label>
-                    <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8 justify-between">
+                    <div className="flex flex-col justify-between space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-8 justify-between">
                         <DatePickerForm className="text-base"
                             value={new Date(Date.parse(cachedEvent?.startDate))}
                             onChange={(newDate: Date) => {
@@ -124,7 +124,7 @@ export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent
                         </Button>
                     </div>
                 </div>
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col justify-between space-y-2 md:space-y-0">
                     <Label>
                         Time
                     </Label>
@@ -149,11 +149,11 @@ export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent
                         </Button>
                     </div>
                 </div>
-                <div className="flex flex-col space-y-2 md:space-y-0 space-y-2">
+                <div className="flex flex-col space-y-2">
                     <Label>
                         Limit
                     </Label>
-                    <div className="flex flex-col space-y-2 md:flex-row items-center space-x-2 md:space-x-8">
+                    <div className="flex flex-col justify-between space-y-2 md:space-y-0 md:flex-row items-center space-x-2 md:space-x-8">
                         <Input className="text-base" type="number" value={cachedEvent?.limit} onChange={(e) => setCachedEvent({ ...cachedEvent, limit: e.target.value })} />
                         <Button onClick={() => {
                             updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, limit: cachedEvent.limit })
