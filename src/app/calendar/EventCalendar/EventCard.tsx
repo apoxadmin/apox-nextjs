@@ -202,7 +202,6 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
 function EventCardTrigger({ event, attendees }) {
     return (
         <Card className="hover:shadow-lg transition delay-50 duration-200 ease-in-out overflow-hidden">
-        <ScrollArea className="overflow-scroll-y">
             <div className="max-h-[30vh]">
                 <CardHeader className="flex flex-col items-center">
                     <CardDescription>{event?.label}</CardDescription>
@@ -217,9 +216,7 @@ function EventCardTrigger({ event, attendees }) {
                     }
                 </CardHeader>
             </div>
-        </ScrollArea>
-        
-    </Card>
+        </Card>
     )
 }
  
