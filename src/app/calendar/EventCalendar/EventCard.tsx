@@ -18,7 +18,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { updateEvent } from "@/lib/supabase/actions";
 
-const DEBUG = true;
+const DEBUG = false;
 
 function EventCardDetail({ event, chairs, attendees, userData, setAttendees, setChairs }) {
     const [allShifts, setAllShifts] = React.useState<Array<any>>([]);
