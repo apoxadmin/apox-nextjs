@@ -177,7 +177,7 @@ export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent
                         </Label>
                     }
                     {
-                        cachedEvent?.shifts.map((shift, i) => {
+                        cachedEvent?.shifts?.map((shift, i) => {
                             return (
                                 <div key={i} className="flex flex-col space-y-2 w-full outline outline-1 rounded-lg outline-neutral-200 p-2">
                                     <div className="flex items-center w-full space-x-2 justify-between">

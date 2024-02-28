@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { createClientServer } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import FinancePage from "./finance";
+import PPPage from "./pp";
 
 export default async function PanelPage() {
     const supabase = createClientServer();
@@ -40,6 +41,9 @@ export default async function PanelPage() {
                 }
                 {
                     roles.name == 'finance vice president' && <FinancePage />
+                }
+                {
+                    roles.name == 'pledge parent' && <PPPage />
                 }
             </div>
         </div>
