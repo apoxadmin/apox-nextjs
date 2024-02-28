@@ -74,7 +74,8 @@ export default function ProfileForm() {
             form.setValue('linkedin', userData['linkedin']);
             form.setValue('instagram', userData['instagram']);
             form.setValue('facebook', userData['facebook']);
-            form.setValue('birthday', userData['birthday']);
+            const birthday = new Date(userData['birthday']);
+            form.setValue('birthday', new Date(birthday.valueOf() + birthday.getTimezoneOffset() * 60 * 1000));
             form.setValue('address', userData['address']);
         }
         
@@ -84,8 +85,12 @@ export default function ProfileForm() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // console.log(values);
         // console.log(userData)
-        const { error } = await supabase.from('users').update(values).eq('id', userData.id);
-        if (!error) {
+        const newValues: any = { ...values };
+        newValues['birthday'] = values['birthday'].toUTCString();
+        console.log(newValues['birthday'])
+        const userUpdate = await supabase.from('users').update(newValues).eq('id', userData.id);
+        const emailUpdate = await supabase.auth.updateUser({ email: values.email });
+        if (!userUpdate.error && !emailUpdate.error) {
             toast({
                 title: 'Success!',
                 description: 'Your changes were saved.'

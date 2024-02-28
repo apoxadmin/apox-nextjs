@@ -32,6 +32,7 @@ export default function DatePickerForm({ value, onChange, ...props }: { value: a
             <CalendarPicker
               mode="single"
               selected={value}
+              defaultMonth={value}
               onSelect={onChange}
               initialFocus
               disabled={props.disabled}

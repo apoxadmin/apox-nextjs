@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { format, getYear, startOfToday } from "date-fns"
+import { format, formatDate, formatISO, getYear, startOfToday } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -26,7 +26,7 @@ export default function DatePickerMonthYear({ value, onChange, ...props }: { val
                     )}
                 >
                     {/* <CalendarIcon className="mr-2 h-4 w-4" /> */}
-                    {value ? format(value, "PPP") : <span>Pick a date</span>}
+                    {value ? formatDate(value, "PPP") : <span>Pick a date</span>}
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
