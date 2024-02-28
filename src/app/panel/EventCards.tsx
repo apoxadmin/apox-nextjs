@@ -220,7 +220,7 @@ export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent
                                             Update
                                         </Button>
                                         <Button type="button" onClick={_ => {
-                                                let shifts = cachedEvent?.shifts;
+                                                let shifts = [...cachedEvent?.shifts];
                                                 shifts = shifts.toSpliced(i, 1);
                                                 updateEvent({ id: cachedEvent.id, eventType: cachedEvent.event_types.name, shifts: shifts })
                                                 .then(() => {
@@ -228,7 +228,8 @@ export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent
                                                         variant: 'destructive',
                                                         title: 'Deleted shift.'
                                                     });
-                                                    setCachedEvent({ ...cachedEvent, shifts: shifts });
+                                                    setCachedEvent({ ...cachedEvent, shift: shifts });
+                                                    setEvent({ ...focusEvent, event: { ...cachedEvent, shifts: shifts } });
                                                 })
                                             }}
                                             className="bg-red-700 hover:bg-red-600"
@@ -344,7 +345,7 @@ export function EventReviewCard(props) {
     return (
         <div className={
             cn("hover:shadow-xl hover:cursor-pointer p-4 rounded-lg outline outline-1 transition ease-in-out delay-50 duration-200",
-            props.event.reviewed ? 'bg-lime-50 outline-lime-200 hover:outline-lime-500' : 'bg-red-100 outline-red-200 hover:outline-red-500')
+            props.event.reviewed ? 'bg-emerald-50 outline-emerald-400 hover:bg-emerald-100' : 'bg-red-50 outline-red-400 hover:outline-bg-100')
         } {...props}>
             <h1 className="text-center font-bold">{props.event.name}</h1>
             <h1 className="text-center text-gray-500">{format(props.event.startDate, 'PPPP')}</h1>

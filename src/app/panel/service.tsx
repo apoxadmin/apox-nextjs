@@ -3,19 +3,25 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import React from "react";
 import { EventReviewCard, EventReviewDialog } from "./EventCards";
+import { endOfToday, startOfToday } from "date-fns";
 
 
 
 export default function ServicePage() {
     const supabase = createClientComponentClient();
-    const [events, setEvents] = React.useState<Array<any>>([]);
-    const [focusEvent, setFocusEvent] = React.useState<any>(null);
-    const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
+    const [unreviewedEvents, setUnreviewedEvents] = React.useState<Array<any>>([]);
+    const [upcomingEvents, setUpcomingEvents] = React.useState<Array<any>>([]);
+    const [unreviewedFocusEvent, setUnreviewedFocusEvent] = React.useState<any>(null);
+    const [upcomingFocusEvent, setUpcomingFocusEvent] = React.useState<any>(null);
+    const [unreviewedDialogOpen, setUnreviewedDialogOpen] = React.useState<boolean>(false);
+    const [upcomingDialogOpen, setUpcomingDialogOpen] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         async function fetchEvents() {
-            const eventList = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('event_types.name', 'service').eq('reviewed', false)).data;
-            setEvents(eventList);
+            const unreviewed = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('event_types.name', 'service').eq('reviewed', false)).data;
+            setUnreviewedEvents(unreviewed);
+            const upcoming = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('event_types.name', 'service').eq('reviewed', true).gte('startDate', startOfToday().toISOString())).data;
+            setUpcomingEvents(upcoming);
         }
         fetchEvents();
     }, [])
@@ -23,31 +29,62 @@ export default function ServicePage() {
     return (
         <div className="flex flex-col items-center space-y-4 pb-4 px-4">
             <EventReviewDialog 
-                focusEvent={focusEvent}
+                focusEvent={unreviewedFocusEvent}
                 setEvent={(newEvent) => { 
-                    const newEvents = [...events];
+                    const newEvents = [...unreviewedEvents];
                     newEvents[newEvent.i] = newEvent.event;
-                    setEvents(newEvents);
+                    setUnreviewedEvents(newEvents);
                 }}
-                events={events}
-                setEvents={setEvents}
-                open={dialogOpen}
-                onOpenChange={setDialogOpen}
-                closeDialog={() => { setDialogOpen(false); }}
+                events={unreviewedEvents}
+                setEvents={setUnreviewedEvents}
+                open={unreviewedDialogOpen}
+                onOpenChange={setUnreviewedDialogOpen}
+                closeDialog={() => { setUnreviewedDialogOpen(false); }}
             />
-            <h1 className="text-center text-xl pt-4 w-full font-medium underline">Unreviewed Service Events</h1>
+            <h1 className="text-center text-xl pt-4 w-full font-medium underline">Unreviewed Service</h1>
+            <div className="flex flex-col space-y-2 w-full max-w-sm">
             {
-                    events.length > 0 ?
-                    events?.map((event, i) => {
+                    unreviewedEvents?.length > 0 ?
+                    unreviewedEvents?.map((event, i) => {
                         return (
                             <EventReviewCard 
                                 key={i}
                                 event={event}
-                                onClick={() => { setFocusEvent({ event, i }); setDialogOpen(true); }}/>
+                                onClick={() => { setUnreviewedFocusEvent({ event, i }); setUnreviewedDialogOpen(true); }}/>
                         )
                     })
                     : <h1 className="text-center text-neutral-500">Nothing here yet!</h1>
-                }
+            }
+            </div>
+            
+            <EventReviewDialog 
+                focusEvent={upcomingFocusEvent}
+                setEvent={(newEvent) => { 
+                    const newEvents = [...upcomingEvents];
+                    newEvents[newEvent.i] = newEvent.event;
+                    setUpcomingEvents(newEvents);
+                }}
+                events={upcomingEvents}
+                setEvents={setUpcomingEvents}
+                open={upcomingDialogOpen}
+                onOpenChange={setUpcomingDialogOpen}
+                closeDialog={() => { setUpcomingDialogOpen(false); }}
+            />
+            <h1 className="text-center text-xl pt-4 w-full font-medium underline">Upcoming Service</h1>
+            <div className="flex flex-col space-y-2 w-full max-w-sm">
+            {
+                    upcomingEvents?.length > 0 ?
+                    upcomingEvents?.map((event, i) => {
+                        return (
+                            <EventReviewCard 
+                                key={i}
+                                event={event}
+                                onClick={() => { setUpcomingFocusEvent({ event, i }); setUpcomingDialogOpen(true); }}/>
+                        )
+                    })
+                    : <h1 className="text-center text-neutral-500">Nothing here yet!</h1>
+            }
+            </div>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import EventForm from "@/components/EventForm";
+import EventForm from "./EventForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FaPenToSquare } from "react-icons/fa6";
 

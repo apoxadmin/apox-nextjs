@@ -34,7 +34,7 @@ export default function ProfileButton({ className }: { className?: string }) {
             <DropdownMenuTrigger className={
                 cn("outline-none", className)
             }>
-                <FaUserCircle className="text-3xl text-indigo-400 hover:cursor-pointer hover:text-indigo-300"/>
+                <FaUserCircle className="text-3xl text-indigo-400 hover:cursor-pointer hover:text-indigo-300 transition ease-in-out delay-50 duration-200"/>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel className="text-indigo-500">
@@ -45,11 +45,11 @@ export default function ProfileButton({ className }: { className?: string }) {
                     <DropdownMenuItem onClick={() => {
                         navigate('/profile');
                     }}
-                        className="flex items-center space-x-2">
+                        className="flex items-center space-x-2 hover:cursor-pointer hover:bg-neutral-100 transition ease-in-out delay-50 duration-200">
                         <HiUser className="text-lg text-gray-600"/>
                         <h1 className="text-gray-600">My Profile</h1>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="flex items-center space-x-2">
+                    <DropdownMenuItem className="flex items-center space-x-2 hover:cursor-pointer hover:bg-neutral-100 transition ease-in-out delay-50 duration-200">
                         <HiUserGroup className="text-lg text-gray-600"/>
                         <h1 className="text-gray-600">My Family</h1>
                     </DropdownMenuItem>
@@ -59,7 +59,7 @@ export default function ProfileButton({ className }: { className?: string }) {
                     <DropdownMenuItem onClick={() => {
                         navigate('/settings');
                     }}
-                        className="flex items-center space-x-2">
+                        className="flex items-center space-x-2 hover:cursor-pointer hover:bg-neutral-100 transition ease-in-out delay-50 duration-200">
                         <IoMdSettings className="text-lg text-gray-600"/>
                         <h1 className="text-gray-600">Settings</h1>
                     </DropdownMenuItem>
@@ -69,7 +69,7 @@ export default function ProfileButton({ className }: { className?: string }) {
                     <DropdownMenuItem onClick={() => {
                             logout();
                         }}
-                        className="flex items-center space-x-2 hover:!cursor-pointer">
+                        className="flex items-center space-x-2 hover:!cursor-pointer hover:cursor-pointer hover:bg-neutral-100 transition ease-in-out delay-50 duration-200">
                         <FiLogOut className="text-lg text-gray-600"/>
                         <h1 className="text-gray-600">Log out</h1>
                     </DropdownMenuItem>

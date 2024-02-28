@@ -1,12 +1,12 @@
 'use client'
 
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../../components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectTrigger, SelectGroup, SelectItem, SelectLabel, SelectValue } from "../ui/select";
+import { Select, SelectContent, SelectTrigger, SelectGroup, SelectItem, SelectLabel, SelectValue } from "../../../components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import DatePickerForm from "@/components/ui/date-picker";
 import { getHours, getMinutes, isBefore, set, startOfToday } from "date-fns";
@@ -15,7 +15,7 @@ import TimeRangePicker from "@/components/ui/TimeRangePicker";
 import React from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useToast } from "@/components/ui/use-toast";
-import { Label } from "../ui/label";
+import { Label } from "../../../components/ui/label";
 import { createEvent } from "@/lib/supabase/client";
 import { navigate } from "@/lib/actions";
 
@@ -28,12 +28,8 @@ const formSchema = z.object({
     name: z.string().min(1, {
         message: "Event name must be at least 1 character.",
     }),
-    description: z.string().min(1, {
-        message: "Description must be at least 1 character.",
-    }),
-    location: z.string().min(1, {
-        message: "Location must be at least 1 character.",
-    }),
+    description: z.string(),
+    location: z.string(),
     day: z.date(),
     dates: z.object({
         startDate: z.date(),
