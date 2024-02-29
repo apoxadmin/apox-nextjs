@@ -112,7 +112,7 @@ export function EventDayMobile({ focusDate, day, events, today, userData }) {
                                     <h1 className="text-[0.7rem] font-bold">
                                         {eventLabel}
                                     </h1>
-                                    <h1 className="text-[0.7rem] truncate">
+                                    <h1 className="text-[0.7rem] text-clip">
                                         {event.name}
                                     </h1>
                                 </div>

@@ -44,10 +44,11 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
     }, [event]);
 
     return (
-        <div className="flex flex-col items-center space-y-4 px-4">
+        <ScrollArea>
+        <div className="flex flex-col items-center space-y-4 px-8 md:px-4 py-8">
             <div className="flex flex-col items-center space-y-1">
                 <h1 className="text-neutral-500 text-sm">{event.label}</h1>
-                <h1 className="text-lg md:text-2xl font-bold">{event?.name}</h1>
+                <h1 className="text-lg md:text-xl font-bold">{event?.name}</h1>
                 <h1 className="text-base md:text-xl font-medium">{format(event?.startDate, 'p')} - {format(event.endDate, 'p')}</h1>
                 {
                     !event.event_types.name.endsWith('meeting') && !(event.event_types.name == 'pledge credit') &&
@@ -211,6 +212,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                 </div>
             }
         </div>
+        </ScrollArea>
     )
 }
 
