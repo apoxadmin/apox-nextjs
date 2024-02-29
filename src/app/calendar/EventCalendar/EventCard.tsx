@@ -44,7 +44,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
     }, [event]);
 
     return (
-        <div className="flex flex-col items-center space-y-4 px-8">
+        <div className="flex flex-col items-center space-y-4 px-4">
             <div className="flex flex-col items-center space-y-1">
                 <h1 className="text-neutral-500 text-sm">{event.label}</h1>
                 <h1 className="text-lg md:text-2xl font-bold">{event?.name}</h1>
@@ -53,7 +53,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                     !event.event_types.name.endsWith('meeting') && !(event.event_types.name == 'pledge credit') &&
                     <h1 className="text-neutral-500">Contact: {event?.users?.name}</h1>
                 }
-                <h1>{event?.description}</h1>
+                <h1 className="[overflow-wrap:anywhere]">{event?.description}</h1>
                 <div className="flex space-x-1">
                     <h1 className="font-medium">
                         Location:
