@@ -14,7 +14,7 @@ const EVENT_COLORS = {
     'service': 'bg-lime-100',
     'family': 'bg-orange-100',
     'fundraising': 'bg-green-100',
-    'interchapter': 'bg-fuschia-100'
+    'interchapter': 'bg-fuchsia-100'
 }
 
 export function EventDayDesktop({ focusDate, day, events, today, userData }) {
