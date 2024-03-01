@@ -161,7 +161,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                             return (
                                 <div key={i} className="flex flex-col items-center space-y-1">
                                     <h1 className="font-medium">
-                                    {format(event?.shifts?.at(i).at(0)?.startDate, 'p')} - {format(event?.shifts?.at(i).at(0)?.endDate, 'p')}
+                                    {format(event?.shifts?.at(i)?.startDate, 'p')} - {format(event?.shifts?.at(i)?.endDate, 'p')}
                                     </h1>
                                     {
                                         allShifts[i].map((user, j) => {
