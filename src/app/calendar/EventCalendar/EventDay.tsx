@@ -68,9 +68,9 @@ export function EventDayDesktop({ focusDate, day, events, today, userData }) {
                         
                     </SheetDescription>
                 </SheetHeader>
-                <div className="h-full">
+                <div className="h-full ">
                     <ScrollArea className="h-full">
-                        <div className="flex flex-col space-y-4 p-1 h-full">
+                        <div className="flex flex-col space-y-4 p-1 h-full py-8">
                             {
                                 events.map((event, i) => <EventCard key={i} userData={userData} event={event} />)
                             }
@@ -133,7 +133,7 @@ export function EventDayMobile({ focusDate, day, events, today, userData }) {
                         <DrawerDescription className="flex flex-col space-y-2">
                             
                         </DrawerDescription>
-                        <div className="flex flex-col space-y-4">
+                        <div className="flex flex-col space-y-4 py-8">
                             {
                                 events.map((event, i) => <EventCard key={i} userData={userData} event={event} />)
                             }
