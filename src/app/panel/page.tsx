@@ -49,6 +49,9 @@ export default async function PanelPage() {
                 {
                     roles.name == 'interchapter chair' && <ICPage />
                 }
+                {
+                    roles.name == 'administrative vice president' && <MVPPage />
+                }
             </div>
         </div>
         :

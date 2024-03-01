@@ -86,11 +86,7 @@ export async function updateEvent(data) {
         return Promise.reject('No user role.');
     }
 
-    if (data.eventType == 'fellowship' && userData.roles.name == 'fellowship vice president') {
-        return updateEventField(supabaseServer, data);
-    }
-
-    if (data.eventType == 'service' && userData.roles.name == 'service vice president') {
+    if (userData?.roles) {
         return updateEventField(supabaseServer, data);
     }
 
