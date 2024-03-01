@@ -149,9 +149,8 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                     </div>
                 </div>
             }
-            
             {
-                userData && allShifts.length > 0 &&
+                userData && event?.shifts?.length > 0 && allShifts.length > 0 &&
                 <div className="flex flex-col items-center space-y-4 w-full">
                     <h1 className="text-center font-bold">
                         Shifts:
