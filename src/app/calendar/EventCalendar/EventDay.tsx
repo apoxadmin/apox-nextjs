@@ -55,7 +55,7 @@ export function EventDayDesktop({ focusDate, day, events, today, userData }) {
                         })
                     }
                     <h1 className="font-bold text-xs text-center">
-                        { events.length > 3 && '. . .' }
+                        { events.length > 3 && 'More events...' }
                     </h1>
                 </div>
             </SheetTrigger>
