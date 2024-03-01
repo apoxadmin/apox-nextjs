@@ -45,7 +45,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
 
     return (
         <ScrollArea>
-        <div className="flex flex-col items-center space-y-4 px-8 md:px-4 py-8">
+        <div className="w-full max-h-[95dvh] flex flex-col items-center space-y-4 px-8 md:px-4 py-8">
             <div className="flex flex-col items-center space-y-4">
                 <h1 className="text-neutral-500 text-sm">{event.label}</h1>
                 <h1 className="text-lg md:text-xl font-bold">{event?.name}</h1>
