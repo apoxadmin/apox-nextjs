@@ -73,13 +73,13 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
             </div>
             <div className="space-x-2">
                 {
-                    userData && (isBefore(endOfToday(), subDays(event.startDate, 3)) || DEBUG) && attendees?.map(a => a.id).includes(userData.id) ? 
+                    userData && (isBefore(endOfToday(), subDays(event?.startDate, 3)) || DEBUG) && attendees?.map(a => a.id).includes(userData.id) ? 
                     <Button 
                         onClick={() => { 
-                            leaveEvent(event.id)
+                            leaveEvent(event?.id)
                             .then(() => {
                                 setAttendees(attendees.filter(a => a.id != userData.id));
-                                unchairEvent(event.id);
+                                unchairEvent(event?.id);
                                 setChairs(chairs.filter(a => a.id != userData.id));
                             });
                         }}
@@ -88,10 +88,10 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                         Leave
                     </Button>
                     :
-                    userData && ((isBefore(endOfToday(), subDays(event.startDate, 3)) && attendees.length < event.limit) || (event.limit == 0) || DEBUG) && 
+                    userData && ((isBefore(endOfToday(), subDays(event?.startDate, 3)) && attendees.length < event.limit) || (event?.limit == 0) || DEBUG) && 
                     <Button 
                         onClick={() => { 
-                            signUpEvent(event.id)
+                            signUpEvent(event?.id)
                             .then(() => {
                                 setAttendees([...attendees, { name: userData?.name, id: userData?.id }]);
                             })
@@ -161,7 +161,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                             return (
                                 <div key={i} className="flex flex-col items-center space-y-1">
                                     <h1 className="font-medium">
-                                    {format(event?.shifts?.at(i).startDate, 'p')} - {format(event?.shifts?.at(i).endDate, 'p')}
+                                    {format(event?.shifts?.at(i).at(0)?.startDate, 'p')} - {format(event?.shifts?.at(i).at(0)?.endDate, 'p')}
                                     </h1>
                                     {
                                         allShifts[i].map((user, j) => {
@@ -223,7 +223,7 @@ function EventCardTrigger({ event, attendees }) {
                 <CardHeader className="flex flex-col items-center">
                     <CardDescription>{event?.label}</CardDescription>
                     <CardTitle className="text-lg md:text-2xl">{event?.name}</CardTitle>
-                    <CardTitle className="text-base md:text-xl">{format(event?.startDate, 'p')} - {format(event?.endDate, 'p')}</CardTitle>
+                    {/* <CardTitle className="text-base md:text-xl">{format(event?.startDate, 'p')} - {format(event?.endDate, 'p')}</CardTitle> */}
                     <div className="flex space-x-2 text-sm">
                         <p className="font-medium">Location:</p>
                         <p>{event.location}</p>
