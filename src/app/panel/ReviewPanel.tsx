@@ -19,9 +19,9 @@ export default function ReviewPanel({ eventTypes }: { eventTypes: Array<string> 
 
     React.useEffect(() => {
         async function fetchEvents() {
-            const unreviewed = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('reviewed', false)).data;
+            const unreviewed = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('reviewed', false).order('startDate')).data;
             setUnreviewedEvents(unreviewed);
-            const upcoming = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('reviewed', true).gte('startDate', startOfToday().toISOString())).data;
+            const upcoming = (await supabase.from('events').select('*, chair_joins ( users ( * ) ), event_user_joins ( users ( * ) ), event_types!inner(*)').eq('reviewed', true).gte('startDate', startOfToday().toISOString()).order('startDate')).data;
             setUpcomingEvents(upcoming);
         }
         fetchEvents();
