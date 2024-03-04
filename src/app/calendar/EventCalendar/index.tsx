@@ -9,7 +9,7 @@ import { EventDayDesktop, EventDayMobile } from './EventDay';
 export default function EventCalendar({ focusDate, userData }: { focusDate: Date, userData: any }) {
     const isDesktop = useMediaQuery("(min-width: 768px)");
     const supabase = createClient();
-    const today = dateFns.set(dateFns.startOfToday(), { month: 1 });
+    const today = dateFns.startOfToday();
     const [startOfMonth, setStartOfMonth] = React.useState<Date>(null);
     const [endOfMonth, setEndOfMonth] = React.useState<Date>(null);
     const [events, setEvents] = React.useState<Array<any>>([]);
