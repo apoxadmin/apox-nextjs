@@ -43,7 +43,7 @@ export default function ReviewPanel({ eventTypes }: { eventTypes: Array<string> 
                 closeDialog={() => { setUnreviewedDialogOpen(false); }}
             />
             <h1 className="text-center text-xl pt-4 w-full font-medium underline">Unreviewed { eventTypes.length == 1 ? stringToCapital(eventTypes[0]) : 'Events' }</h1>
-            <div className="flex flex-col space-y-2 w-full max-w-sm">
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-4 w-full">
             {
                     unreviewedEvents?.length > 0 ?
                     unreviewedEvents?.map((event, i) => {
@@ -72,19 +72,19 @@ export default function ReviewPanel({ eventTypes }: { eventTypes: Array<string> 
                 closeDialog={() => { setUpcomingDialogOpen(false); }}
             />
             <h1 className="text-center text-xl pt-4 w-full font-medium underline">Upcoming { eventTypes.length == 1 ? stringToCapital(eventTypes[0]) : 'Events' }</h1>
-            <div className="flex flex-col space-y-2 w-full max-w-sm">
-            {
-                    upcomingEvents?.length > 0 ?
-                    upcomingEvents?.map((event, i) => {
-                        return (
-                            <EventReviewCard 
-                                key={i}
-                                event={event}
-                                onClick={() => { setUpcomingFocusEvent({ event, i }); setUpcomingDialogOpen(true); }}/>
-                        )
-                    })
-                    : <h1 className="text-center text-neutral-500">Nothing here yet!</h1>
-            }
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-4 w-full">
+                {
+                        upcomingEvents?.length > 0 ?
+                        upcomingEvents?.map((event, i) => {
+                            return (
+                                <EventReviewCard 
+                                    key={i}
+                                    event={event}
+                                    onClick={() => { setUpcomingFocusEvent({ event, i }); setUpcomingDialogOpen(true); }}/>
+                            )
+                        })
+                        : <h1 className="text-center text-neutral-500">Nothing here yet!</h1>
+                }
             </div>
         </div>
     )

@@ -25,34 +25,32 @@ export default async function PanelPage() {
 
     return (
         userQuery ? 
-        <div className="flex flex-col items-center space-y-8 w-full h-[90vh] py-8 px-1 md:p-8">
+        <div className="flex flex-col items-center space-y-8 w-full py-8 px-1 md:p-8">
             <div>
                 <h1 className="text-center md:text-xl">Welcome back,</h1>
                 <h1 className="text-center text-lg md:text-2xl font-medium">{stringToCapital(roles.name)}</h1>
             </div>
-            <div className="w-full">
-                {
-                    roles.name == 'membership vice president' && <MVPPage />
-                }
-                {
-                    roles.name == 'fellowship vice president' && <FellowshipPage />
-                }
-                {
-                    roles.name == 'service vice president' && <ServicePage />
-                }
-                {
-                    roles.name == 'finance vice president' && <FinancePage />
-                }
-                {
-                    roles.name == 'pledge parent' && <PPPage />
-                }
-                {
-                    roles.name == 'interchapter chair' && <ICPage />
-                }
-                {
-                    roles.name == 'administrative vice president' && <MVPPage />
-                }
-            </div>
+            {
+                roles.name == 'membership vice president' && <MVPPage />
+            }
+            {
+                roles.name == 'fellowship vice president' && <FellowshipPage />
+            }
+            {
+                roles.name == 'service vice president' && <ServicePage />
+            }
+            {
+                roles.name == 'finance vice president' && <FinancePage />
+            }
+            {
+                roles.name == 'pledge parent' && <PPPage />
+            }
+            {
+                roles.name == 'interchapter chair' && <ICPage />
+            }
+            {
+                roles.name == 'administrative vice president' && <MVPPage />
+            }
         </div>
         :
         <></>
