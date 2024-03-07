@@ -35,6 +35,10 @@ import { MdCasino } from "react-icons/md";
 import { FaUber } from "react-icons/fa";
 import { FaGasPump } from "react-icons/fa";
 import { GiMoneyStack } from "react-icons/gi";
+import { PiArmchairFill } from "react-icons/pi";
+import { MdError } from "react-icons/md";
+import { MdPermDeviceInformation } from "react-icons/md";
+import { FaMapPin } from "react-icons/fa";
 
 export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
     return (
@@ -119,6 +123,42 @@ export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
                 <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                     <MdCasino className="text-lg"/>
                     <h1 className="text-base">FAMBLING</h1>
+                </CommandItem>
+            </Link>
+            <Link
+                href="https://docs.google.com/document/d/1NIAmVc5yme_LJf0Mn5JywE2cG74meiMBYvCoUmAaMKw/edit"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <PiArmchairFill className="text-lg"/>
+                    <h1 className="text-base">Chairing Guidelines</h1>
+                </CommandItem>
+            </Link>
+            <Link
+                href="https://docs.google.com/forms/d/1jGWF0i9-4-LmPOWYw6YI_QpRap36Nm088AmH-IgdnAA/edit"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <MdError className="text-lg"/>
+                    <h1 className="text-base">Rule Violations</h1>
+                </CommandItem>
+            </Link>
+            <Link
+                href="https://docs.google.com/forms/d/1jbeOIRl14rA0U9VWPdED-JVkqIrnElnb_7t0LAdnvp4/edit"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <MdPermDeviceInformation className="text-lg"/>
+                    <h1 className="text-base">Waiver</h1>
+                </CommandItem>
+            </Link>
+            <Link
+                href="https://docs.google.com/forms/d/13XsJq4FFcqMfFtpTjVNXaDe6NvaexsgD2aqIhtqeQH8/edit"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <FaMapPin className="text-lg"/>
+                    <h1 className="text-base">Lost Pins Form</h1>
                 </CommandItem>
             </Link>
             </CommandGroup>

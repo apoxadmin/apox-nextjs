@@ -126,6 +126,52 @@ export default function NavbarAuthComponents() {
                                 
                             </Link>
                         </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel>
+                            Sergeant-at-Arms
+                        </DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                            <Link
+                                href="https://docs.google.com/document/d/1NIAmVc5yme_LJf0Mn5JywE2cG74meiMBYvCoUmAaMKw/edit"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                Chairing Guidelines
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                            <Link
+                                href="https://docs.google.com/forms/d/1jGWF0i9-4-LmPOWYw6YI_QpRap36Nm088AmH-IgdnAA/edit"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                Rule Violations
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                            <Link
+                                href="https://docs.google.com/forms/d/1jbeOIRl14rA0U9VWPdED-JVkqIrnElnb_7t0LAdnvp4/edit"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                Off-Campus Waiver
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                            <Link
+                                href="https://docs.google.com/forms/d/13XsJq4FFcqMfFtpTjVNXaDe6NvaexsgD2aqIhtqeQH8/edit"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                Lost Pins Form
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                        </DropdownMenuGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
