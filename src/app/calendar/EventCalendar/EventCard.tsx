@@ -143,9 +143,11 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                     </div>
                     <div className="flex flex-col items-center text-center">
                         <h1 className="font-bold">Attendees:</h1>
+                        <div className="flex flex-col space-y-2">
                         {
-                            attendees?.map((attendee, i) => <h1 className="text-xs md:text-base" key={i}>{attendee.name}</h1>)
+                            attendees?.map((attendee, i) => <div><h1 className="text-xs md:text-base" key={i}>{attendee.name}</h1><h1 className="text-xs md:text-base text-neutral-500" key={i}>{attendee.email}</h1></div>)
                         }
+                        </div>
                     </div>
                 </div>
             }
