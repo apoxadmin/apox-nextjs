@@ -145,7 +145,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                         <h1 className="font-bold">Attendees:</h1>
                         <div className="flex flex-col space-y-2">
                         {
-                            attendees?.map((attendee, i) => <div><h1 className="text-xs md:text-base" key={i}>{attendee.name}</h1><h1 className="text-xs md:text-base text-neutral-500" key={i}>{attendee.email}</h1></div>)
+                            attendees?.map((attendee, i) => <div key={i}><h1 className="text-xs md:text-base">{attendee.name}</h1><h1 className="text-xs md:text-base text-neutral-500" key={i}>{attendee.email}</h1></div>)
                         }
                         </div>
                     </div>
