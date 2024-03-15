@@ -59,7 +59,7 @@ export function EventDayDesktop({ focusDate, day, events, today, userData }) {
                     </h1>
                 </div>
             </SheetTrigger>
-            <SheetContent className="h-screen md:w-[60vw] lg:w-[40vw] xl:w-[30vw] bg-gray-100">
+            <SheetContent className="h-screen md:w-[60vw] lg:w-[60vw] xl:w-[50vw] bg-gray-100">
                 <SheetHeader>
                     <SheetTitle>
                         {dateFns.format(day, 'PPPP')}
