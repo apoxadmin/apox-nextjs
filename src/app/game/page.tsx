@@ -19,7 +19,15 @@ export default function GamePage() {
             </h1>
 
             <button
-                className="bg-lime-300 hover:bg-lime-400 p-10 rounded-full shadow-md"
+                className="bg-lime-300 hover:bg-lime-400 p-10 rounded-full shadow-md select-none"
+                onMouseDown={(e) => {
+                    e.preventDefault();
+                    setStartTime(new Date());
+                }}
+                onMouseUp={(e) => {
+                    e.preventDefault();
+                    setEndTime(new Date());
+                }}
                 onTouchStart={(e) => {
                     e.preventDefault();
                     setStartTime(new Date());
@@ -27,7 +35,6 @@ export default function GamePage() {
                 onTouchEnd={(e) => {
                     e.preventDefault();
                     setEndTime(new Date());
-                    console.log('YO');
                 }}
             >
                 hold here ;)
