@@ -1,10 +1,12 @@
 'use client'
 
+import { differenceInMilliseconds, subMilliseconds } from 'date-fns';
 import * as React from 'react';
 
 export default function GamePage() {
     const [startTime, setStartTime] = React.useState<Date>(null);
     const [endTime, setEndTime] = React.useState<Date>(null);
+    const [timeHeld, setTimeHeld] = React.useState<number>(0);
 
     return (
         <main className="flex min-h-screen flex-col items-center space-y-8 py-10 md:py-24">
@@ -12,10 +14,7 @@ export default function GamePage() {
                 hi
             </h1>
             <h1>
-                {JSON.stringify(startTime)}
-            </h1>
-            <h1>
-                {JSON.stringify(endTime)}
+                Longest Held: {timeHeld/1000}s
             </h1>
 
             <button
@@ -26,7 +25,9 @@ export default function GamePage() {
                 }}
                 onMouseUp={(e) => {
                     e.preventDefault();
-                    setEndTime(new Date());
+                    const end = new Date()
+                    setEndTime(end);
+                    setTimeHeld(differenceInMilliseconds(end, startTime));
                 }}
                 onTouchStart={(e) => {
                     e.preventDefault();
@@ -34,7 +35,9 @@ export default function GamePage() {
                 }}
                 onTouchEnd={(e) => {
                     e.preventDefault();
-                    setEndTime(new Date());
+                    const end = new Date()
+                    setEndTime(end);
+                    setTimeHeld(differenceInMilliseconds(end, startTime));
                 }}
             >
                 hold here ;)
