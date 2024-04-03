@@ -41,7 +41,7 @@ export default function GamePage() {
     });
 
     return (
-        <main className="flex min-h-screen flex-col items-center space-y-8 py-10 md:py-24">
+        <main className="flex min-h-screen flex-col items-center space-y-8 py-10 px-6 md:py-24">
             <div
                 className="flex flex-col space-y-2 items-center"
             >
