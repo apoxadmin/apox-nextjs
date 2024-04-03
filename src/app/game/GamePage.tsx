@@ -45,7 +45,7 @@ export default function GamePage() {
             <div
                 className="flex flex-col space-y-2 items-center"
             >
-                <h1 className="text-xl font-bold">
+                <h1 className="text-xl font-bold text-center">
                     hold and win something? game
                 </h1>
                 <h1 className="italic">
