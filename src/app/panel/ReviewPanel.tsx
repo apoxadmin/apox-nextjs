@@ -6,8 +6,6 @@ import { EventReviewCard, EventReviewDialog } from "./EventCards";
 import { endOfToday, startOfToday } from "date-fns";
 import { stringToCapital } from "@/lib/utils";
 
-
-
 export default function ReviewPanel({ eventTypes }: { eventTypes: Array<string> }) {
     const supabase = createClientComponentClient();
     const [unreviewedEvents, setUnreviewedEvents] = React.useState<Array<any>>([]);
@@ -25,7 +23,7 @@ export default function ReviewPanel({ eventTypes }: { eventTypes: Array<string> 
             setUpcomingEvents(upcoming);
         }
         fetchEvents();
-    }, [])
+    }, []);
 
     return (
         <div className="flex flex-col items-center space-y-4 pb-4 px-4">

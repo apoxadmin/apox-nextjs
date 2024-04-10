@@ -12,9 +12,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { deleteEvent, updateEvent } from "@/lib/supabase/actions";
-import { cn } from "@/lib/utils";
+import { cn, stringToCapital } from "@/lib/utils";
 import { format, getDayOfYear, getHours, setDayOfYear } from "date-fns";
 import React from "react";
+
+const EVENT_COLORS = {
+    'chapter meeting': 'bg-red-100 outline outline-1 outline-red-700',
+    'pledge meeting': 'bg-yellow-100 outline outline-1 outline-yellow-700',
+    'active credit': 'bg-red-100',
+    'pledge credit': 'bg-yellow-100',
+    'fellowship': 'bg-cyan-100',
+    'service': 'bg-lime-100',
+    'family': 'bg-orange-100',
+    'fundraising': 'bg-green-100',
+    'interchapter': 'bg-fuchsia-100',
+    'leadership': 'bg-violet-200'
+}
 
 export function EventReviewForm({ closeDialog, focusEvent, setEvent, cachedEvent, setCachedEvent, setEvents, events }) {
     return (
@@ -345,8 +358,10 @@ export function EventReviewCard(props) {
     return (
         <div className={
             cn("hover:shadow-xl hover:cursor-pointer p-4 rounded-lg outline outline-1 transition ease-in-out delay-50 duration-200",
-            props.event.reviewed ? 'bg-emerald-50 outline-emerald-400 hover:bg-emerald-100' : 'bg-red-50 outline-red-400 hover:outline-bg-100')
+            EVENT_COLORS[props.event.event_types.name]
+            )
         } {...props}>
+            <h1 className="text-center">{stringToCapital(props.event.event_types.name)}</h1>
             <h1 className="text-center font-bold">{props.event.name}</h1>
             <h1 className="text-center text-gray-500">{format(props.event.startDate, 'PPPP')}</h1>
             <h1 className="text-center underline">{format(props.event.startDate, 'p')} - {format(props.event.endDate, 'p')}</h1>

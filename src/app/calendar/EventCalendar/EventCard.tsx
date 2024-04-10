@@ -278,7 +278,7 @@ export default function EventCard({ userData, event }) {
             <SheetTrigger>
                 <EventCardTrigger event={event} attendees={attendees} />
             </SheetTrigger>
-            <SheetContent className="h-screen md:w-[60vw] lg:w-[40vw] xl:w-[30vw]">
+            <SheetContent className="h-screen md:w-[60vw] lg:w-[50vw] xl:w-[50vw]">
                 <EventCardDetail event={event} chairs={chairs} attendees={attendees} userData={userData} setAttendees={setAttendees} setChairs={setChairs} />
             </SheetContent>
         </Sheet>

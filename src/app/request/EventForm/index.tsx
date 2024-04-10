@@ -20,7 +20,7 @@ import { createEvent } from "@/lib/supabase/client";
 import { navigate } from "@/lib/actions";
 
 const EVENT_TYPES: any = ['service', 'fellowship', 'fundraising', 'family', 'active credit', 'pledge credit', 'chapter meeting', 'pledge meeting', 'interchapter'];
-const EVENT_TYPES_NORMAL: any = ['service', 'fellowship', 'fundraising', 'family', 'active credit', 'pledge credit', 'interchapter'];
+const EVENT_TYPES_NORMAL: any = ['service', 'fellowship', 'fundraising', 'family', 'active credit', 'pledge credit', 'interchapter', 'leadership'];
 
 const formSchema = z.object({
     type: z.enum(EVENT_TYPES, {
