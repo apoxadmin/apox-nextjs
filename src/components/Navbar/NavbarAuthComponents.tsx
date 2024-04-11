@@ -172,6 +172,21 @@ export default function NavbarAuthComponents() {
                                 
                             </Link>
                         </DropdownMenuGroup>
+                        <DropdownMenuLabel>
+                            Historian
+                        </DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                            <Link
+                                href="https://drive.google.com/drive/folders/11F5MDTmAYoC5Xo14I6lVtVwvxBRRjgeB?usp=sharing"
+                                className="text-nowrap text-xs xl:text-sm transition ease-in-out delay-50 duration-200"
+                                target="_blank"
+                            >
+                                <DropdownMenuItem className="hover:cursor-pointer hover:bg-neutral-100">
+                                Collaborative Drive
+                                </DropdownMenuItem>
+                                
+                            </Link>
+                        </DropdownMenuGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

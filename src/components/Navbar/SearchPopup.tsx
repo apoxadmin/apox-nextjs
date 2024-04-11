@@ -23,7 +23,7 @@ import React from "react";
 
 import { FaWpforms } from "react-icons/fa";
 import { IoCalendarNumberOutline } from "react-icons/io5";
-import { FaRegUser } from "react-icons/fa6";
+import { FaGoogleDrive, FaRegUser } from "react-icons/fa6";
 import { navigate } from "@/lib/actions";
 import { FaChessKnight } from "react-icons/fa6";
 import { BsCalendar2CheckFill } from "react-icons/bs";
@@ -78,6 +78,15 @@ export function CommandListSearch({ user, searchOpen, setSearchOpen }) {
                 <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
                     <SiGooglesheets className="text-lg"/>
                     <h1 className="text-base">Tracker Sheet</h1>
+                </CommandItem>
+            </Link>
+            <Link
+                href="https://drive.google.com/drive/folders/11F5MDTmAYoC5Xo14I6lVtVwvxBRRjgeB?usp=sharing"
+                target="_blank"
+            >
+                <CommandItem className="flex space-x-2 items-center text-neutral-400 transition ease-in-out delay-50 duration-200">
+                    <FaGoogleDrive className="text-lg"/>
+                    <h1 className="text-base">Collaborative Drive</h1>
                 </CommandItem>
             </Link>
             <Link
