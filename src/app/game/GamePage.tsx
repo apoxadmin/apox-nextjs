@@ -23,7 +23,7 @@ function GamePiece({ target, diff, setDiff }) {
     }, [end]);
     return (
         <div className="flex flex-col items-center space-y-2">
-            <h1>
+            <h1 className="font-bold">
                 Target: {target}s
             </h1>
             <h1>
@@ -139,7 +139,7 @@ export default function GamePage() {
                 Check Score
             </button>
             {
-                currentScore && <h1>{`Your current score is: ${currentScore}`}</h1>
+                currentScore && <h1 className="text-center">{`Your current score is: ${currentScore.toFixed(5)}`}</h1>
             }
             <button
                 className="bg-indigo-500 text-white p-4 rounded-full shadow-lg font-bold"
@@ -148,7 +148,7 @@ export default function GamePage() {
                 Submit
             </button>
             {
-                score && <h1>{`Your best score is: ${score}`}</h1>
+                score && <h1 className="text-center">{`Your recorded score is: ${score}`}</h1>
             }
 
             <div className="flex flex-col items-center space-y-4 pt-10">
@@ -171,7 +171,7 @@ export default function GamePage() {
                         allScores.map((data, i) => 
                         <div key={i}>
                             <h1
-                                className={cn("p-2 rounded-md", i == 1  && "bg-lime-200 outline outline-lime-500")}
+                                className={cn("p-2 rounded-md text-center", i == 1  && "bg-lime-200 outline outline-lime-500")}
                             >{data.users.name}: {data.score}</h1>
                         </div>)
                     }
