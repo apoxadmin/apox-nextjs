@@ -17,6 +17,8 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { updateEvent } from "@/lib/supabase/actions";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 const DEBUG = false;
 
@@ -214,12 +216,30 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
             }
         </div>
         </ScrollArea>
-    )
+    );
+}
+
+const EVENT_COLORS = {
+    'chapter meeting': 'bg-red-100 outline outline-1 outline-red-700',
+    'pledge meeting': 'bg-yellow-100 outline outline-1 outline-yellow-700',
+    'active credit': 'bg-red-100',
+    'pledge credit': 'bg-yellow-100',
+    'fellowship': 'bg-cyan-100',
+    'service': 'bg-lime-100',
+    'family': 'bg-orange-100',
+    'fundraising': 'bg-green-100',
+    'interchapter': 'bg-fuchsia-100',
+    'leadership': 'bg-violet-200'
 }
 
 function EventCardTrigger({ event, attendees }) {
     return (
-        <Card className="hover:shadow-lg transition delay-50 duration-200 ease-in-out overflow-hidden">
+        <Card className={
+            cn(
+                "hover:shadow-lg transition delay-50 duration-200 ease-in-out overflow-hidden",
+                EVENT_COLORS[event.event_types.name]
+            )
+        }>
             <div className="max-h-[30vh]">
                 <CardHeader className="flex flex-col items-center">
                     <CardDescription>{event?.label}</CardDescription>
@@ -274,14 +294,14 @@ export default function EventCard({ userData, event }) {
 
     return (
         isDesktop ? 
-        <Sheet>
-            <SheetTrigger>
+        <Dialog>
+            <DialogTrigger>
                 <EventCardTrigger event={event} attendees={attendees} />
-            </SheetTrigger>
-            <SheetContent className="h-screen md:w-[60vw] lg:w-[50vw] xl:w-[50vw]">
+            </DialogTrigger>
+            <DialogContent className="h-[80dvh]">
                 <EventCardDetail event={event} chairs={chairs} attendees={attendees} userData={userData} setAttendees={setAttendees} setChairs={setChairs} />
-            </SheetContent>
-        </Sheet>
+            </DialogContent>
+        </Dialog>
         : <Drawer>
             <DrawerTrigger>
                 <EventCardTrigger event={event} attendees={attendees} />

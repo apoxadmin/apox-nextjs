@@ -18,6 +18,43 @@ const EVENT_COLORS = {
     'leadership': 'bg-violet-200'
 }
 
+export function EventDay({ focusDate, day, events, today, userData, setDayDialogOpen, setDayDialogDate, setDayDialogEvents }) {
+    return <div className={
+        cn(
+            "flex flex-col space-y-[1px] overflow-hidden md:rounded-lg p-[3px] md:p-1 md:hover:z-50 md:hover:shadow-xl md:hover:outline md:outline-1 outline-gray-400 hover:cursor-pointer transition-all ease-in-out delay-50 duration-200",
+            dateFns.isSameMonth(focusDate, day) ? 'bg-white' : 'bg-gray-200 text-gray-400',
+            dateFns.isSameDay(day, today) && 'bg-indigo-200'
+        )}
+        onClick={() => { setDayDialogOpen(true); setDayDialogDate(day); setDayDialogEvents(events); }}
+    >
+        <p className="text-xs md:text-base">{dateFns.getDate(day)}</p>
+        {
+            events.map((event, i) => {
+                const names = event.event_types.name.split(' ');
+                for (let i = 0; i < names.length; i++) {
+                    names[i] = names[i][0].toUpperCase();
+                }
+                const eventLabel = names.join('');
+                return (
+                    <div key={i} className={
+                        cn(
+                            "flex space-x-1 px-1 rounded",
+                            EVENT_COLORS[event.event_types.name]
+                        )
+                    }>
+                        <h1 className="text-[0.7rem] font-bold">
+                            {event.event_types.abbreviation.toUpperCase()}
+                        </h1>
+                        <h1 className="text-[0.7rem] truncate">
+                            {event.name}
+                        </h1>
+                    </div>
+                )
+            })
+        }
+    </div>
+}
+
 export function EventDayDesktop({ focusDate, day, events, today, userData }) {
     return (
         <Sheet>
@@ -69,7 +106,7 @@ export function EventDayDesktop({ focusDate, day, events, today, userData }) {
                         
                     </SheetDescription>
                 </SheetHeader>
-                <div className="h-full ">
+                <div className="h-full">
                     <ScrollArea className="h-full">
                         <div className="flex flex-col space-y-4 p-1 h-full py-8">
                             {

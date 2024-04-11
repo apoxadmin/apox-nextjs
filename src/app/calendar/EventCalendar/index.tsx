@@ -4,7 +4,9 @@ import * as dateFns from 'date-fns';
 import React from 'react';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { createClient } from '@/utils/supabase/client';
-import { EventDayDesktop, EventDayMobile } from './EventDay';
+import { EventDay, EventDayDesktop, EventDayMobile } from './EventDay';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import EventCard from './EventCard';
 
 export default function EventCalendar({ focusDate, userData }: { focusDate: Date, userData: any }) {
     const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -13,6 +15,11 @@ export default function EventCalendar({ focusDate, userData }: { focusDate: Date
     const [startOfMonth, setStartOfMonth] = React.useState<Date>(null);
     const [endOfMonth, setEndOfMonth] = React.useState<Date>(null);
     const [events, setEvents] = React.useState<Array<any>>([]);
+
+    // For setting Date Dialog Data
+    const [dayDialogOpen, setDayDialogOpen] = React.useState<boolean>(false);
+    const [dayDialogDate, setDayDialogDate] = React.useState<Date>(null);
+    const [dayDialogEvents, setDayDialogEvents] = React.useState<Array<any>>([]);
 
     // When focus date changes, update start/end of month, fetch data
     React.useEffect(() => {
@@ -65,31 +72,33 @@ export default function EventCalendar({ focusDate, userData }: { focusDate: Date
                     }).map((day, i) => 
                     {
                         const dayEvents = events.filter(event => dateFns.isSameDay(event.startDate, day))
-                        if (isDesktop) {
-                            return (
-                                <EventDayDesktop
-                                    key={i}
-                                    focusDate={focusDate}
-                                    day={day}
-                                    events={dayEvents}
-                                    today={today}
-                                    userData={userData}
-                                />
-                            )
-                        }
-                        return (
-                            <EventDayMobile
-                                key={i}
-                                focusDate={focusDate}
-                                day={day}
-                                events={dayEvents}
-                                today={today}
-                                userData={userData}
-                            />
-                        )
+                        return <EventDay
+                            key={i}
+                            focusDate={focusDate}
+                            day={day}
+                            events={dayEvents}
+                            today={today}
+                            userData={userData}
+                            setDayDialogOpen={setDayDialogOpen}
+                            setDayDialogDate={setDayDialogDate}
+                            setDayDialogEvents={setDayDialogEvents}
+                        />
                     })
                 }
             </div>
+            <button onClick={() => { setDayDialogOpen(!dayDialogOpen); }}>
+                yo
+            </button>
+            <Dialog open={dayDialogOpen} onOpenChange={setDayDialogOpen}>
+                <DialogContent>
+                    {dayDialogDate && dateFns.format(dayDialogDate, 'PPPP')}
+                    <div className="flex flex-col space-y-4 p-1 h-full py-8">
+                        {
+                            dayDialogEvents.map((event, i) => <EventCard key={i} userData={userData} event={event} />)
+                        }
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
