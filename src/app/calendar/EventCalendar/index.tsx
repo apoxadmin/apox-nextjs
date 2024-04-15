@@ -87,7 +87,7 @@ export default function EventCalendar({ focusDate, userData }: { focusDate: Date
                 }
             </div>
             <button onClick={() => { setDayDialogOpen(!dayDialogOpen); }}>
-                yo
+                {/* yo */}
             </button>
             <Dialog open={dayDialogOpen} onOpenChange={setDayDialogOpen}>
                 <DialogContent>
