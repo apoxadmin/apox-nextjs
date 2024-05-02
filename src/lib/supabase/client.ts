@@ -202,9 +202,6 @@ export async function chairEvent(eventId: number) {
         return Promise.reject('Too many chairs');
     }
 
-    if (chairData && chairData.users.filter((user) => user.id == userData.id).length > 0)
-        return Promise.reject(`Already chaired.`);
-
     const { error } = await supabase.from('chair_joins').insert({
         user_id: userData.id,
         event_id: eventId
