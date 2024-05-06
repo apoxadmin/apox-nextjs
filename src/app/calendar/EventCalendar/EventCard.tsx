@@ -90,7 +90,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
                         Leave
                     </Button>
                     :
-                    userData && ((isBefore(endOfToday(), subDays(event?.startDate, 3)) && (attendees.length < event.limit || event?.limit == 0) ) || DEBUG) && 
+                    userData && ((isBefore(endOfToday(), subDays(event?.startDate, 0)) && (attendees.length < event.limit || event?.limit == 0) ) || DEBUG) && 
                     <Button 
                         onClick={() => { 
                             signUpEvent(event?.id)
