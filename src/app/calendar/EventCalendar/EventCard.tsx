@@ -8,7 +8,7 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-import { endOfToday, format, isBefore, subDays } from "date-fns";
+import { endOfToday, format, isBefore, startOfDay, startOfToday, subDays } from "date-fns";
 import React from "react";
 import { chairEvent, leaveEvent, leaveShift, signUpEvent, signUpShift, unchairEvent } from "@/lib/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -75,7 +75,7 @@ function EventCardDetail({ event, chairs, attendees, userData, setAttendees, set
             </div>
             <div className="space-x-2">
                 {
-                    userData && (isBefore(endOfToday(), subDays(event?.startDate, 3)) || DEBUG) && attendees?.map(a => a.id).includes(userData.id) ? 
+                    userData && (isBefore(startOfToday(), subDays(event?.startDate, 1)) || DEBUG) && attendees?.map(a => a.id).includes(userData.id) ? 
                     <Button 
                         onClick={() => { 
                             leaveEvent(event?.id)
