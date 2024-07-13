@@ -1,7 +1,2 @@
-# APO-X Website
-
-## Stack
-- NextJS
-- Supabase
-- TailwindCSS
-- shadcn/ui
+# APO-X JavaScript Porting
+- because ts sux
