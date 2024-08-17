@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* :root {
+:root {
   --background-start-rgb: #fffffff6;
   --background-end-rgb: #f0ebfffd;
 }
@@ -15,6 +15,7 @@ body {
     )
     var(--background-start-rgb);
 }
+
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -30,7 +31,7 @@ select:-webkit-autofill:focus {
   box-shadow: 0 0 0px 1000px #ffffff inset;
   transition: background-color 5000s ease-in-out 0s;
   color: white;
-} */
+}
 
 /*
 @media (prefers-color-scheme: dark) {
