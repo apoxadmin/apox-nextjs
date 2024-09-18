@@ -8,11 +8,13 @@ export async function loginUserWithEmailAndPassword(email, password) {
     const supabase = createSupabaseServer();
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+    console.log(error);
 
     if (!error) {
-        revalidatePath('/myapo', 'layout');
+        //revalidatePath('/myapo', 'layout');
         redirect('/myapo');
     } else {
+        console.log(error);
         return Promise.reject(new Error('User does not exist.'));
     }
 }
