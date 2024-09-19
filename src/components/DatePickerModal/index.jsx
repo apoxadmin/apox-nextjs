@@ -8,11 +8,17 @@ export default function DatePickerModal({ set = () => { } }) {
     const modal = useRef(null);
 
     // Click outside of the modal to close it
-    window.addEventListener('click', function (e) {
-        const modalContent = document.getElementById('date-modal-content');
-        const button = document.getElementById('date-picker-button');
-        if (!button.contains(e.target) && !modalContent.contains(e.target)) {
-            modal.current.close();
+    useEffect(function mount() {
+        function closeModal(e) {
+            const modalContent = document.getElementById('date-modal-content');
+            const button = document.getElementById('date-picker-button');
+            if (!button.contains(e.target) && !modalContent.contains(e.target)) {
+                modal.current.close();
+            }
+        }
+        window.addEventListener('click', closeModal);
+        return function unmount() {
+            window.removeEventListener('click', closeModal);
         }
     });
 

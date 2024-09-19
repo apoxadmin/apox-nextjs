@@ -24,13 +24,6 @@ function EventModal({ supabase, event, setEvent, user_id }) {
     const [attendees, setAttendees] = useState([]);
     const [chairs, setChairs] = useState([]);
 
-    document.onkeydown = function (evt) {
-        if (evt.key == 27) {
-            // Escape key pressed
-            setEvent(null);
-            ref.current.close();
-        }
-    };
 
     async function getAttendees() {
         const attendeesResponse = await supabase?.from('event_signups').select('users (*) ').eq('event_id', event?.id);
@@ -58,6 +51,23 @@ function EventModal({ supabase, event, setEvent, user_id }) {
             setDateString('');
         }
     }, [event, ref]);
+
+    useEffect(function mount() {
+        function closeEscape(event) {
+            if (event.key == "Escape") {
+                // Escape key pressed
+                setEvent(null);
+                ref.current.close();
+            }
+        };
+
+        window.addEventListener("keydown", closeEscape);
+        return function unmount() {
+            window.removeEventListener("keydown", closeEscape);
+        }
+
+    });
+
 
     return (
         <dialog ref={ref} className="modal">
@@ -264,7 +274,7 @@ export default function MyAPOPage() {
     }, []);
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full w-full">
             <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} user_id={userData?.id} />
             <div className="grid grid-cols-7">
                 {
