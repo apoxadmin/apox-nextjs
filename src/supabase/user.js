@@ -1,6 +1,31 @@
 'use server'
 
 import { createSupabaseAdmin } from "@/supabase/admin";
+import { createSupabaseServer } from "@/supabase/server";
+
+export async function isPrivileged() {
+    const supabase = createSupabaseServer();
+    const authUser = await supabase.auth.getUser();
+    if (authUser.error)
+        return false;
+
+    const userResponse = await supabase
+        .from('users')
+        .select('id')
+        .eq('auth_id', authUser.data.user.id)
+        .maybeSingle();
+    if (userResponse.error)
+        return false;
+
+    const userId = userResponse.data.id;
+    const privilegedResponse = await supabase
+        .from('privileged')
+        .select()
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    return !!privilegedResponse.data;
+}
 
 /**
  * @param {Object} userData Information about the user
@@ -16,6 +41,7 @@ export async function createUser(userData) {
     };
     const newAuthUserResponse = await supabase.auth.admin.createUser(newAuthUser);
     if (newAuthUserResponse.error) {
+        console.log('Invalid user!', newAuthUserResponse.error)
         return false;
     }
     const authId = newAuthUserResponse.data.user.id;
@@ -24,6 +50,7 @@ export async function createUser(userData) {
 
     const newUserResponse = await supabase.from('users').insert(userData);
     if (newUserResponse.error) {
+        console.log('Cannot insert user', newUserResponse.error);
         return false;
     }
 
@@ -34,11 +61,18 @@ export async function createUser(userData) {
  * @param {string | undefined} userId User ID
  **/
 export async function deleteUser(userId) {
-    console.log(userId)
-    if (!userId) {
-        return false;
-    }
+    // if (!userId) {
+    //     console.log('No')
+    //     return false;
+    // }
+
     const supabase = createSupabaseAdmin();
+    const delUsers = await supabase.auth.admin.listUsers();
+    for (const user of delUsers.data.users) {
+        if (user.email !== 'andersonleetruong@gmail.com')
+            await supabase.auth.admin.deleteUser(user.id);
+    }
+
     const deleteUserResponse = await supabase.auth.admin.deleteUser(userId);
     if (deleteUserResponse.error) {
         return false;

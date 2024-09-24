@@ -54,7 +54,7 @@ export default function RequestPage() {
                 dropdown.open = false;
             }
         });
-    });
+    }, [window]);
 
     return (
         <div className="flex flex-col h-full items-center p-10 space-y-10 overflow-y-auto w-full">

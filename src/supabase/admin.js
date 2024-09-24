@@ -11,3 +11,5 @@ export const createSupabaseAdmin = () =>
             }
         }
     );
+
+export const supabaseAdmin = createSupabaseAdmin();

@@ -9,7 +9,6 @@ import React, { useEffect, useRef, useState } from "react";
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 function send() {
-    console.log(process.env.NEXT_PUBLIC_EMAIL);
     sendEmail({
         subject: "Hello world!",
         text: "I am sending an email using nodemailer",
@@ -245,9 +244,10 @@ export default function MyAPOPage() {
     async function getEvents() {
         const eventsResponse = await supabase
             .from('events')
-            .select('*, users(*), event_types(*)')
+            .select('*, event_types(*)')
             .gte('date', start.toISOString())
             .lte('date', end.toISOString())
+            .eq('reviewed', true)
             .order('date', { ascending: false });
         const eventsList = eventsResponse.data;
         const eventsMap = new Map();
