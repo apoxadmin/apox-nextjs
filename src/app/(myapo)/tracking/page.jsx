@@ -1,6 +1,7 @@
 'use client'
 
 import { AuthContext, createSupabaseClient } from "@/supabase/client";
+import { format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 
 function AttendeeCheck({ event_id, user }) {
@@ -60,7 +61,27 @@ function TrackingEvent({ event, users }) {
             </button>
             <dialog ref={ref} className="modal">
                 <div className="modal-box">
-                    <h1>{event.name}</h1>
+                    <div className="flex justify-between">
+                        <h1 className="text-neutral-600">
+                            {event?.event_types.name.split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join()}
+                        </h1>
+                        <h1 className="text-neutral-600">
+                            {`${format(event.start_time, 'p')} - ${format(event.end_time, 'p')}`}
+                        </h1>
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col text-center">
+                            <h1 className="font-bold text-lg">
+                                {event?.name}
+                            </h1>
+                            <h1 className="font-bold">
+                                @ {event?.location}
+                            </h1>
+                        </div>
+                        <h1 className="text-center">
+                            {event?.description}
+                        </h1>
+                    </div>
                     <div>
                         {
                             attendees.map((user, i) => {
@@ -71,10 +92,10 @@ function TrackingEvent({ event, users }) {
                         }
                     </div>
                     <h1>Flake-ins?</h1>
-                    <div>
+                    <div className="overflow-x-auto max-h-[200px]">
                         {
-                            users?.map((user, i) => {
-                                return <h1 key={i}>{user.name}</h1>
+                            users?.filter(user => !attendees.includes(user)).map((user, i) => {
+                                return <AttendeeCheck key={i} user={user} event_id={event.id} />
                             })
                         }
                     </div>
@@ -110,7 +131,7 @@ export default function TrackingPage() {
         async function getEvents() {
             const eventsResponse = await supabase
                 .from('event_chairs')
-                .select('*, events ( * )')
+                .select('*, events ( *, event_types(*) )')
                 .eq('user_id', user.id)
                 .eq('events.tracked', false)
             const eventsData = eventsResponse.data.map((chair) => chair.events);
