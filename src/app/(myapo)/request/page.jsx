@@ -47,13 +47,21 @@ export default function RequestPage() {
         getUser();
     }, []);
 
-    window.addEventListener('click', function (e) {
-        document.querySelectorAll('.dropdown').forEach(function (dropdown) {
-            if (!dropdown.contains(e.target)) {
-                // Click was outside the dropdown, close it
-                dropdown.open = false;
-            }
-        });
+    useEffect(() => {
+        function escape(e) {
+            document.querySelectorAll('.dropdown').forEach(function (dropdown) {
+                if (!dropdown.contains(e.target)) {
+                    // Click was outside the dropdown, close it
+                    dropdown.open = false;
+                }
+            });
+        }
+        window.addEventListener('click', escape);
+
+        return () => {
+            window.removeEventListener('click', escape);
+        }
+
     }, [window]);
 
     return (

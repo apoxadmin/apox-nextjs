@@ -6,11 +6,10 @@ import { useContext, useEffect, useState } from "react";
 
 function UserRow({ user }) {
     return (
-        <div className="[&>*]:px-2 [&>*]:overflow-x-auto grid grid-cols-subgrid col-span-8 gap-x-1 divide-black text-center">
-            <h1>{user.name}</h1>
+        <div className="[&>*]:px-2 [&>*]:overflow-x-auto grid grid-cols-subgrid col-span-7 gap-x-1 divide-black text-center">
+            <h1 className="text-start overflow-x-scroll text-nowrap">{user.name}</h1>
             <h1>{user.email}</h1>
-            <h1>{uppercase(user.standings?.name || 'None')} Standing</h1>
-            <h1>{user.users?.at(0)?.name || 'None'}</h1>
+            <h1>{uppercase(user.standings?.name || 'None')}</h1>
             <h1>
                 {
                     user.service || '0'
@@ -47,7 +46,8 @@ export default function UserTable() {
         async function getUsers() {
             const usersResponse = await supabase
                 .from('users')
-                .select('*, standings(*), users!big(*), class(*), credit_users_requirements(*)');
+                .select('*, standings!inner(*), class(*), credit_users_requirements(*)')
+                .neq('standings.name', 'alumni')
             if (usersResponse.data) {
                 let usersData = usersResponse.data;
                 for (let user of usersData) {
@@ -64,8 +64,7 @@ export default function UserTable() {
 
     return (
         <div className="flex flex-col items-center">
-            <h1 className="text-xl text-neutral-600">Users Table</h1>
-            <div className="grid grid-cols-8">
+            <div className="grid grid-cols-7">
                 {
                     users.map((user, i) => {
                         return (

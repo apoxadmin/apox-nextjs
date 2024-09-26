@@ -249,7 +249,7 @@ export default function MyAPOPage() {
             .lte('date', end.toISOString())
             .eq('reviewed', true)
             .order('date', { ascending: false });
-        const eventsList = eventsResponse.data;
+        const eventsList = eventsResponse?.data;
         const eventsMap = new Map();
         for (const event of eventsList) {
             var [YYYY, MM, DD] = event.date.split('-')

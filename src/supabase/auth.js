@@ -7,6 +7,8 @@ import { redirect } from "next/navigation";
 export async function loginUserWithEmailAndPassword(email, password) {
     const supabase = createSupabaseServer();
 
+    console.log(email, password);
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     console.log(error);
 

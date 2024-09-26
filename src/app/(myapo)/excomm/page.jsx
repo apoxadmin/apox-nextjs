@@ -99,7 +99,7 @@ export default function ExcommPage() {
                                         return (
                                             <EventModal event={event} getEvents={getEvents} key={i} />
                                         )
-                                    else return <></>
+                                    else return <div key={i}></div>
                                 })
                             }
                         </div>
@@ -113,15 +113,27 @@ export default function ExcommPage() {
                                         return (
                                             <EventModal event={event} getEvents={getEvents} key={i} />
                                         )
-                                    else return <></>
+                                    else return <div key={i}></div>
                                 })
                             }
                         </div>
                     </div>
                 </div>
             </div>
-            <div>
-                <UserTable />
+            <div className="flex flex-col items-center space-y-4 overflow-y-auto">
+                <h1 className="text-center text-xl text-neutral-600">User Table</h1>
+                <div className="grid grid-cols-7 w-full text-center">
+                    <h1>Name</h1>
+                    <h1>Email</h1>
+                    <h1>Standing</h1>
+                    <h1>Service Hours</h1>
+                    <h1>Fundraising</h1>
+                    <h1>Chairing</h1>
+                    <h1>Rush</h1>
+                </div>
+                <div className="overflow-y-scroll">
+                    <UserTable />
+                </div>
             </div>
         </div>
     )

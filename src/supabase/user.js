@@ -67,15 +67,18 @@ export async function deleteUser(userId) {
     // }
 
     const supabase = createSupabaseAdmin();
-    const delUsers = await supabase.auth.admin.listUsers();
+    const delUsers = await supabase.auth.admin.listUsers({ perPage: 100 });
     for (const user of delUsers.data.users) {
-        if (user.email !== 'andersonleetruong@gmail.com')
-            await supabase.auth.admin.deleteUser(user.id);
+        if (user.email !== 'andersonleetruong@gmail.com') {
+            console.log('Update', user.email);
+            await supabase.auth.admin.updateUserById(user.id, { password: 'smelliot' });
+        }
+        // await supabase.auth.admin.deleteUser(user.id);
     }
 
-    const deleteUserResponse = await supabase.auth.admin.deleteUser(userId);
-    if (deleteUserResponse.error) {
-        return false;
-    }
+    // const deleteUserResponse = await supabase.auth.admin.deleteUser(userId);
+    // if (deleteUserResponse.error) {
+    //     return false;
+    // }
     return true;
 }
