@@ -4,25 +4,34 @@ import { AuthContext, createSupabaseClient } from "@/supabase/client";
 import { format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 
-function AttendeeCheck({ event_id, user }) {
+function AttendeeCheck({ event_id, user, submitted, attendee = false }) {
     const [attended, setAttended] = useState(false);
     const supabase = useContext(AuthContext);
     async function updateAttended() {
-        const { error } = await supabase.from('event_signups').upsert({ user_id: user.id, event_id: event_id, attended: !attended }, { onConflict: 'user_id, event_id' }).select();
-        if (!error) {
-            setAttended(!attended);
-        }
+        setAttended(!attended);
     }
     useEffect(() => {
         setAttended(user.attended);
     }, [user]);
+
+    useEffect(() => {
+        async function submitUser() {
+            if (attended || attendee) {
+                const { error } = await supabase.from('event_signups').upsert({ user_id: user.id, event_id: event_id, attended: attended, flake_in: !attendee }, { onConflict: 'user_id, event_id' }).select();
+            }
+        }
+        if (submitted) {
+            submitUser();
+        }
+    }, [submitted, attended]);
+
     return (
-        <h1
-            className={`${attended ? 'text-green-400' : ''}`}
+        <button
+            className={`${attended ? 'text-green-400' : 'hover:text-neutral-400'}`}
             onClick={updateAttended}
         >
             {user.name}
-        </h1>
+        </button>
     )
 }
 
@@ -30,6 +39,8 @@ function TrackingEvent({ event, users }) {
     const [attendees, setAttendees] = useState([]);
     const supabase = useContext(AuthContext);
     const ref = useRef(null);
+    const [submitted, setSubmitted] = useState(false);
+    const [mediaURL, setMediaURL] = useState('');
 
     useEffect(() => {
         async function getAttendees() {
@@ -82,22 +93,41 @@ function TrackingEvent({ event, users }) {
                             {event?.description}
                         </h1>
                     </div>
-                    <div>
-                        {
-                            attendees.map((user, i) => {
-                                return (
-                                    <AttendeeCheck key={i} user={user} event_id={event.id} />
-                                )
-                            })
-                        }
+                    <div className="grid grid-cols-2">
+                        <div className="flex flex-col items-center">
+                            <h1 className="font-bold">Attendees:</h1>
+                            {
+                                attendees.map((user, i) => {
+                                    return (
+                                        <AttendeeCheck key={i} user={user} event_id={event.id} submitted={submitted} attendee />
+                                    )
+                                })
+                            }
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <h1 className="font-bold">Flake-ins?</h1>
+                            <div className="overflow-x-auto max-h-[200px] flex flex-col">
+                                {
+                                    users?.filter(user => !attendees.includes(user)).map((user, i) => {
+                                        return <AttendeeCheck key={i} user={user} event_id={event.id} submitted={submitted} />
+                                    })
+                                }
+                            </div>
+                        </div>
                     </div>
-                    <h1>Flake-ins?</h1>
-                    <div className="overflow-x-auto max-h-[200px]">
-                        {
-                            users?.filter(user => !attendees.includes(user)).map((user, i) => {
-                                return <AttendeeCheck key={i} user={user} event_id={event.id} />
-                            })
-                        }
+                    <div className="flex flex-col">
+                        <label>Submit link to your photos/videos:</label>
+                        <input value={mediaURL} onChange={(e) => setMediaURL(e.target.value)} placeholder="https://drive.google.com/***" />
+                    </div>
+                    <div className="flex justify-center">
+                        <button
+                            className="bg-green-600 px-4 py-2 rounded-full"
+                            onClick={() => { if (mediaURL !== '') { setSubmitted(true); ref.current.close(); } }}
+                        >
+                            <h1 className="text-white">
+                                Submit
+                            </h1>
+                        </button>
                     </div>
                 </div>
                 <form method="dialog" className="modal-backdrop">

@@ -1,10 +1,10 @@
 'use client'
 
 import sendEmail from "@/mailer/mailer"
-import { createSupabaseClient } from "@/supabase/client";
+import { AuthContext, createSupabaseClient } from "@/supabase/client";
 import { joinEvent, leaveEvent, chairEvent, unchairEvent } from "@/supabase/event";
 import { eachDayOfInterval, endOfMonth, endOfWeek, format, getDate, interval, isSameMonth, isThisMonth, isToday, startOfMonth, startOfWeek } from "date-fns";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -233,7 +233,7 @@ function MonthDayComponent({ day, index, fiveRows, events, setEvent }) {
 }
 
 export default function MyAPOPage() {
-    const supabase = createSupabaseClient();
+    const supabase = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
     const [events, setEvents] = useState([]);
     const start = startOfWeek(startOfMonth(Date.now()));
