@@ -276,6 +276,7 @@ export default function MyAPOPage() {
     return (
         <div className="flex flex-col h-full w-full">
             <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} user_id={userData?.id} />
+            <h1 className="text-center text-neutral-500 text-xl py-2">{format(start, 'LLLL').toUpperCase()}</h1>
             <div className="grid grid-cols-7">
                 {
                     DAYS.map(day => {

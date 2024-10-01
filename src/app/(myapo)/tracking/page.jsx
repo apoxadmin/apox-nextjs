@@ -150,7 +150,7 @@ export default function TrackingPage() {
             setUser(userResponse.data);
         }
         async function getUsers() {
-            const usersResponse = await supabase.from('users').select();
+            const usersResponse = await supabase.from('users').select('*, standings!inner(name)').neq('standings.name', 'alumni');
             setUsers(usersResponse.data);
         }
         getUser();

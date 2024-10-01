@@ -7,12 +7,10 @@ import TimePicker from '@/components/TimePicker';
 import { useForm } from 'react-hook-form';
 import { requestEvent } from '@/supabase/event';
 
-/**
- * 
- **/
 export default function RequestPage() {
     const [eventTypes, setEventTypes] = useState([]);
     const [userData, setUserData] = useState(null);
+    const [toast, setToast] = useState(false);
     const supabase = createSupabaseClient();
     const {
         register,
@@ -27,7 +25,12 @@ export default function RequestPage() {
     register('end_time', { required: true });
 
     const onSubmit = (data) => {
-        requestEvent(userData.id, data);
+        if (requestEvent(userData.id, data)) {
+            setToast(true);
+            setTimeout(() => {
+                setToast(false);
+            }, 5000);
+        }
     };
 
     useEffect(() => {
@@ -178,6 +181,14 @@ export default function RequestPage() {
                 <h1>Shifts?</h1>
                 <h1>Create shifts</h1>
             </div>
+            {
+                toast &&
+                <div className="toast">
+                    <div className="alert alert-success shadow-lg text-center">
+                        <h1 className="text-white">Event created!</h1>
+                    </div>
+                </div>
+            }
         </div>
     )
 }
