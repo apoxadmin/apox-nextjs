@@ -1,4 +1,4 @@
-import { eachDayOfInterval, endOfMonth, format, interval, isSameDay, startOfDay, startOfMonth, startOfToday } from "date-fns";
+import { eachDayOfInterval, endOfMonth, endOfWeek, format, interval, isSameDay, startOfDay, startOfMonth, startOfToday, startOfWeek } from "date-fns";
 import { useEffect, useState } from "react";
 
 /**
@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
  * @param { Function } setDay
  **/
 export default function DatePicker({ setDay = () => { } }) {
-    const [focusDay, setFocusDay] = useState(startOfMonth(Date.now()));
-    const end = endOfMonth(focusDay);
+    const [focusDay, setFocusDay] = useState(startOfWeek(startOfMonth(Date.now())));
+    const end = endOfWeek(endOfMonth(focusDay));
     const days = eachDayOfInterval(interval(focusDay, end));
     const [selectedDay, setSelectedDay] = useState(startOfToday());
 
