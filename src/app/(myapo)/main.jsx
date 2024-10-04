@@ -61,7 +61,7 @@ export default function Main({ children }) {
     }, []);
 
     return (
-        <div className="grow h-screen flex flex-col bg-neutral-50">
+        <div className="grow h-screen flex flex-col bg-neutral-50 w-full">
             <div className="flex py-3 px-8 justify-between items-center">
                 <Link href="/">
                     <img className="h-[30px]" src="/logo_long.png" />
@@ -98,7 +98,7 @@ export default function Main({ children }) {
                     </div>
                 </div>
             </div>
-            <div className="flex grow overflow-y-scroll">
+            <div className="flex w-screen grow overflow-y-scroll">
                 <Sidebar visible={open} />
                 <div className="flex grow bg-white shadow-lg rounded-tl-lg border border-neutral-200 border-[1.5px]">
                     <div className="mx-2">

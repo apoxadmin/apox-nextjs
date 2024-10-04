@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
  * @param { Function } setDay
  **/
 export default function DatePicker({ setDay = () => { } }) {
-    const [focusDay, setFocusDay] = useState(startOfWeek(startOfMonth(Date.now())));
+    const [focusDay, setFocusDay] = useState((Date.now()));
+    const start = startOfWeek(startOfMonth(focusDay));
     const end = endOfWeek(endOfMonth(focusDay));
-    const days = eachDayOfInterval(interval(focusDay, end));
+    const days = eachDayOfInterval(interval(start, end));
     const [selectedDay, setSelectedDay] = useState(startOfToday());
 
     useEffect(() => {
@@ -27,6 +28,7 @@ export default function DatePicker({ setDay = () => { } }) {
                                 key={i}
                                 onClick={(formData) => { setSelectedDay(day) }}
                                 className={style}
+                                type="button"
                             >
                                 {
                                     format(day, 'd')

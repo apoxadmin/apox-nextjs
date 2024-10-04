@@ -1,10 +1,15 @@
 'use client'
 
-import { AuthContext, createSupabaseClient } from "@/supabase/client";
+import { AuthContext } from "@/supabase/client";
 import { format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 
-function AttendeeCheck({ event_id, user, submitted, attendee = false }) {
+/**
+ *  Button component for Attendees
+ *  Click on the name to mark as "attended"
+ *  Once `submitted` is True, upserts "attended" status
+ */
+function AttendeeCheck({ event, user, submitted, attendee = false }) {
     const [attended, setAttended] = useState(false);
     const supabase = useContext(AuthContext);
     async function updateAttended() {
@@ -16,8 +21,42 @@ function AttendeeCheck({ event_id, user, submitted, attendee = false }) {
 
     useEffect(() => {
         async function submitUser() {
-            if (attended || attendee) {
-                const { error } = await supabase.from('event_signups').upsert({ user_id: user.id, event_id: event_id, attended: attended, flake_in: !attendee }, { onConflict: 'user_id, event_id' }).select();
+            if (attended) {
+                const { error } = await supabase.from('event_signups').upsert({ user_id: user.id, event_id: event.id, attended: attended, flake_in: !attendee }, { onConflict: 'user_id, event_id' }).select();
+                const event_req_name = event?.event_types?.requirement;
+                const credit_req_name = event?.event_types?.credit;
+                if (!error && event_req_name) {
+                    const checkReq = await supabase
+                        .from('event_users_requirements')
+                        .select('value')
+                        .eq('user_id', user.id)
+                        .eq('name', event_req_name)
+                        .maybeSingle();
+                    let value = 1;
+                    if (!checkReq.error && checkReq.data) {
+                        value = checkReq.data.value + 1;
+                    }
+                    const { error } = await supabase
+                        .from('event_users_requirements')
+                        .upsert({ user_id: user.id, value: value, name: event_req_name }, { onConflict: 'user_id, name' });
+                    console.log(error);
+                }
+                if (!error && credit_req_name) {
+                    const checkReq = await supabase
+                        .from('credit_users_requirements')
+                        .select('value')
+                        .eq('user_id', user.id)
+                        .eq('name', credit_req_name)
+                        .maybeSingle();
+                    let value = event?.credit;
+                    if (!checkReq.error && checkReq.data) {
+                        value += checkReq.data.value;
+                    }
+                    const { error } = await supabase
+                        .from('credit_users_requirements')
+                        .upsert({ user_id: user.id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
+                    console.log(error);
+                }
             }
         }
         if (submitted) {
@@ -66,7 +105,7 @@ function TrackingEvent({ event, users }) {
 
     return (
         <div>
-            <button className="flex space-x-4" onClick={() => { ref.current.showModal(); }}>
+            <button className="flex space-x-4 p-2 bg-red-500 rounded text-white" onClick={() => { ref.current.showModal(); }}>
                 <h1>{event.name}</h1>
                 <h1>{attendees?.length} / {event.capacity}</h1>
             </button>
@@ -99,7 +138,7 @@ function TrackingEvent({ event, users }) {
                             {
                                 attendees.map((user, i) => {
                                     return (
-                                        <AttendeeCheck key={i} user={user} event_id={event.id} submitted={submitted} attendee />
+                                        <AttendeeCheck key={i} user={user} event={event} submitted={submitted} attendee={true} />
                                     )
                                 })
                             }
@@ -109,7 +148,7 @@ function TrackingEvent({ event, users }) {
                             <div className="overflow-x-auto max-h-[200px] flex flex-col">
                                 {
                                     users?.filter(user => !attendees.includes(user)).map((user, i) => {
-                                        return <AttendeeCheck key={i} user={user} event_id={event.id} submitted={submitted} />
+                                        return <AttendeeCheck key={i} user={user} event={event} submitted={submitted} />
                                     })
                                 }
                             </div>
