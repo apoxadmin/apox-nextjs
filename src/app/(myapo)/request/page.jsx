@@ -6,6 +6,7 @@ import DatePickerModal from '@/components/DatePickerModal';
 import TimePicker from '@/components/TimePicker';
 import { useForm } from 'react-hook-form';
 import { requestEvent } from '@/supabase/event';
+import { uppercase } from '@/utils/utils';
 
 export default function RequestPage() {
     const [eventTypes, setEventTypes] = useState([]);
@@ -78,11 +79,11 @@ export default function RequestPage() {
                         </span>
                     </div>
                     <details className="dropdown" id="eventTypeDropdown">
-                        <summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">{eventType == null ? 'Event Type' : eventType.name}</summary>
+                        <summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">{eventType == null ? 'Event Type' : uppercase(eventType.name)}</summary>
                         <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                             {
                                 eventTypes.map((event_type, i) => {
-                                    return <li key={i} onClick={() => { setValue("event_type", event_type); document.querySelector('#eventTypeDropdown').open = false; }}><a>{event_type.name}</a></li>
+                                    return <li key={i} onClick={() => { setValue("event_type", event_type); document.querySelector('#eventTypeDropdown').open = false; }}><a>{uppercase(event_type.name)}</a></li>
                                 })
                             }
                         </ul>
