@@ -175,12 +175,14 @@ export default function RequestPage() {
                         :
                         <></>
                 }
-                <input type="submit" className="btn" />
+                <button type="submit" className="btn">Request Event</button>
             </form>
+            {/*
             <div>
                 <h1>Shifts?</h1>
                 <h1>Create shifts</h1>
             </div>
+            */}
             {
                 toast &&
                 <div className="toast">

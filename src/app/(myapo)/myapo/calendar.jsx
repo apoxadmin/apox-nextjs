@@ -145,7 +145,7 @@ function EventModal({ supabase, event, setEvent, user_id }) {
     )
 }
 
-function MonthDayComponent({ focusDay, day, index, fiveRows, events, setEvent }) {
+function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, setEvent }) {
     const [color, setColor] = useState(isSameMonth(focusDay, day) ? (isToday(focusDay) ? 'bg-blue-100' : '') : 'bg-neutral-200 hover:bg-neutral-100');
     let textColor = isToday(day) ? 'text-neutral-600' : '';
     let position = "";
@@ -185,10 +185,19 @@ function MonthDayComponent({ focusDay, day, index, fiveRows, events, setEvent })
                 <div className="flex flex-col items-center space-y-[1px]">
                     {
                         events?.map((event, i) => {
+                            const includesUser = event?.event_signups?.some((signup) => signup.user_id === userData?.id);
+                            let style = '';
+                            if (includesUser) {
+                                style = 'hover:bg-green-500 hover:text-white bg-green-200';
+                            } else if (isToday(day)) {
+                                style = 'hover:bg-blue-400 hover:text-white';
+                            } else {
+                                style = 'hover:bg-neutral-100';
+                            }
                             return <button
                                 key={i}
                                 onClick={() => setEvent(event)}
-                                className={`text-xs ${isToday(day) ? 'hover:bg-blue-400 hover:text-white' : 'hover:bg-neutral-100'} py-1 px-2 hover:shadow-lg transition ease-in delay-50 duration-100`}
+                                className={`text-xs ${style} py-1 px-2 hover:shadow-lg transition ease-in delay-50 duration-100`}
                             >
                                 <div className="flex space-x-2">
                                     <h1>
@@ -254,7 +263,7 @@ export default function EventCalendar({ focusDay, userData }) {
     return (
         <div className="flex flex-col h-full w-full">
             <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} user_id={userData?.id} />
-            <h1 className="text-center text-neutral-500 text-xl py-2">{format(focusDay, 'LLLL').toUpperCase()}</h1>
+            <h1 className="text-center text-neutral-500 text-xl py-2">{format(focusDay, 'LLLL y').toUpperCase()}</h1>
             <div className="grid grid-cols-7">
                 {
                     DAYS.map(day => {
@@ -274,6 +283,7 @@ export default function EventCalendar({ focusDay, userData }) {
                     monthDays?.map((day, i) => {
                         return <MonthDayComponent
                             key={day.toISOString()}
+                            userData={userData}
                             focusDay={focusDay}
                             day={day}
                             index={i}
