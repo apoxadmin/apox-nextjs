@@ -2,7 +2,7 @@
 
 import { AuthContext } from "@/supabase/client";
 import { sortByField } from "@/utils/utils";
-import { format } from "date-fns";
+import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 
 /**
@@ -207,10 +207,13 @@ export default function TrackingPage() {
                 .select('*, events ( *, event_types(*) )')
                 .eq('user_id', user.id)
                 .eq('events.tracked', false)
-            let eventsData = eventsResponse.data.map((chair) => chair.events);
-            const sortByStart = (a, b) => { return sortByField(a, b, 'date') };
-            eventsData.sort(sortByStart);
-            setEvents(eventsData);
+                .lte('events.date', endOfToday().toISOString());
+            if (eventsResponse.data) {
+                let eventsData = eventsResponse.data.map((chair) => chair.events);
+                const sortByStart = (a, b) => { return sortByField(a, b, 'date') };
+                eventsData.sort(sortByStart);
+                setEvents(eventsData);
+            }
         }
         if (user)
             getEvents();

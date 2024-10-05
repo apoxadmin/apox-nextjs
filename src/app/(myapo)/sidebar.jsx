@@ -28,12 +28,12 @@ export default function Sidebar({ visible = true }) {
     return (
         <div className={`min-w-[180px] ${visible ? '' : 'hidden'}`}>
             <div className="flex flex-col text-neutral-500">
-                <SidebarButton name="Calendar" url="myapo" />
-                <SidebarButton name="Request Event" url="request" />
-                <SidebarButton name="Tracking" url="tracking" />
+                <SidebarButton name="Calendar" url="/myapo" />
+                <SidebarButton name="Request Event" url="/request" />
+                <SidebarButton name="Tracking" url="/tracking" />
                 {
                     privileged &&
-                    <SidebarButton name="ExComm" url="excomm" />
+                    <SidebarButton name="ExComm" url="/excomm" />
                 }
                 {/*<SidebarButton name="My Status" />
                 <SidebarButton name="My Family" />

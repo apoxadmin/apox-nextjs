@@ -39,7 +39,7 @@ const col_span_width = [
 function UserRow({ user, creditRequirements }) {
     return (
         <div className={`[&>*]:px-2 [&>*]:overflow-x-auto grid grid-cols-subgrid ${col_span_width[creditRequirements.length + 3]} gap-x-1 divide-black text-center`}>
-            <h1 className="text-start overflow-x-scroll text-nowrap">{user.name}</h1>
+            <h1 className="text-start px-0 overflow-x-scroll text-nowrap">{user.name}</h1>
             <h1>{user.email}</h1>
             <h1 className="text-end">{uppercase(user.standings?.name || 'None')}</h1>
             {

@@ -142,7 +142,7 @@ function EventModal({ supabase, event, setEvent, user_id }) {
                 </div>
             </div>
             <form method="dialog" className="modal-backdrop">
-                <button onClick={() => { setEvent(null); }}>close</button>
+                <button onClick={() => { setEvent(null); ref.current.close(); }}>close</button>
             </form>
         </dialog >
     )
@@ -202,7 +202,10 @@ function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, s
                                 onClick={() => setEvent(event)}
                                 className={`text-xs ${style} py-1 px-2 hover:shadow-lg transition ease-in delay-50 duration-100`}
                             >
-                                <div className="flex space-x-2">
+                                <div className="flex space-x-2 text-xs">
+                                    <h1>
+                                        {event?.event_types?.abbreviation.toUpperCase()}
+                                    </h1>
                                     <h1>
                                         {format(event?.start_time, 'p')}
                                     </h1>
