@@ -40,7 +40,7 @@ export default function MyAPOPage() {
     return (
         <div className="flex grow">
             <Swiper
-                className="w-0 w-full flex bg-white rounded shadow-md flex-1"
+                className="w-0 flex bg-white rounded shadow-md flex-1"
                 runCallbacksOnInit={false}
                 initialSlide={1}
                 speed={150}
