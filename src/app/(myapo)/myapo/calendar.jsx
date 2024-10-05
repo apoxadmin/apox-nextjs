@@ -1,6 +1,6 @@
 import { AuthContext } from "@/supabase/client";
 import { chairEvent, joinEvent, leaveEvent, unchairEvent } from "@/supabase/event";
-import { eachDayOfInterval, endOfMonth, endOfWeek, format, getDate, interval, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfWeek } from "date-fns";
+import { eachDayOfInterval, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfWeek } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
 
 function EventModal({ supabase, event, setEvent, user_id }) {
@@ -103,20 +103,23 @@ function EventModal({ supabase, event, setEvent, user_id }) {
                 </div>
                 <div className="flex justify-center space-x-4">
                     {
-                        attendees?.some(user => user.id === user_id) ?
-                            <button
-                                className="text-white bg-red-500 hover:bg-red-700 py-2 px-4 rounded-full min-w-[100px]"
-                                onClick={() => { if (leaveEvent(user_id, event)) { unchairEvent(user_id, event); setTimeout(getAttendees, 500); setTimeout(getChairs, 500) } }}
-                            >
-                                Leave
-                            </button>
-                            :
-                            <button
-                                className="text-white bg-blue-500 hover:bg-blue-700 py-2 px-4 rounded-full min-w-[100px]"
-                                onClick={() => { if (joinEvent(user_id, event)) setTimeout(getAttendees, 500); }}
-                            >
-                                Sign up
-                            </button>
+                        isAfter(event?.startDate, endOfToday()) &&
+                        (
+                            attendees?.some(user => user.id === user_id) ?
+                                <button
+                                    className="text-white bg-red-500 hover:bg-red-700 py-2 px-4 rounded-full min-w-[100px]"
+                                    onClick={() => { if (leaveEvent(user_id, event)) { unchairEvent(user_id, event); setTimeout(getAttendees, 500); setTimeout(getChairs, 500) } }}
+                                >
+                                    Leave
+                                </button>
+                                :
+                                <button
+                                    className="text-white bg-blue-500 hover:bg-blue-700 py-2 px-4 rounded-full min-w-[100px]"
+                                    onClick={() => { if (joinEvent(user_id, event)) setTimeout(getAttendees, 500); }}
+                                >
+                                    Sign up
+                                </button>
+                        )
                     }
                     {
                         attendees?.some(user => user.id === user_id) && (chairs?.some(user => user.id == user_id) ?
