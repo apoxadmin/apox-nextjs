@@ -86,7 +86,7 @@ export default function Main({ children }) {
                                 <span className="text-sm">{user?.initials}</span>
                             </div>
                         </div>
-                        <div tabIndex={0} className="dropdown-content menu bg-white z-[1] shadow-lg rounded-lg p-4">
+                        <div tabIndex={0} className="dropdown-content menu bg-white z-50 shadow-lg rounded-lg p-4">
                             <div className="flex flex-col space-y-2">
                                 <h1 className="text-nowrap text-neutral-600">{user?.name}</h1>
                                 <div className="flex flex-col">
