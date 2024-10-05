@@ -103,7 +103,7 @@ function EventModal({ supabase, event, setEvent, user_id }) {
                 </div>
                 <div className="flex justify-center space-x-4">
                     {
-                        isAfter(event?.startDate, endOfToday()) &&
+                        isAfter(event?.date, endOfToday()) &&
                         (
                             attendees?.some(user => user.id === user_id) ?
                                 <button
@@ -148,6 +148,38 @@ function EventModal({ supabase, event, setEvent, user_id }) {
     )
 }
 
+function EventDay({ day, event, userData, setEvent }) {
+    const includesUser = event?.event_signups?.some((signup) => signup.user_id === userData?.id);
+    const isChairing = event?.event_chairs?.some((chair) => chair.user_id === userData?.id);
+    let style = '';
+    if (includesUser) {
+        style = 'hover:bg-green-500 hover:text-white bg-green-200 ';
+        if (isChairing) {
+            style += 'border border-purple-200 border-2'
+        }
+    } else if (isToday(day)) {
+        style = 'hover:bg-blue-400 hover:text-white';
+    } else {
+        style = 'hover:bg-neutral-100';
+    }
+    return <button
+        onClick={() => setEvent(event)}
+        className={`text-xs ${style} py-1 px-2 hover:shadow-lg transition ease-in delay-50 duration-100 w-full`}
+    >
+        <div className="flex space-x-2 text-xs overflow-x-hidden">
+            <h1>
+                {event?.event_types?.abbreviation.toUpperCase()}
+            </h1>
+            <h1 className="text-nowrap">
+                {format(event?.start_time, 'p')}
+            </h1>
+            <h1 className="text-nowrap overflow-x-hidden">
+                {event?.name}
+            </h1>
+        </div>
+    </button>
+}
+
 function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, setEvent }) {
     const [color, setColor] = useState(isSameMonth(focusDay, day) ? (isToday(focusDay) ? 'bg-blue-100' : '') : 'bg-neutral-200 hover:bg-neutral-100');
     let textColor = isToday(day) ? 'text-neutral-600' : '';
@@ -178,45 +210,18 @@ function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, s
     }
 
     return (
-        <div className="flex justify-center items-center relative group" onMouseLeave={() => { setPopover(false); }}>
-            <div className={`flex flex-col h-full w-full py-2 transition ease-out delay-20 duration-150 ${color}`}>
-                <h1 className={`text-center text-sm ${textColor}`}>
-                    {
-                        day && getDate(day)
-                    }
-                </h1>
-                <div className="flex flex-col items-center space-y-[1px]">
-                    {
-                        events?.map((event, i) => {
-                            const includesUser = event?.event_signups?.some((signup) => signup.user_id === userData?.id);
-                            let style = '';
-                            if (includesUser) {
-                                style = 'hover:bg-green-500 hover:text-white bg-green-200';
-                            } else if (isToday(day)) {
-                                style = 'hover:bg-blue-400 hover:text-white';
-                            } else {
-                                style = 'hover:bg-neutral-100';
-                            }
-                            return <button
-                                key={i}
-                                onClick={() => setEvent(event)}
-                                className={`text-xs ${style} py-1 px-2 hover:shadow-lg transition ease-in delay-50 duration-100`}
-                            >
-                                <div className="flex space-x-2 text-xs">
-                                    <h1>
-                                        {event?.event_types?.abbreviation.toUpperCase()}
-                                    </h1>
-                                    <h1>
-                                        {format(event?.start_time, 'p')}
-                                    </h1>
-                                    <h1>
-                                        {event?.name}
-                                    </h1>
-                                </div>
-                            </button>
-                        })
-                    }
-                </div>
+        <div className={`flex flex-col w-full py-2 transition ease-out delay-20 duration-150 max-h-[15vh] ${color}`} onMouseLeave={() => { setPopover(false); }}>
+            <h1 className={`text-center text-sm ${textColor}`}>
+                {
+                    day && getDate(day)
+                }
+            </h1>
+            <div className="flex flex-col items-center space-y-[1px] px-2 overflow-y-scroll">
+                {
+                    events?.map((event, i) =>
+                        <EventDay key={i} userData={userData} event={event} setEvent={setEvent} day={day} />
+                    )
+                }
             </div>
         </div>
     )
@@ -243,7 +248,7 @@ export default function EventCalendar({ focusDay, userData }) {
     async function getEvents() {
         const eventsResponse = await supabase
             .from('events')
-            .select('*, event_types(*), event_signups(*)')
+            .select('*, event_types(*), event_signups(*), event_chairs(*)')
             .gte('date', focusStartDay.toISOString())
             .lte('date', focusEndDay.toISOString())
             .eq('reviewed', true)
