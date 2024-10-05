@@ -1,6 +1,7 @@
 'use client'
 
 import { AuthContext } from "@/supabase/client";
+import { sortByField } from "@/utils/utils";
 import { format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 
@@ -105,8 +106,11 @@ function TrackingEvent({ event, users }) {
 
     return (
         <div>
-            <button className="flex space-x-4 p-2 bg-red-500 rounded text-white" onClick={() => { ref.current.showModal(); }}>
-                <h1>{event.name}</h1>
+            <button className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full" onClick={() => { ref.current.showModal(); }}>
+                <div className="flex space-x-2">
+                    <h1>{event.event_types.abbreviation.toUpperCase()}</h1>
+                    <h1>{event.name}</h1>
+                </div>
                 <h1>{attendees?.length} / {event.capacity}</h1>
             </button>
             <dialog ref={ref} className="modal">
@@ -203,7 +207,9 @@ export default function TrackingPage() {
                 .select('*, events ( *, event_types(*) )')
                 .eq('user_id', user.id)
                 .eq('events.tracked', false)
-            const eventsData = eventsResponse.data.map((chair) => chair.events);
+            let eventsData = eventsResponse.data.map((chair) => chair.events);
+            const sortByStart = (a, b) => { return sortByField(a, b, 'date') };
+            eventsData.sort(sortByStart);
             setEvents(eventsData);
         }
         if (user)
@@ -211,12 +217,14 @@ export default function TrackingPage() {
 
     }, [user]);
 
-    return <div className="flex flex-col items-center w-full p-10 overflow-y-auto">
+    return <div className="flex flex-col space-y-8 items-center w-full p-10 overflow-y-auto">
         <h1 className="text-center text-xl text-neutral-700">Tracking</h1>
-        {
-            events?.map((event, i) =>
-                <TrackingEvent event={event} key={i} users={users} />
-            )
-        }
+        <div className="grid grid-cols-4 gap-x-2 gap-y-2">
+            {
+                events?.map((event, i) =>
+                    <TrackingEvent event={event} key={i} users={users} />
+                )
+            }
+        </div>
     </div>
 }
