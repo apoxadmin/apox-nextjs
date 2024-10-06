@@ -57,8 +57,9 @@ export default function Main({ children }) {
                 setUser(user.data);
             }
         }
-        getUser();
-    }, []);
+        if (supabase)
+            getUser();
+    }, [supabase]);
 
     return (
         <div className="grow h-screen flex flex-col bg-neutral-50 w-full">

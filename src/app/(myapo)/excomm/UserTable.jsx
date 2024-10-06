@@ -43,9 +43,9 @@ function UserRow({ user, creditRequirements }) {
             <h1>{user.email}</h1>
             <h1 className="text-end">{uppercase(user.standings?.name || 'None')}</h1>
             {
-                creditRequirements.map((req) => {
+                creditRequirements.map((req, i) => {
                     return (
-                        <h1 className="text-end">
+                        <h1 key={i} className="text-end">
                             {
                                 req.prefix
                             }
