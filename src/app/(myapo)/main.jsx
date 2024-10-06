@@ -25,7 +25,7 @@ export default function Main({ children }) {
             window.removeEventListener("keydown", closeEscape);
         }
 
-    });
+    }, []);
 
     useEffect(() => {
         function escape(e) {
@@ -42,7 +42,7 @@ export default function Main({ children }) {
             window.removeEventListener('click', escape);
         }
 
-    }, [window]);
+    }, []);
 
     useEffect(() => {
         async function getUser() {

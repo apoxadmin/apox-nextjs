@@ -40,7 +40,6 @@ function AttendeeCheck({ event, user, submitted, attendee = false }) {
                     const { error } = await supabase
                         .from('event_users_requirements')
                         .upsert({ user_id: user.id, value: value, name: event_req_name }, { onConflict: 'user_id, name' });
-                    console.log(error);
                 }
                 if (!error && credit_req_name) {
                     const checkReq = await supabase
@@ -102,7 +101,38 @@ function TrackingEvent({ event, users }) {
         return function unmount() {
             window.removeEventListener("keydown", closeEscape);
         }
-    });
+    }, []);
+
+    useEffect(() => {
+        async function updateChair(user_id, event_id) {
+            const credit_req_name = 'chairing';
+            const checkReq = await supabase
+                .from('credit_users_requirements')
+                .select('value')
+                .eq('user_id', user_id)
+                .eq('name', credit_req_name)
+                .maybeSingle();
+            let value = 1;
+            if (!checkReq.error && checkReq.data) {
+                value += checkReq.data.value;
+            }
+            const { error } = await supabase
+                .from('credit_users_requirements')
+                .upsert({ user_id: user_id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
+        }
+        async function updateEvent() {
+            const { error } = await supabase
+                .from('events')
+                .update({ tracked: true, drive_link: mediaURL })
+                .eq('id', event?.id);
+        }
+        if (submitted) {
+            for (const chair of event?.event_chairs) {
+                updateChair(chair.id, event?.id);
+            }
+            updateEvent();
+        }
+    }, [submitted, event, mediaURL]);
 
     return (
         <div>
@@ -204,12 +234,13 @@ export default function TrackingPage() {
         async function getEvents() {
             const eventsResponse = await supabase
                 .from('event_chairs')
-                .select('*, events ( *, event_types(*) )')
+                .select('*, events(tracked, *, event_types(*), event_chairs(*) )')
                 .eq('user_id', user.id)
                 .eq('events.tracked', false)
                 .lte('events.date', endOfToday().toISOString());
             if (eventsResponse.data) {
                 let eventsData = eventsResponse.data.map((chair) => chair.events);
+                eventsData = eventsData.filter((event) => event !== null);
                 const sortByStart = (a, b) => { return sortByField(a, b, 'date') };
                 eventsData.sort(sortByStart);
                 setEvents(eventsData);
