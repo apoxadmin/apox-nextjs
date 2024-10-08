@@ -59,7 +59,7 @@ function EventModal({ supabase, event, setEvent, user_id }) {
             <div className="modal-box flex flex-col space-y-4 max-h-[90vh] overflow-y-hidden">
                 <div className="flex justify-between">
                     <h1 className="text-neutral-600">
-                        {event?.event_types.name.split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join()}
+                        {event?.event_types.name.split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}
                     </h1>
                     <h1 className="text-neutral-600">
                         {dateString}
