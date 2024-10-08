@@ -49,8 +49,8 @@ export default function Sidebar({ visible = true }) {
                 }
                 <SidebarLink name="Gas Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLScp47-NYgZm-Gp7XGkTf7jYeHHdinqfI2TZ9KkI4wQ1yXEexA/viewform?usp=sf_link" />
                 <SidebarLink name="Regular Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLSco5IJ_mG_dN8xNbPuDKF-P19KA1GXa88KaWgqoXysYMhsMvw/viewform?usp=sf_link" />
-                <SidebarLink name="Rule Violations" url="https://docs.google.com/forms/d/e/1FAIpQLScp47-NYgZm-Gp7XGkTf7jYeHHdinqfI2TZ9KkI4wQ1yXEexA/viewform?usp=sf_link" />
-                <SidebarLink name="Collaborative Drive" url="https://docs.google.com/forms/d/e/1FAIpQLScp47-NYgZm-Gp7XGkTf7jYeHHdinqfI2TZ9KkI4wQ1yXEexA/viewform?usp=sf_link" />
+                <SidebarLink name="Rule Violations" url="https://docs.google.com/forms/d/e/1FAIpQLSfcZlkaLwu42CiQLi_9exH5A100DGQu5VPJWkzvhw0ChYWucA/viewform" />
+                <SidebarLink name="Collaborative Drive" url="https://drive.google.com/drive/folders/1Ac2nRqfeRI00R3tc4-J9m3uTfOiyCrZY?usp=sharing" />
                 {/*<SidebarButton name="My Status" />
                 <SidebarButton name="My Family" />
                 <SidebarButton name="My Class" />
