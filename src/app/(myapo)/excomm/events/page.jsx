@@ -1,3 +1,5 @@
+'use client'
+
 import { AuthContext } from "@/supabase/client";
 import { approveEvent, deleteEvent, unapproveEvent } from "@/supabase/event";
 import { format, startOfToday } from "date-fns";

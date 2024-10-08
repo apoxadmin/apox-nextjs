@@ -1,7 +1,5 @@
 'use client'
 
-import UserTable from "./UserTable";
-import ExCommEvents from "./ExCommEvents";
 import Link from "next/link";
 export default function ExCommPage({ children }) {
     return (
