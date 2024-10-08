@@ -210,7 +210,7 @@ function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, s
     }
 
     return (
-        <div className={`flex flex-col w-full py-2 transition ease-out delay-20 duration-150 max-h-[15vh] ${color}`} onMouseLeave={() => { setPopover(false); }}>
+        <div className={`flex flex-col w-full pt-2 transition ease-out delay-20 duration-150 ${color}`} onMouseLeave={() => { setPopover(false); }}>
             <h1 className={`text-center text-sm ${textColor}`}>
                 {
                     day && getDate(day)
@@ -289,7 +289,7 @@ export default function EventCalendar({ focusDay, userData }) {
                     })
                 }
             </div>
-            <div className="grow grid grid-cols-7 auto-rows-fr">
+            <div className="grow grid grid-cols-7 auto-rows-fr min-h-0">
                 {
                     monthDays?.map((day, i) => {
                         return <MonthDayComponent
