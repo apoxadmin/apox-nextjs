@@ -18,6 +18,10 @@ const grid_cols_width = [
     'grid-cols-10',
     'grid-cols-11',
     'grid-cols-12',
+    'grid-cols-13',
+    'grid-cols-14',
+    'grid-cols-15',
+    'grid-cols-16'
 ]
 
 const col_span_width = [
@@ -34,11 +38,15 @@ const col_span_width = [
     'col-span-10',
     'col-span-11',
     'col-span-12',
+    'col-span-13',
+    'col-span-14',
+    'col-span-15',
+    'col-span-16',
 ]
 
-function UserRow({ user, creditRequirements }) {
+function UserRow({ user, creditRequirements, eventRequirements }) {
     return (
-        <div className={`[&>*]:px-2 [&>*]:overflow-x-auto grid grid-cols-subgrid ${col_span_width[creditRequirements.length + 3]} gap-x-1 divide-black text-center`}>
+        <div className={`[&>*]:px-2 [&>*]:overflow-x-auto grid grid-cols-subgrid ${col_span_width[creditRequirements.length + eventRequirements.length + 3]} gap-x-1 divide-black text-center`}>
             <h1 className="text-start px-0 overflow-x-scroll text-nowrap">{user.name}</h1>
             <h1>{user.email}</h1>
             <h1 className="text-end">{uppercase(user.standings?.name || 'None')}</h1>
@@ -49,6 +57,17 @@ function UserRow({ user, creditRequirements }) {
                             {
                                 req.prefix
                             }
+                            {
+                                user[req.name] || '0'
+                            }
+                        </h1>
+                    )
+                })
+            }
+            {
+                eventRequirements.map((req, i) => {
+                    return (
+                        <h1 key={i} className="text-end">
                             {
                                 user[req.name] || '0'
                             }
@@ -73,6 +92,7 @@ export default function UserTable() {
     const supabase = useContext(AuthContext);
     const [users, setUsers] = useState([]);
     const [creditRequirements, setCreditRequirements] = useState([]);
+    const [eventRequirements, setEventRequirements] = useState([]);
 
     useEffect(() => {
         async function getUsers() {
@@ -105,36 +125,54 @@ export default function UserTable() {
                 setCreditRequirements(data);
             }
         }
+        async function getEventRequirements() {
+            const response = await supabase
+                .from('event_requirements')
+                .select();
+            if (response.data) {
+                let data = response.data;
+                data.sort(sortById);
+                setEventRequirements(data);
+            }
+        }
         getUsers();
         getCreditRequirements();
+        getEventRequirements();
     }, []);
 
     return (
-        <div className="flex flex-col items-center space-y-4 overflow-y-auto">
+        <div className="flex flex-col items-center space-y-4 overflow-y-auto overflow-x-scroll w-full">
             <h1 className="text-center text-xl text-neutral-600">User Table</h1>
-            <div className={`grid ${grid_cols_width[creditRequirements.length + 3]} w-full text-center`}>
+            <div className={`grid ${grid_cols_width[creditRequirements.length + eventRequirements.length + 3]} w-full text-center`}>
                 <h1 className="text-start">Name</h1>
                 <h1>Email</h1>
-                <h1 className="text-end">Standing</h1>
-                {
-                    creditRequirements.map((req, i) => {
-                        return (
-                            <h1 key={i} className="text-end">{uppercase(req.name)}</h1>
-                        )
-                    })
-                }
+                <div className={`overflow-x-scroll grid grid-cols-subgrid ${col_span_width[creditRequirements.length + eventRequirements.length + 1]}`}>
+                    <h1 className="text-end">Standing</h1>
+                    {
+                        creditRequirements.map((req, i) => {
+                            return (
+                                <h1 key={i} className="text-end">{uppercase(req.name)}</h1>
+                            )
+                        })
+                    }
+                    {
+                        eventRequirements.map((req, i) => {
+                            return (
+                                <h1 key={i} className="text-end">{uppercase(req.name)}</h1>
+                            )
+                        })
+                    }
+                </div>
             </div>
-            <div className="overflow-y-scroll">
-                <div className="flex flex-col items-center">
-                    <div className={`grid ${grid_cols_width[creditRequirements.length + 3]}`}>
-                        {
-                            users.map((user, i) => {
-                                return (
-                                    <UserRow key={i} user={user} creditRequirements={creditRequirements} />
-                                )
-                            })
-                        }
-                    </div>
+            <div className="overflow-y-scroll w-full">
+                <div className={`min-w-0 max-w-none gap-y-2 gap-x-4 grid ${grid_cols_width[creditRequirements.length + eventRequirements.length + 3]}`}>
+                    {
+                        users.map((user, i) => {
+                            return (
+                                <UserRow key={i} user={user} creditRequirements={creditRequirements} eventRequirements={eventRequirements} />
+                            )
+                        })
+                    }
                 </div>
             </div>
         </div>

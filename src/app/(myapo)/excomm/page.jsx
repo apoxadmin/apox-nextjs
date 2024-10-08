@@ -16,7 +16,7 @@ export default function ExCommDashboard() {
             <Widget path="/excomm/events">
                 Events
             </Widget>
-            <Widget>
+            <Widget path="/excomm/users">
                 Users
             </Widget>
             <Widget path="/excomm/pledging">

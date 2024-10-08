@@ -55,7 +55,6 @@ function AttendeeCheck({ event, user, submitted, attendee = false }) {
                     const { error } = await supabase
                         .from('credit_users_requirements')
                         .upsert({ user_id: user.id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
-                    console.log(error);
                 }
             }
         }
@@ -79,14 +78,34 @@ function TrackingEvent({ event, users }) {
     const supabase = useContext(AuthContext);
     const ref = useRef(null);
     const [submitted, setSubmitted] = useState(false);
+    const [driveURL, setDriveURL] = useState('');
     const [mediaURL, setMediaURL] = useState('');
+    const [toast, setToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+
+    useEffect(() => {
+        if (event?.drive_link) {
+            setMediaURL(event?.drive_link);
+        }
+    }, [event]);
 
     useEffect(() => {
         async function getAttendees() {
             const attendeesResponse = await supabase.from('event_signups').select('*, users(*)').eq('event_id', event.id);
             setAttendees(attendeesResponse.data.map(attendee => { return { ...attendee.users, attended: attendee.attended } }));
         }
+        async function getDriveURL() {
+            const response = await supabase
+                .from('urls')
+                .select()
+                .eq('name', 'drive')
+                .maybeSingle();
+            if (response.data) {
+                setDriveURL(response.data?.url);
+            }
+        }
         getAttendees();
+        getDriveURL();
     }, []);
 
     useEffect(function mount() {
@@ -102,49 +121,56 @@ function TrackingEvent({ event, users }) {
             window.removeEventListener("keydown", closeEscape);
         }
     }, []);
+    async function updateChair(user_id, event_id) {
+        const credit_req_name = 'chairing';
+        const checkReq = await supabase
+            .from('credit_users_requirements')
+            .select('value')
+            .eq('user_id', user_id)
+            .eq('name', credit_req_name)
+            .maybeSingle();
+        let value = 1;
+        if (!checkReq.error && checkReq.data) {
+            value += checkReq.data.value;
+        }
+        const { error } = await supabase
+            .from('credit_users_requirements')
+            .upsert({ user_id: user_id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
+    }
+    async function updateEvent() {
+        const { error } = await supabase
+            .from('events')
+            .update({ tracked: true, drive_link: mediaURL })
+            .eq('id', event?.id);
+    }
 
-    useEffect(() => {
-        async function updateChair(user_id, event_id) {
-            const credit_req_name = 'chairing';
-            const checkReq = await supabase
-                .from('credit_users_requirements')
-                .select('value')
-                .eq('user_id', user_id)
-                .eq('name', credit_req_name)
-                .maybeSingle();
-            let value = 1;
-            if (!checkReq.error && checkReq.data) {
-                value += checkReq.data.value;
-            }
-            const { error } = await supabase
-                .from('credit_users_requirements')
-                .upsert({ user_id: user_id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
-        }
-        async function updateEvent() {
-            const { error } = await supabase
-                .from('events')
-                .update({ tracked: true, drive_link: mediaURL })
-                .eq('id', event?.id);
-        }
-        if (submitted) {
+    function submitTracking() {
+        console.log('Submitting')
+        if (mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
+            setSubmitted(true);
             for (const chair of event?.event_chairs) {
                 updateChair(chair.id, event?.id);
             }
             updateEvent();
+            ref.current.close();
+        } else {
+            setToastMessage('Invalid drive folder link!');
+            setToast(true);
+            setTimeout(() => { setToast(false); }, 3000);
         }
-    }, [submitted, event, mediaURL]);
+    }
 
     return (
         <div>
-            <button className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full" onClick={() => { ref.current.showModal(); }}>
+            <button className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full h-full" onClick={() => { ref.current.showModal(); }}>
                 <div className="flex space-x-2">
-                    <h1>{event.event_types.abbreviation.toUpperCase()}</h1>
-                    <h1>{event.name}</h1>
+                    <h1>{event?.event_types.abbreviation.toUpperCase()}</h1>
+                    <h1 className="text-nowrap overflow-x-hidden">{event?.name}</h1>
                 </div>
-                <h1>{attendees?.length} / {event.capacity}</h1>
+                <h1 className="text-nowrap">{attendees?.length} / {event?.capacity}</h1>
             </button>
             <dialog ref={ref} className="modal">
-                <div className="modal-box">
+                <div className="flex flex-col space-y-4 modal-box">
                     <div className="flex justify-between">
                         <h1 className="text-neutral-600">
                             {event?.event_types.name.split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join()}
@@ -189,13 +215,17 @@ function TrackingEvent({ event, users }) {
                         </div>
                     </div>
                     <div className="flex flex-col">
-                        <label>Submit link to your photos/videos:</label>
+                        <h1>Collaborative Drive URL:</h1>
+                        <a className="text-xs text-blue-400" target="_blank" href={driveURL}>{driveURL}</a>
+                    </div>
+                    <div className="flex flex-col">
+                        <label>Submit link to the folder with photos/videos:</label>
                         <input value={mediaURL} onChange={(e) => setMediaURL(e.target.value)} placeholder="https://drive.google.com/***" />
                     </div>
                     <div className="flex justify-center">
                         <button
                             className="bg-green-600 px-4 py-2 rounded-full"
-                            onClick={() => { if (mediaURL !== '') { setSubmitted(true); ref.current.close(); } }}
+                            onClick={() => { submitTracking(); }}
                         >
                             <h1 className="text-white">
                                 Submit
@@ -205,6 +235,14 @@ function TrackingEvent({ event, users }) {
                 </div>
                 <form method="dialog" className="modal-backdrop">
                     <button onClick={() => { }}>close</button>
+                    {
+                        toast &&
+                        <div className="toast z-[1000]">
+                            <div className="alert alert-error shadow-lg text-center">
+                                <h1 className="text-white">{toastMessage}</h1>
+                            </div>
+                        </div>
+                    }
                 </form>
             </dialog>
         </div>
@@ -216,6 +254,7 @@ export default function TrackingPage() {
     const [events, setEvents] = useState([]);
     const [users, setUsers] = useState([]);
     const supabase = useContext(AuthContext);
+
     useEffect(() => {
         async function getUser() {
             const auth = await supabase.auth.getUser();
@@ -223,8 +262,16 @@ export default function TrackingPage() {
             setUser(userResponse.data);
         }
         async function getUsers() {
-            const usersResponse = await supabase.from('users').select('*, standings!inner(name)').neq('standings.name', 'alumni');
-            setUsers(usersResponse.data);
+            const usersResponse = await supabase
+                .from('users')
+                .select('*, standings!inner(name)')
+                .neq('standings.name', 'alumni');
+            let data = usersResponse.data;
+            if (data) {
+                const sortByName = (a, b) => sortByField(a, b, 'name');
+                data.sort(sortByName);
+                setUsers(data);
+            }
         }
         getUser();
         getUsers();
@@ -253,7 +300,7 @@ export default function TrackingPage() {
 
     return <div className="flex flex-col space-y-8 items-center w-full p-10 overflow-y-auto">
         <h1 className="text-center text-xl text-neutral-700">Tracking</h1>
-        <div className="grid grid-cols-4 gap-x-2 gap-y-2">
+        <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
             {
                 events?.map((event, i) =>
                     <TrackingEvent event={event} key={i} users={users} />

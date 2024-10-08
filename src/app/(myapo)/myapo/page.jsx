@@ -26,7 +26,11 @@ export default function MyAPOPage() {
     async function getUserData() {
         const { data } = await supabase.auth.getUser();
         if (data) {
-            const user = await supabase.from('users').select().eq('auth_id', data.user.id).maybeSingle();
+            const user = await supabase
+                .from('users')
+                .select('*, privileged(*)')
+                .eq('auth_id', data.user.id)
+                .maybeSingle();
             setUserData(user.data);
         }
     }

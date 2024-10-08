@@ -3,7 +3,7 @@ import { chairEvent, joinEvent, leaveEvent, unchairEvent } from "@/supabase/even
 import { eachDayOfInterval, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfWeek } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
 
-function EventModal({ supabase, event, setEvent, user_id }) {
+function EventModal({ supabase, event, setEvent, userData }) {
     const ref = useRef(null);
     const [dateString, setDateString] = useState('');
     const [attendees, setAttendees] = useState([]);
@@ -103,29 +103,29 @@ function EventModal({ supabase, event, setEvent, user_id }) {
                 </div>
                 <div className="flex justify-center space-x-4">
                     {
-                        isAfter(event?.date, endOfToday()) &&
+                        (isAfter(event?.date, endOfToday()) || userData?.privileged.length > 0) &&
                         (
-                            attendees?.some(user => user.id === user_id) ?
+                            attendees?.some(user => user.id === userData?.id) ?
                                 <button
                                     className="text-white bg-red-500 hover:bg-red-700 py-2 px-4 rounded-full min-w-[100px]"
-                                    onClick={() => { if (leaveEvent(user_id, event)) { unchairEvent(user_id, event); setTimeout(getAttendees, 500); setTimeout(getChairs, 500) } }}
+                                    onClick={() => { if (leaveEvent(userData?.id, event)) { unchairEvent(userData?.id, event); setTimeout(getAttendees, 500); setTimeout(getChairs, 500) } }}
                                 >
                                     Leave
                                 </button>
                                 :
                                 <button
                                     className="text-white bg-blue-500 hover:bg-blue-700 py-2 px-4 rounded-full min-w-[100px]"
-                                    onClick={() => { if (joinEvent(user_id, event)) setTimeout(getAttendees, 500); }}
+                                    onClick={() => { if (joinEvent(userData?.id, event)) setTimeout(getAttendees, 500); }}
                                 >
                                     Sign up
                                 </button>
                         )
                     }
                     {
-                        attendees?.some(user => user.id === user_id) && (chairs?.some(user => user.id == user_id) ?
+                        attendees?.some(user => user.id === userData?.id) && (chairs?.some(user => user.id == userData?.id) ?
                             <button
                                 className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded-full min-w-[100px]"
-                                onClick={() => { if (unchairEvent(user_id, event)) setTimeout(getChairs, 500); }}
+                                onClick={() => { if (unchairEvent(userData?.id, event)) setTimeout(getChairs, 500); }}
                             >
                                 Unchair
                             </button>
@@ -133,7 +133,7 @@ function EventModal({ supabase, event, setEvent, user_id }) {
                             chairs?.length < 2 &&
                             <button
                                 className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-full min-w-[100px]"
-                                onClick={() => { if (chairEvent(user_id, event)) setTimeout(getChairs, 500); }}
+                                onClick={() => { if (chairEvent(userData?.id, event)) setTimeout(getChairs, 500); }}
                             >
                                 Chair
                             </button>
@@ -273,7 +273,7 @@ export default function EventCalendar({ focusDay, userData }) {
 
     return (
         <div className="flex flex-col h-full w-full">
-            <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} user_id={userData?.id} />
+            <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} userData={userData} />
             <h1 className="text-center text-neutral-500 text-xl py-2">{format(focusDay, 'LLLL y').toUpperCase()}</h1>
             <div className="grid grid-cols-7">
                 {
