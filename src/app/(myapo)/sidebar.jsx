@@ -6,9 +6,21 @@ import { useEffect, useState } from "react";
 
 const buttonClassName = "px-8 py-4 rounded-lg hover:text-neutral-800 hover:bg-neutral-200 hover:cursor-pointer transition ease-out delay-20 duration-150"
 
+const openInNewTab = (url) => {
+    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+    if (newWindow) newWindow.opener = null
+  }
+
 function SidebarButton({ name, url = "/" }) {
     return (
         <Link href={url} className={buttonClassName}>
+            {name}
+        </Link>
+    )
+}
+function SidebarLink({ name, url = "/" }) {
+    return (
+        <Link href={url} className={buttonClassName} rel="noopener noreferrer" target='_blank'>
             {name}
         </Link>
     )
@@ -35,6 +47,10 @@ export default function Sidebar({ visible = true }) {
                     privileged &&
                     <SidebarButton name="ExComm" url="/excomm" />
                 }
+                <SidebarLink name="Gas Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLScp47-NYgZm-Gp7XGkTf7jYeHHdinqfI2TZ9KkI4wQ1yXEexA/viewform?usp=sf_link" />
+                <SidebarLink name="Regular Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLSco5IJ_mG_dN8xNbPuDKF-P19KA1GXa88KaWgqoXysYMhsMvw/viewform?usp=sf_link" />
+                <SidebarLink name="Rule Violations" url="https://docs.google.com/forms/d/e/1FAIpQLScp47-NYgZm-Gp7XGkTf7jYeHHdinqfI2TZ9KkI4wQ1yXEexA/viewform?usp=sf_link" />
+                <SidebarLink name="Collaborative Drive" url="https://docs.google.com/forms/d/e/1FAIpQLScp47-NYgZm-Gp7XGkTf7jYeHHdinqfI2TZ9KkI4wQ1yXEexA/viewform?usp=sf_link" />
                 {/*<SidebarButton name="My Status" />
                 <SidebarButton name="My Family" />
                 <SidebarButton name="My Class" />
