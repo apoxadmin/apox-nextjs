@@ -22,7 +22,7 @@ export default function ExCommDashboard() {
             <Widget path="/excomm/pledging">
                 Pledging
             </Widget>
-            <Widget>
+            <Widget path="/excomm/admin">
                 Admin
             </Widget>
             <Widget>
