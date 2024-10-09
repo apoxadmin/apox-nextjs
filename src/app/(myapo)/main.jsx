@@ -90,9 +90,8 @@ export default function Main({ children }) {
                         <div tabIndex={0} className="dropdown-content menu bg-white z-50 shadow-lg rounded-lg p-4">
                             <div className="flex flex-col space-y-2">
                                 <h1 className="text-nowrap text-neutral-600">{user?.name}</h1>
-                                <div className="flex flex-col">
-                                    <h1 className="text-neutral-600">Settings</h1>
-                                </div>
+                                <Link href="/myprofile" className="w-full text-neutral-600 text-start">Profile</Link>
+                                <Link href="/settings" className="w-full text-neutral-600 text-start">Settings</Link>
                                 <button onClick={() => { logout(); }} className="w-full text-neutral-600 text-start">Log out</button>
                             </div>
                         </div>

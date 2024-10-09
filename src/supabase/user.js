@@ -58,6 +58,33 @@ export async function createUser(userData) {
 }
 
 /**
+ * @param {int} id the user's id
+ * @param {Object} userData Information about the user
+ **/
+export async function updateUser(id, userData) {
+    const supabase = createSupabaseAdmin();
+    const newAuthUser = {
+        email: userData.email,
+        password: userData.password,
+        email_confirm: true
+    };
+    const newAuthUserResponse = await supabase.auth.admin.updateUserById(userData.auth_id, newAuthUser);
+    if (newAuthUserResponse.error) {
+        console.log('Invalid user!', newAuthUserResponse.error)
+        return false;
+    }
+    delete userData.password;
+
+    const updateUserResponse = await supabase.from('users').update(userData).eq('id', id);
+    if (updateUserResponse.error) {
+        console.log('Cannot insert user', updateUserResponse.error);
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * @param {string | undefined} userId User ID
  **/
 export async function deleteUser(userId) {
