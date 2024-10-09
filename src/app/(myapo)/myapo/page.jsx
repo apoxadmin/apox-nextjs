@@ -48,6 +48,7 @@ export default function MyAPOPage() {
                 runCallbacksOnInit={false}
                 initialSlide={1}
                 speed={150}
+                draggable = {false}
                 onSlideChange={(swiper) => {
                     if (swiper.activeIndex < swiper.previousIndex) {
                         const newFocus = subMonths(focusDay, 1);

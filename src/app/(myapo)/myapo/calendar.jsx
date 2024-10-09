@@ -68,14 +68,20 @@ function EventModal({ supabase, event, setEvent, userData }) {
                 <div className="flex flex-col space-y-2">
                     <div className="flex flex-col text-center">
                         <h1 className="font-bold text-lg">
-                            {event?.name}
+                            <span class="swiper-no-swiping">
+                                {event?.name}
+                            </span>
                         </h1>
                         <h1 className="font-bold">
-                            @ {event?.location}
+                            <span class="swiper-no-swiping">
+                                @ {event?.location}
+                            </span>
                         </h1>
                     </div>
                     <h1 className="text-center">
-                        {event?.description}
+                        <span class="swiper-no-swiping">
+                            {event?.description}
+                        </span>
                     </h1>
                 </div>
                 <div className="flex flex-col space-y-2 overflow-auto">
@@ -89,11 +95,13 @@ function EventModal({ supabase, event, setEvent, userData }) {
                                 attendees?.map((user, i) => {
                                     let bg = chairs?.some(chair => chair.id == user.id) ? 'bg-green-600 text-white' : '';
                                     return <div key={i} className={`${bg} flex flex-col border border-black p-2 overflow-x-hidden`}>
-                                        <h1>
+                                        <h1 class="swiper-no-swiping">
                                             {user.name}
                                         </h1>
                                         <h1 className="text-xs">
-                                            {user.email}
+                                            <span class="swiper-no-swiping">
+                                                {user.email}
+                                            </span>
                                         </h1>
                                     </div>
                                 })
