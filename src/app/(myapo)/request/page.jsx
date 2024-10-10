@@ -148,7 +148,7 @@ export default function RequestPage() {
                         {...register('capacity', { valueAsNumber: true, required: true })}
                         id="capacityInput"
                         type="number"
-                        placeholder="10"
+                        placeholder="Capacity.."
                         step="1"
                         min="0"
                         onInput={
