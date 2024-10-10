@@ -30,8 +30,8 @@ const Grid = ({ rows, cols, user, creditRequirements, eventRequirements, circleS
                 const maxValue = req.value
                 let t = value / maxValue
                 return (
-                    <div style={{ width: circleSize, height: circleSize }}>
-                        <CircularProgressbarWithChildren key={i} value={value} minValue={0} maxValue={maxValue} 
+                    <div style={{ width: circleSize, height: circleSize }} key={i}>
+                        <CircularProgressbarWithChildren value={value} minValue={0} maxValue={maxValue} 
                             styles={buildStyles({
                                 pathColor: `rgb(${lerp(19, 239, t)}, ${lerp(49, 179, t)}, ${lerp(160, 61, t)})`
                             }                       
@@ -48,8 +48,8 @@ const Grid = ({ rows, cols, user, creditRequirements, eventRequirements, circleS
                 const maxValue = req.value
                 let t = value / maxValue
                 return (
-                    <div style={{ width: circleSize, height: circleSize }}>
-                        <CircularProgressbarWithChildren key={i + eventRequirements.length} value={value} minValue={0} maxValue={maxValue} 
+                    <div style={{ width: circleSize, height: circleSize }} key={i + eventRequirements.length}>
+                        <CircularProgressbarWithChildren value={value} minValue={0} maxValue={maxValue} 
                             styles={buildStyles({
                                 pathColor: `rgb(${lerp(19, 239, t)}, ${lerp(49, 179, t)}, ${lerp(160, 61, t)})`
                             }                       
