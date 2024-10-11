@@ -68,18 +68,18 @@ function EventModal({ supabase, event, setEvent, userData }) {
                 <div className="flex flex-col space-y-2">
                     <div className="flex flex-col text-center">
                         <h1 className="font-bold text-lg">
-                            <span class="swiper-no-swiping">
+                            <span className="swiper-no-swiping">
                                 {event?.name}
                             </span>
                         </h1>
                         <h1 className="font-bold">
-                            <span class="swiper-no-swiping">
+                            <span className="swiper-no-swiping">
                                 @ {event?.location}
                             </span>
                         </h1>
                     </div>
                     <h1 className="text-center">
-                        <span class="swiper-no-swiping">
+                        <span className="swiper-no-swiping">
                             {event?.description}
                         </span>
                     </h1>
@@ -95,11 +95,11 @@ function EventModal({ supabase, event, setEvent, userData }) {
                                 attendees?.map((user, i) => {
                                     let bg = chairs?.some(chair => chair.id == user.id) ? 'bg-green-600 text-white' : '';
                                     return <div key={i} className={`${bg} flex flex-col border border-black p-2 overflow-x-hidden`}>
-                                        <h1 class="swiper-no-swiping">
+                                        <h1 className="swiper-no-swiping">
                                             {user.name}
                                         </h1>
                                         <h1 className="text-xs">
-                                            <span class="swiper-no-swiping">
+                                            <span className="swiper-no-swiping">
                                                 {user.email}
                                             </span>
                                         </h1>
@@ -159,20 +159,44 @@ function EventModal({ supabase, event, setEvent, userData }) {
 function EventDay({ day, event, userData, setEvent }) {
     const includesUser = event?.event_signups?.some((signup) => signup.user_id === userData?.id);
     const isChairing = event?.event_chairs?.some((chair) => chair.user_id === userData?.id);
+    const eventTypeId = event?.event_types.id;
     let style = '';
     if (includesUser) {
-        style = 'hover:bg-green-500 hover:text-white bg-green-200 ';
+        style = 'hover:bg-green-500 hover:text-white bg-green-200';
         if (isChairing) {
-            style += 'border border-purple-200 border-2'
+            style += ' border border-purple-200 border-2'
         }
     } else if (isToday(day)) {
         style = 'hover:bg-blue-400 hover:text-white';
     } else {
-        style = 'hover:bg-neutral-100';
+        if(eventTypeId == 1)
+            style = `hover:bg-lime-400 hover:text-white bg-lime-200`;
+        if(eventTypeId == 2)
+            style = `hover:bg-teal-400 hover:text-white bg-teal-100`;
+        if(eventTypeId == 3)
+            style = `hover:bg-fuschia-600 hover:text-white bg-fuschia-300`;
+        if(eventTypeId == 4)
+            style = `hover:bg-emerald-500 hover:text-white bg-emerald-200`;
+        if(eventTypeId == 5)
+            style = `hover:bg-orange-400 hover:text-white bg-orange-200`;
+        if(eventTypeId == 6)
+            style = `hover:bg-purple-500 hover:text-white bg-purple-300`;
+        if(eventTypeId == 7)
+            style = `hover:bg-yellow-600 hover:text-white bg-yellow-300`;
+        if(eventTypeId == 8)
+            style = `hover:bg-pink-600 hover:text-white bg-pink-300`;
+        if(eventTypeId == 9)
+            style = `hover:bg-lime-500 hover:text-white bg-lime-200`;
+        if(eventTypeId == 10)
+            style = `hover:bg-red-600 hover:text-white bg-red-300`;
+        if(eventTypeId == 11)
+            style = `hover:bg-stone-600 hover:text-white bg-stone-300`;
+        if(eventTypeId == 12)
+            style = `hover:bg-indigo-800 hover:text-white bg-indigo-300`;
     }
     return <button
         onClick={() => setEvent(event)}
-        className={`text-xs ${style} py-1 px-2 hover:shadow-lg transition ease-in delay-50 duration-100 w-full`}
+        className={`text-xs text-stone-800 ${style} py-1 px-2 hover:shadow-lg transition ease-in delay-50 duration-100 w-full`}
     >
         <div className="flex space-x-2 text-xs overflow-x-hidden">
             <h1>
