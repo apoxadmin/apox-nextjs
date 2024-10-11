@@ -52,6 +52,7 @@ export default function Sidebar({ visible = true }) {
                 <SidebarLink name="Rule Violations" url="https://docs.google.com/forms/d/e/1FAIpQLSfcZlkaLwu42CiQLi_9exH5A100DGQu5VPJWkzvhw0ChYWucA/viewform" />
                 <SidebarLink name="Collaborative Drive" url="https://drive.google.com/drive/folders/1Ac2nRqfeRI00R3tc4-J9m3uTfOiyCrZY?usp=sharing" />
                 <SidebarLink name="Outside Service" url="https://forms.gle/UuSLmX42myFNF8sx9" />
+                <SidebarLink name="Big/Little Comp" url="https://docs.google.com/spreadsheets/d/12U-2avpz5loeUF7Wf4trf_xXwhSaTnVukvJsh0COvfs/edit?usp=sharing" />
                 {/*<SidebarButton name="My Status" />
                 <SidebarButton name="My Family" />
                 <SidebarButton name="My Class" />

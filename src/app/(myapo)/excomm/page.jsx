@@ -25,8 +25,8 @@ export default function ExCommDashboard() {
             <Widget path="/excomm/admin">
                 Admin
             </Widget>
-            <Widget>
-                Membership
+            <Widget path="/excomm/excommtrack">
+                Tracking (Excomm)
             </Widget>
             <Widget>
                 Finance
