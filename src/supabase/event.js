@@ -103,3 +103,49 @@ export async function unapproveEvent(event_id) {
 
     return !updateEvent.error;
 }
+
+export async function updateChair(user_id, event_id) {
+    const credit_req_name = 'chairing';
+    const checkReq = await supabase
+        .from('credit_users_requirements')
+        .select('value')
+        .eq('user_id', user_id)
+        .eq('name', credit_req_name)
+        .maybeSingle();
+    let value = 1;
+    if (!checkReq.error && checkReq.data) {
+        value += checkReq.data.value;
+    }
+    const { error } = await supabase
+        .from('credit_users_requirements')
+        .upsert({ user_id: user_id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
+}
+
+export async function setDriver(user_id, event_id)
+{
+    const supabase = createSupabaseAdmin();
+    const { error } = await supabase
+        .from('event_signups')
+        .update({ driving: true })
+        .eq('user_id', user_id)
+        .eq('event_id', event_id);
+    if (error) 
+    {
+        console.log(error);
+        return false;
+    }
+    console.log(error)
+    return true;
+}
+
+export async function removeDriver(user_id, event_id)
+{
+    const supabase = createSupabaseAdmin();
+    const { error } = await supabase
+        .from('event_signups')
+        .update({ driving: false })
+        .eq('user_id', user_id)
+        .eq('event_id', event_id)
+    if (error) return false;
+    return true;
+}

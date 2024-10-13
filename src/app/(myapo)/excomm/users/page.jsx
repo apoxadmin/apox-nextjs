@@ -93,6 +93,7 @@ export default function UserTable() {
     const [users, setUsers] = useState([]);
     const [creditRequirements, setCreditRequirements] = useState([]);
     const [eventRequirements, setEventRequirements] = useState([]);
+    const [eventTypes, setEventTypes] = useState([]);
 
     useEffect(() => {
         async function getUsers() {
@@ -135,9 +136,20 @@ export default function UserTable() {
                 setEventRequirements(data);
             }
         }
+        async function getEventTypes() {
+            const response = await supabase
+            .from('event_types')
+            .select();
+            if (response.data) {
+                let data = response.data;
+                data.sort(sortById);
+                setEventTypes(data);
+            }
+        }
         getUsers();
         getCreditRequirements();
         getEventRequirements();
+        getEventTypes();
     }, []);
 
     return (
@@ -146,23 +158,23 @@ export default function UserTable() {
             <div className={`grid ${grid_cols_width[creditRequirements.length + eventRequirements.length + 3]} w-full text-center`}>
                 <h1 className="text-start">Name</h1>
                 <h1>Email</h1>
-                <div className={`overflow-x-scroll grid grid-cols-subgrid ${col_span_width[creditRequirements.length + eventRequirements.length + 1]}`}>
+                {/* <div className={`overflow-x-scroll grid grid-cols-subgrid ${col_span_width[creditRequirements.length + eventRequirements.length + 1]}`}> */}
                     <h1 className="text-end">Standing</h1>
                     {
                         creditRequirements.map((req, i) => {
                             return (
-                                <h1 key={i} className="text-end">{uppercase(req.name)}</h1>
+                                <h1 key={i} className="text-end">{req.name}</h1>
                             )
                         })
                     }
                     {
                         eventRequirements.map((req, i) => {
                             return (
-                                <h1 key={i} className="text-end">{uppercase(req.name)}</h1>
+                                <h1 key={i} className="text-end">{req.name}</h1>
                             )
                         })
                     }
-                </div>
+                {/* </div> */}
             </div>
             <div className="overflow-y-scroll w-full">
                 <div className={`min-w-0 max-w-none gap-y-2 gap-x-4 grid ${grid_cols_width[creditRequirements.length + eventRequirements.length + 3]}`}>

@@ -2,15 +2,9 @@
 
 import { AuthContext } from "@/supabase/client";
 import { useContext, useEffect, useState, forwardRef } from "react";
-import { uppercase, sortById } from '@/utils/utils';
+import { uppercase, sortById, lerp } from '@/utils/utils';
 import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
-
-function lerp(start, end, t) {
-    if (t > 1) t = 1;
-    if (t < 0) t = 0;
-    return start + (end - start) * t;
-}
 
 const Grid = ({ rows, cols, user, creditRequirements, eventRequirements, circleSize, padding }) => {
     const gridStyle = {
@@ -29,6 +23,8 @@ const Grid = ({ rows, cols, user, creditRequirements, eventRequirements, circleS
                 if(user != null && req.name in user) value = user[ req.name ]
                 const maxValue = req.value
                 let t = value / maxValue
+                const isPledge = user?.standing == 5;
+                if (isPledge && req.actives_only) return null;
                 return (
                     <div style={{ width: circleSize, height: circleSize }} key={i}>
                         <CircularProgressbarWithChildren value={value} minValue={0} maxValue={maxValue} 
@@ -47,6 +43,8 @@ const Grid = ({ rows, cols, user, creditRequirements, eventRequirements, circleS
                 if(user != null && req.name in user) value = user[ req.name ]
                 const maxValue = req.value
                 let t = value / maxValue
+                const isPledge = user?.standing == 5;
+                if (isPledge && req.actives_only) return null;
                 return (
                     <div style={{ width: circleSize, height: circleSize }} key={i + eventRequirements.length}>
                         <CircularProgressbarWithChildren value={value} minValue={0} maxValue={maxValue} 
@@ -71,27 +69,6 @@ export default function ProfilePage() {
     const [eventRequirements, setEventRequirements ] = useState([]);
     
     useEffect(() => {
-        async function getUser() {
-            const authUser = await supabase.auth.getUser();
-            const user_id = authUser.data.user.id;
-            const userResponse = await supabase
-                .from('users')
-                .select('*, standings!inner(*), class(*), credit_users_requirements(*), event_users_requirements(*)')
-                .eq('auth_id', user_id)
-                .maybeSingle();
-            if (userResponse.data) {
-                let user = userResponse.data;
-                console.log(creditRequirements.length)
-                for (let credit of user.credit_users_requirements) {
-                    user[credit.name] = credit.value;
-                }
-                for (let event_req of user.event_users_requirements) {
-                    user[event_req.name] = event_req.value;
-                }
-                delete user.credit_users_requirements;                
-                setUserData(user);
-            }
-        }
         async function getCreditRequirements() {
             const response = await supabase
                 .from('credit_requirements')
@@ -112,9 +89,29 @@ export default function ProfilePage() {
                 setEventRequirements(data);
             }
         }
+        async function getUser() {
+            const authUser = await supabase.auth.getUser();
+            const user_id = authUser.data.user.id;
+            const userResponse = await supabase
+                .from('users')
+                .select('*, standings!inner(*), class(*), credit_users_requirements(*), event_users_requirements(*)')
+                .eq('auth_id', user_id)
+                .maybeSingle();
+            if (userResponse.data) {
+                let user = userResponse.data;
+                for (let credit of user.credit_users_requirements) {
+                    user[credit.name] = credit.value;
+                }
+                for (let event_req of user.event_users_requirements) {
+                    user[event_req.name] = event_req.value;
+                }
+                delete user.credit_users_requirements;                
+                setUserData(user);
+            }
+        }
+        getUser();
         getCreditRequirements();
         getEventRequirements();
-        getUser();
     }, []);
 
     return (

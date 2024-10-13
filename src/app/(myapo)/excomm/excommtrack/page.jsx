@@ -4,6 +4,7 @@ import { AuthContext } from "@/supabase/client";
 import { sortByField } from "@/utils/utils";
 import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
+import { updateChair } from "@/supabase/event";
 
 /**
  *  Button component for Attendees
@@ -37,13 +38,9 @@ function AttendeeCheck({ event, user, submitted, attendee = false }) {
                     if (!checkReq.error && checkReq.data) {
                         value = checkReq.data.value + 1;
                     }
-                    // console.log(user.name);
                     const { error } = await supabase
                         .from('event_users_requirements')
                         .upsert({ user_id: user.id, value: value, name: event_req_name }, { onConflict: 'user_id, name' });
-                    if (error) {
-                        console.log('Error during insert/upsert:', error);
-                    }
                 }
                 if (!error && credit_req_name) {
                     const checkReq = await supabase
@@ -125,22 +122,6 @@ function TrackingEvent({ event, users }) {
             window.removeEventListener("keydown", closeEscape);
         }
     }, []);
-    async function updateChair(user_id, event_id) {
-        const credit_req_name = 'chairing';
-        const checkReq = await supabase
-            .from('credit_users_requirements')
-            .select('value')
-            .eq('user_id', user_id)
-            .eq('name', credit_req_name)
-            .maybeSingle();
-        let value = 1;
-        if (!checkReq.error && checkReq.data) {
-            value += checkReq.data.value;
-        }
-        const { error } = await supabase
-            .from('credit_users_requirements')
-            .upsert({ user_id: user_id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
-    }
     async function updateEvent() {
         const { error } = await supabase
             .from('events')

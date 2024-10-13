@@ -4,6 +4,7 @@ import { AuthContext } from "@/supabase/client";
 import { sortByField } from "@/utils/utils";
 import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
+import { updateChair } from "@/supabase/event";
 
 /**
  *  Button component for Attendees
@@ -121,22 +122,6 @@ function TrackingEvent({ event, users }) {
             window.removeEventListener("keydown", closeEscape);
         }
     }, []);
-    async function updateChair(user_id, event_id) {
-        const credit_req_name = 'chairing';
-        const checkReq = await supabase
-            .from('credit_users_requirements')
-            .select('value')
-            .eq('user_id', user_id)
-            .eq('name', credit_req_name)
-            .maybeSingle();
-        let value = 1;
-        if (!checkReq.error && checkReq.data) {
-            value += checkReq.data.value;
-        }
-        const { error } = await supabase
-            .from('credit_users_requirements')
-            .upsert({ user_id: user_id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
-    }
     async function updateEvent() {
         const { error } = await supabase
             .from('events')
@@ -153,6 +138,7 @@ function TrackingEvent({ event, users }) {
             }
             updateEvent();
             ref.current.close();
+            window.location.reload(); // to remove the event
         } else {
             setToastMessage('Invalid drive folder link!');
             setToast(true);
@@ -279,18 +265,35 @@ export default function TrackingPage() {
     }, []);
     useEffect(() => {
         async function getEvents() {
+            let events = []
             const eventsResponse = await supabase
-                .from('event_chairs')
-                .select('*, events(tracked, *, event_types(*), event_chairs(*) )')
+                .from('event_signups')
+                .select('*, events(tracked, *, event_types(*), event_chairs(*))')
                 .eq('user_id', user.id)
                 .eq('events.tracked', false)
                 .lte('events.date', endOfToday().toISOString());
-            if (eventsResponse.data) {
-                let eventsData = eventsResponse.data.map((chair) => chair.events);
+            const chairedEventsResponse = await supabase
+                .from('event_chairs')
+                .select('*, events(tracked, *, event_types(*), event_chairs(*))')
+                .eq('user_id', user.id)
+                .eq('events.tracked', false)
+                .lte('events.date', endOfToday().toISOString());
+            if (eventsResponse.data)
+            {
+                let eventsData = eventsResponse.data.map((signup) => signup.events);
+                eventsData = eventsData.filter((event) => event !== null && event.event_chairs.length == 0);
+                events = events.concat(eventsData)
+            }
+            if (chairedEventsResponse.data) {
+                let eventsData = chairedEventsResponse.data.map((chair) => chair.events);
                 eventsData = eventsData.filter((event) => event !== null);
+                events = events.concat(eventsData)
+            }
+            if (events.length != 0)
+            {
                 const sortByStart = (a, b) => { return sortByField(a, b, 'date') };
-                eventsData.sort(sortByStart);
-                setEvents(eventsData);
+                events.sort(sortByStart);
+                setEvents(events);
             }
         }
         if (user)

@@ -19,3 +19,9 @@ export function sortByField(a, b, field) {
     }
     return 0;
 }
+
+export function lerp(start, end, t) {
+    if (t > 1) t = 1;
+    if (t < 0) t = 0;
+    return start + (end - start) * t;
+}

@@ -1,5 +1,5 @@
 import { AuthContext } from "@/supabase/client";
-import { chairEvent, joinEvent, leaveEvent, unchairEvent } from "@/supabase/event";
+import { chairEvent, joinEvent, leaveEvent, unchairEvent, setDriver, removeDriver } from "@/supabase/event";
 import { eachDayOfInterval, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfWeek } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
 
@@ -8,7 +8,6 @@ function EventModal({ supabase, event, setEvent, userData }) {
     const [dateString, setDateString] = useState('');
     const [attendees, setAttendees] = useState([]);
     const [chairs, setChairs] = useState([]);
-
 
     async function getAttendees() {
         const attendeesResponse = await supabase?.from('event_signups').select('users (*) ').eq('event_id', event?.id);
@@ -103,6 +102,14 @@ function EventModal({ supabase, event, setEvent, userData }) {
                                                 {user.email}
                                             </span>
                                         </h1>
+                                        {
+                                            user.phone_number != null &&
+                                            <h1 className="text-xs">
+                                                <span className="swiper-no-swiping">
+                                                    {user.phone_number}
+                                                </span>
+                                            </h1>
+                                        }
                                     </div>
                                 })
                             }
@@ -147,6 +154,7 @@ function EventModal({ supabase, event, setEvent, userData }) {
                             </button>
                         )
                     }
+                    
                 </div>
             </div>
             <form method="dialog" className="modal-backdrop">
@@ -162,21 +170,20 @@ function EventDay({ day, event, userData, setEvent }) {
     const eventTypeId = event?.event_types.id;
     let style = '';
     if (includesUser) {
-        style = 'hover:bg-green-500 hover:text-white bg-green-200';
+        style = 'hover:bg-blue-500 hover:text-white bg-blue-300';
         if (isChairing) {
             style += ' border border-purple-200 border-2'
         }
-    } else if (isToday(day)) {
-        style = 'hover:bg-blue-400 hover:text-white';
+        else style += ' border border-slate-700 border-2'
     } else {
         if(eventTypeId == 1)
-            style = `hover:bg-lime-400 hover:text-white bg-lime-200`;
+            style = `hover:bg-lime-300 hover:text-white bg-lime-200`;
         if(eventTypeId == 2)
-            style = `hover:bg-teal-400 hover:text-white bg-teal-100`;
+            style = `hover:bg-teal-200 hover:text-white bg-teal-100`;
         if(eventTypeId == 3)
-            style = `hover:bg-fuschia-600 hover:text-white bg-fuschia-300`;
+            style = `hover:bg-fuschia-500 hover:text-white bg-fuschia-300`;
         if(eventTypeId == 4)
-            style = `hover:bg-emerald-500 hover:text-white bg-emerald-200`;
+            style = `hover:bg-indigo-300 hover:text-white bg-indigo-200`;
         if(eventTypeId == 5)
             style = `hover:bg-orange-400 hover:text-white bg-orange-200`;
         if(eventTypeId == 6)
@@ -188,7 +195,7 @@ function EventDay({ day, event, userData, setEvent }) {
         if(eventTypeId == 9)
             style = `hover:bg-lime-500 hover:text-white bg-lime-200`;
         if(eventTypeId == 10)
-            style = `hover:bg-red-600 hover:text-white bg-red-300`;
+            style = `hover:bg-red-500 hover:text-white bg-red-300`;
         if(eventTypeId == 11)
             style = `hover:bg-stone-600 hover:text-white bg-stone-300`;
         if(eventTypeId == 12)
