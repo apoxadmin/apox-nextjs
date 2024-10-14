@@ -7,6 +7,7 @@ function EventModal({ supabase, event, setEvent, userData }) {
     const ref = useRef(null);
     const [dateString, setDateString] = useState('');
     const [attendees, setAttendees] = useState([]);
+    const [drivers, setDrivers] = useState([]);
     const [chairs, setChairs] = useState([]);
 
     async function getAttendees() {
@@ -23,15 +24,25 @@ function EventModal({ supabase, event, setEvent, userData }) {
         }
     }
 
+    async function getDrivers() {
+        const driversResponse = await supabase?.from('event_signups').select('users (*)').eq('driving', true).eq('event_id', event?.id);
+        if (driversResponse?.data)
+        {
+            setDrivers(driversResponse.data.map((user) => user.users));
+        }
+    }
+
     useEffect(() => {
         if (event) {
             ref.current.showModal();
             setDateString(`${format(event.start_time, 'p')} - ${format(event.end_time, 'p')}`);
             getAttendees();
             getChairs();
+            getDrivers();
         } else {
             setAttendees([]);
             setChairs([]);
+            setDrivers([])
             setDateString('');
         }
     }, [event, ref]);
@@ -92,10 +103,12 @@ function EventModal({ supabase, event, setEvent, userData }) {
                         <div className="grid grid-cols-2">
                             {
                                 attendees?.map((user, i) => {
-                                    let bg = chairs?.some(chair => chair.id == user.id) ? 'bg-green-600 text-white' : '';
+                                    const isDriver = drivers?.some(driver => driver.id == user.id);
+                                    let bg = isDriver ? 'bg-purple-600 text-white' : '';
+                                    bg = chairs?.some(chair => chair.id == user.id) ? 'bg-green-600 text-white' : bg;
                                     return <div key={i} className={`${bg} flex flex-col border border-black p-2 overflow-x-hidden`}>
                                         <h1 className="swiper-no-swiping">
-                                            {user.name}
+                                            {user.name + (isDriver ? ' (driver)' : '')}
                                         </h1>
                                         <h1 className="text-xs">
                                             <span className="swiper-no-swiping">
@@ -154,7 +167,23 @@ function EventModal({ supabase, event, setEvent, userData }) {
                             </button>
                         )
                     }
-                    
+                    {
+                        attendees?.some(user => user.id === userData?.id) && (drivers?.some(driver => driver.id === userData?.id) ?
+                            <button
+                                className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded-full min-w-[100px]"
+                                onClick={() => { if (removeDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
+                            >
+                                Remove Driver
+                            </button>
+                            :
+                            <button
+                                className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-full min-w-[100px]"
+                                onClick={() => { if (setDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
+                            >
+                                Set Driver
+                            </button>
+                        )
+                    }
                 </div>
             </div>
             <form method="dialog" className="modal-backdrop">
@@ -181,7 +210,7 @@ function EventDay({ day, event, userData, setEvent }) {
         if(eventTypeId == 2)
             style = `hover:bg-teal-200 hover:text-white bg-teal-100`;
         if(eventTypeId == 3)
-            style = `hover:bg-fuschia-500 hover:text-white bg-fuschia-300`;
+            style = `hover:bg-fuchsia-500 hover:text-white bg-fuchsia-300`;
         if(eventTypeId == 4)
             style = `hover:bg-indigo-300 hover:text-white bg-indigo-200`;
         if(eventTypeId == 5)
