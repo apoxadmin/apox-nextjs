@@ -168,6 +168,23 @@ function EventModal({ supabase, event, setEvent, userData }) {
                             </button>
                         )
                     }
+                    {
+                        attendees?.some(user => user.id === userData?.id) && (drivers?.some(user => user.id == userData?.id) ?
+                            <button
+                                className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded-full min-w-[100px]"
+                                onClick={() => { if (removeDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
+                            >
+                                Remove Driver
+                            </button>
+                            :
+                            <button
+                                className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-full min-w-[100px]"
+                                onClick={() => { if (setDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
+                            >
+                                Set Driver
+                            </button>
+                        )
+                    }
                 </div>
             </div>
             <form method="dialog" className="modal-backdrop">
