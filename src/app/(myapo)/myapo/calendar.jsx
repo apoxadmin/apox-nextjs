@@ -1,6 +1,6 @@
 import { AuthContext } from "@/supabase/client";
 import { chairEvent, joinEvent, leaveEvent, unchairEvent, setDriver, removeDriver } from "@/supabase/event";
-import { eachDayOfInterval, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfWeek } from "date-fns";
+import { eachDayOfInterval, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfToday, startOfWeek } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
 
 function EventModal({ supabase, event, setEvent, userData }) {
@@ -118,9 +118,10 @@ function EventModal({ supabase, event, setEvent, userData }) {
                 </div>
                 <div className="flex justify-center space-x-4">
                     {
-                        (isAfter(event?.date, endOfToday()) || userData?.privileged.length > 0) &&
+                        (isAfter(event?.date, startOfToday()) || userData?.privileged.length > 0) &&
                         (
                             attendees?.some(user => user.id === userData?.id) ?
+                                (isAfter(event?.date, endOfToday()) || userData?.privileged.length > 0) &&
                                 <button
                                     className="text-white bg-red-500 hover:bg-red-700 py-2 px-4 rounded-full min-w-[100px]"
                                     onClick={() => { if (leaveEvent(userData?.id, event)) { unchairEvent(userData?.id, event); setTimeout(getAttendees, 500); setTimeout(getChairs, 500) } }}
@@ -154,7 +155,7 @@ function EventModal({ supabase, event, setEvent, userData }) {
                             </button>
                         )
                     }
-                    
+
                 </div>
             </div>
             <form method="dialog" className="modal-backdrop">
@@ -176,29 +177,29 @@ function EventDay({ day, event, userData, setEvent }) {
         }
         else style += ' border border-slate-700 border-2'
     } else {
-        if(eventTypeId == 1)
+        if (eventTypeId == 1)
             style = `hover:bg-lime-300 hover:text-white bg-lime-200`;
-        if(eventTypeId == 2)
+        if (eventTypeId == 2)
             style = `hover:bg-teal-200 hover:text-white bg-teal-100`;
-        if(eventTypeId == 3)
+        if (eventTypeId == 3)
             style = `hover:bg-fuschia-500 hover:text-white bg-fuschia-300`;
-        if(eventTypeId == 4)
+        if (eventTypeId == 4)
             style = `hover:bg-indigo-300 hover:text-white bg-indigo-200`;
-        if(eventTypeId == 5)
+        if (eventTypeId == 5)
             style = `hover:bg-orange-400 hover:text-white bg-orange-200`;
-        if(eventTypeId == 6)
+        if (eventTypeId == 6)
             style = `hover:bg-purple-500 hover:text-white bg-purple-300`;
-        if(eventTypeId == 7)
+        if (eventTypeId == 7)
             style = `hover:bg-yellow-600 hover:text-white bg-yellow-300`;
-        if(eventTypeId == 8)
+        if (eventTypeId == 8)
             style = `hover:bg-pink-600 hover:text-white bg-pink-300`;
-        if(eventTypeId == 9)
+        if (eventTypeId == 9)
             style = `hover:bg-lime-500 hover:text-white bg-lime-200`;
-        if(eventTypeId == 10)
+        if (eventTypeId == 10)
             style = `hover:bg-red-500 hover:text-white bg-red-300`;
-        if(eventTypeId == 11)
+        if (eventTypeId == 11)
             style = `hover:bg-stone-600 hover:text-white bg-stone-300`;
-        if(eventTypeId == 12)
+        if (eventTypeId == 12)
             style = `hover:bg-indigo-800 hover:text-white bg-indigo-300`;
     }
     return <button
