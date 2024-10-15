@@ -26,8 +26,7 @@ function EventModal({ supabase, event, setEvent, userData }) {
 
     async function getDrivers() {
         const driversResponse = await supabase?.from('event_signups').select('users (*)').eq('driving', true).eq('event_id', event?.id);
-        if (driversResponse?.data)
-        {
+        if (driversResponse?.data) {
             setDrivers(driversResponse.data.map((user) => user.users));
         }
     }
@@ -210,9 +209,9 @@ function EventDay({ day, event, userData, setEvent }) {
             style = `hover:bg-lime-300 hover:text-white bg-lime-200`;
         if (eventTypeId == 2)
             style = `hover:bg-teal-200 hover:text-white bg-teal-100`;
-        if(eventTypeId == 3)
+        if (eventTypeId == 3)
             style = `hover:bg-fuchsia-500 hover:text-white bg-fuchsia-300`;
-        if(eventTypeId == 4)
+        if (eventTypeId == 4)
             style = `hover:bg-indigo-300 hover:text-white bg-indigo-200`;
         if (eventTypeId == 5)
             style = `hover:bg-orange-400 hover:text-white bg-orange-200`;
@@ -233,16 +232,16 @@ function EventDay({ day, event, userData, setEvent }) {
     }
     return <button
         onClick={() => setEvent(event)}
-        className={`text-xs text-stone-800 ${style} py-1 px-2 hover:shadow-lg transition ease-in delay-50 duration-100 w-full`}
+        className={`text-stone-800 ${style} py-1 px-[2px] rounded-sm md:rounded-none md:px-2 hover:shadow-lg transition ease-in delay-50 duration-100 w-full`}
     >
-        <div className="flex space-x-2 text-xs overflow-x-hidden">
-            <h1>
-                {event?.event_types?.abbreviation.toUpperCase()}
-            </h1>
-            <h1 className="text-nowrap">
-                {format(event?.start_time, 'p')}
-            </h1>
+        <div className="flex space-x-2 text-[8px] md:text-xs overflow-x-hidden">
             <h1 className="text-nowrap overflow-x-hidden">
+                {event?.event_types?.abbreviation.toUpperCase()}
+                {' '}
+                <span className="hidden md:block">
+                    {format(event?.start_time, 'p')}
+                    {' '}
+                </span>
                 {event?.name}
             </h1>
         </div>
@@ -285,7 +284,7 @@ function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, s
                     day && getDate(day)
                 }
             </h1>
-            <div className="flex flex-col items-center space-y-[1px] px-2 overflow-y-scroll">
+            <div className="flex flex-col items-center space-y-[4px] md:space-y-[1px] pr-[2px] md:px-2 overflow-y-scroll">
                 {
                     events?.map((event, i) =>
                         <EventDay key={i} userData={userData} event={event} setEvent={setEvent} day={day} />
