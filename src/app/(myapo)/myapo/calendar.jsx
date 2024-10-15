@@ -238,7 +238,7 @@ function EventDay({ day, event, userData, setEvent }) {
             <h1 className="text-nowrap overflow-x-hidden">
                 {event?.event_types?.abbreviation.toUpperCase()}
                 {' '}
-                <span className="hidden md:block">
+                <span className="hidden md:inline">
                     {format(event?.start_time, 'p')}
                     {' '}
                 </span>
