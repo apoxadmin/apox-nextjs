@@ -7,6 +7,8 @@ import EventCalendar from "./calendar";
 import { addMonths, startOfToday, subMonths } from "date-fns";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css";
+import 'swiper/css/navigation';
+import { Navigation } from 'swiper/modules';
 
 function send() {
     sendEmail({
@@ -47,8 +49,13 @@ export default function MyAPOPage() {
                 className="w-0 flex bg-white rounded shadow-md flex-1"
                 runCallbacksOnInit={false}
                 initialSlide={1}
-                speed={150}
+                speed={500}
                 draggable = {false}
+                modules={[ Navigation ]}
+                navigation={{
+                    nextEl: '.custom-next',
+                    prevEl: '.custom-prev',
+                }}
                 onSlideChange={(swiper) => {
                     if (swiper.activeIndex < swiper.previousIndex) {
                         const newFocus = subMonths(focusDay, 1);

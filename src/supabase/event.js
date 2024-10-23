@@ -92,9 +92,6 @@ export async function approveEvent(event_id) {
 }
 
 export async function unapproveEvent(event_id) {
-    if (!isPrivileged())
-        return false;
-
     const updateEvent = await supabaseAdmin
         .from('events')
         .update({ reviewed: false })

@@ -1,5 +1,5 @@
 import { AuthContext } from "@/supabase/client";
-import { chairEvent, joinEvent, leaveEvent, unchairEvent, setDriver, removeDriver } from "@/supabase/event";
+import { chairEvent, joinEvent, leaveEvent, unchairEvent, setDriver, removeDriver, unapproveEvent } from "@/supabase/event";
 import { eachDayOfInterval, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfToday, startOfWeek } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
 
@@ -9,6 +9,7 @@ function EventModal({ supabase, event, setEvent, userData }) {
     const [attendees, setAttendees] = useState([]);
     const [drivers, setDrivers] = useState([]);
     const [chairs, setChairs] = useState([]);
+    const [isCreator, setCreator] = useState(false);
 
     async function getAttendees() {
         const attendeesResponse = await supabase?.from('event_signups').select('users (*) ').eq('event_id', event?.id);
@@ -31,6 +32,13 @@ function EventModal({ supabase, event, setEvent, userData }) {
         }
     }
 
+    async function getCreator() {
+        const creatorResponse = await supabase?.from('events').select('*').eq('id', event?.id).maybeSingle();
+        if (creatorResponse?.data) {
+            setCreator(creatorResponse.data.creator == userData?.id);
+        }
+    }
+
     useEffect(() => {
         if (event) {
             ref.current.showModal();
@@ -38,11 +46,13 @@ function EventModal({ supabase, event, setEvent, userData }) {
             getAttendees();
             getChairs();
             getDrivers();
+            getCreator();
         } else {
             setAttendees([]);
             setChairs([]);
             setDrivers([])
             setDateString('');
+            setCreator(false);
         }
     }, [event, ref]);
 
@@ -62,10 +72,42 @@ function EventModal({ supabase, event, setEvent, userData }) {
 
     });
 
+    function convertToLink(inputString) {
+        // Regular expression to match text wrapped in < and >
+        const regex = /(https?:\/\/[^\s]+)/g;
+    
+        // Split the string by the regex and create an array
+        const parts = inputString?.split(regex);
+    
+        // Map the parts to JSX elements
+        return parts?.map((part, index) => {
+            // If the part is a URL, return an anchor element
+            if (index % 2 === 1) { // URL parts are in odd indices
+                return (
+                    <a key={index} href={part} className="text-emerald-500" target="_blank" rel="noopener noreferrer">
+                        link
+                    </a>
+                );
+            }
+            // Otherwise, return the plain text part
+            return part;
+        });
+    }
 
     return (
         <dialog ref={ref} className="modal">
             <div className="modal-box flex flex-col space-y-4 max-h-[90vh] overflow-y-hidden">
+                {
+                isCreator && 
+                <div className="flex justify-end">
+                    <button onClick={() => 
+                        {
+                            unapproveEvent(event?.id);
+                            window.location.reload();
+                        }
+                    } className="text-red-500">Delete event</button>
+                </div>
+                }
                 <div className="flex justify-between">
                     <h1 className="text-neutral-600">
                         {event?.event_types.name.split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}
@@ -89,7 +131,16 @@ function EventModal({ supabase, event, setEvent, userData }) {
                     </div>
                     <h1 className="text-center">
                         <span className="swiper-no-swiping">
-                            {event?.description}
+                        {
+                            (() => {
+                                const formatted = convertToLink(event?.description);
+                                return (
+                                    <span className="swiper-no-swiping">
+                                        {formatted}
+                                    </span>
+                                );
+                            })()
+                        }
                         </span>
                     </h1>
                 </div>
@@ -232,7 +283,7 @@ function EventDay({ day, event, userData, setEvent }) {
     }
     return <button
         onClick={() => setEvent(event)}
-        className={`text-stone-800 ${style} py-1 px-[2px] rounded-sm md:rounded-none md:px-2 hover:shadow-lg transition ease-in delay-50 duration-100 w-full`}
+        className={`text-stone-800 ${style} py-1 px-[2px] rounded-sm md:rounded-lg md:px-2 hover:shadow-lg transition ease-in delay-50 duration-100 w-full`}
     >
         <div className="flex space-x-2 text-[8px] md:text-xs overflow-x-hidden">
             <h1 className="text-nowrap overflow-x-hidden">
@@ -342,7 +393,11 @@ export default function EventCalendar({ focusDay, userData }) {
     return (
         <div className="flex flex-col h-full w-full">
             <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} userData={userData} />
-            <h1 className="text-center text-neutral-500 text-xl py-2">{format(focusDay, 'LLLL y').toUpperCase()}</h1>
+            <div className="flex items-center justify-center">
+                <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-prev hover:bg-stone-500 hover:text-white rounded-full">{ '<' }</button>
+                <h1 className="text-center text-neutral-500 text-xl py-2">{format(focusDay, 'LLLL y').toUpperCase()}</h1>
+                <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-next hover:bg-stone-500 hover:text-white rounded-full">{ '>' }</button>
+            </div>
             <div className="grid grid-cols-7">
                 {
                     DAYS.map(day => {

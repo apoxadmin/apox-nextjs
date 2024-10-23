@@ -42,6 +42,7 @@ export default function Sidebar({ visible = true }) {
             <div className="flex flex-col text-neutral-500">
                 <SidebarButton name="Calendar" url="/myapo" />
                 <SidebarButton name="Request Event" url="/request" />
+                {/* <SidebarButton name="Crossword" url="/crossword" /> */}
                 <SidebarButton name="Tracking" url="/tracking" />
                 {
                     privileged &&
