@@ -40,7 +40,7 @@ export default function MyAPOPage() {
         getUserData();
     }, []);
     useEffect(() => {
-        setFocusDays([subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1)]);
+        setFocusDays([ subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1) ]);
     }, [focusDay]);
 
     return (
@@ -54,18 +54,7 @@ export default function MyAPOPage() {
                 modules={[ Navigation ]}
                 navigation={{
                     nextEl: '.custom-next',
-                    prevEl: '.custom-prev',
-                }}
-                onSlideChange={(swiper) => {
-                    if (swiper.activeIndex < swiper.previousIndex) {
-                        const newFocus = subMonths(focusDay, 1);
-                        setFocusDay(newFocus);
-                        swiper.activeIndex = 1;
-                    } else if (swiper.activeIndex > swiper.previousIndex) {
-                        const newFocus = addMonths(focusDay, 1);
-                        setFocusDay(newFocus);
-                        swiper.activeIndex = 1;
-                    }
+                    prevEl: '.custom-prev',                    
                 }}
             >
                 {
