@@ -1,0 +1,111 @@
+'use server'
+
+import { createSupabaseAdmin, supabaseAdmin } from "@/supabase/admin";
+import { isPrivileged } from "@/supabase/user";
+
+export async function validateRequirements(events_list, user_id) {
+    const supabase = createSupabaseAdmin();
+
+    // validate events
+    const { data: event_reqs, error: error_event_reqs } = await supabase
+        .from('event_requirements')
+        .select('name');
+    const { data: credit_reqs, error: error_credit_reqs } = await supabase
+        .from('credit_requirements')
+        .select('name');
+    const event_req_values = event_reqs.reduce((acc, req) => {
+        acc[req.name] = req.name in events_list ? events_list[req.name].length : 0;
+        return acc;
+    }, {});
+    const credit_req_values = credit_reqs.reduce((acc, req) => {
+        acc[req.name] = req.name in events_list ? events_list[req.name].length : 0;
+        return acc;
+    }, {});
+    
+    const eventUpsertPromises = Object.entries(event_req_values).map(async ([event_req_name, value]) => {
+        const { error } = await supabase
+            .from('event_users_requirements')
+            .upsert(
+                { user_id: user_id, value, name: event_req_name },
+                { onConflict: ['user_id', 'name'] }  // onConflict can also take an array
+            );
+    
+        if (error) {
+            console.error(`Error upserting for ${event_req_name}:`, error);
+        }
+    });
+    const creditUpsertPromises = Object.entries(credit_req_values).map(async ([credit_req_name, value]) => {
+        const { error } = await supabase
+            .from('credit_users_requirements')
+            .upsert(
+                { user_id: user_id, value, name: credit_req_name },
+                { onConflict: ['user_id', 'name'] }  // onConflict can also take an array
+            );
+    
+        if (error) {
+            console.error(`Error upserting for ${credit_req_name}:`, error);
+        }
+    });
+    
+    // Wait for all upsert operations to complete
+    await Promise.all(eventUpsertPromises);
+    await Promise.all(creditUpsertPromises);
+}
+
+export async function getUserEvents(user_id) {
+    if (!user_id) return [];
+    const supabase = createSupabaseAdmin();
+
+    // First, get all the event IDs where the user has signed up
+    const { data: signups, error: signupError } = await supabase
+        .from('event_signups')
+        .select('event_id')
+        .eq('user_id', user_id)
+        .eq('attended', true);
+
+    if (signupError) {
+        console.error('Error fetching event signups:', signupError);
+        return [];
+    }
+
+    // Extract event IDs from the signup data
+    const eventIds = signups.map((signup) => signup.event_id);
+
+    // Now, get all tracked events that match the event IDs
+    const { data, error } = await supabase
+        .from('events')
+        .select('tracked, *, event_types(*), event_chairs(*)')
+        .eq('tracked', true)
+        .in('id', eventIds); // Use .in() to filter by event IDs
+
+    if (error) {
+        console.error('Error fetching tracked events:', error);
+        return [];
+    }
+
+    const grouped = {};
+  
+    data.forEach((event) => {
+        const event_type = event.event_types.requirement;
+
+        // Initialize an empty array at the event_type index if it doesn't exist
+        if (!grouped[event_type]) {
+            grouped[event_type] = [];
+        }
+        if (event.event_chairs.some(chair => chair.user_id === user_id))
+        {
+            if (!grouped['chairing']) {
+                grouped['chairing'] = [];
+            }
+            grouped['chairing'].push(event);
+        }
+
+        // Push the event into the appropriate event_type array
+        grouped[event_type].push(event);
+    });
+
+    await validateRequirements(grouped, user_id);
+
+    return grouped;
+}
+  

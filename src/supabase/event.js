@@ -3,7 +3,6 @@
 import { createSupabaseAdmin, supabaseAdmin } from "@/supabase/admin";
 import { isPrivileged } from "@/supabase/user";
 
-
 export async function requestEvent(user_id, data) {
     const supabase = supabaseAdmin;
     const eventTypeQuery = await supabase.from('event_types').select().eq('name', data.event_type.name).maybeSingle();
