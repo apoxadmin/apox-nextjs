@@ -11,6 +11,37 @@ import { updateChair } from "@/supabase/event";
  *  Click on the name to mark as "attended"
  *  Once `submitted` is True, upserts "attended" status
  */
+function CustomCheckbox({ checked }) {
+  
+    return (
+      <div className="flex items-center space-x-4">
+        {/* Custom styled checkbox container */}
+        <div
+          className={`w-4 h-4 border-2 rounded-md cursor-pointer transition-all
+            ${checked ? 'bg-green-400 border-green-600' : 'border-gray-600'}
+            flex items-center justify-center relative`}
+        >
+          {/* Checkmark inside the checkbox */}
+          {checked && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          )}
+        </div>
+      </div>
+    );
+  }
 function AttendeeCheck({ event, user, submitted, attendee = false }) {
     const [attended, setAttended] = useState(false);
     const supabase = useContext(AuthContext);
@@ -66,12 +97,14 @@ function AttendeeCheck({ event, user, submitted, attendee = false }) {
 
     return (
         <button
-            className={`${attended ? 'text-green-400' : 'hover:text-neutral-400'}`}
+            className={`${attended ? 'text-green-400' : 'hover:text-neutral-400'} flex items-center space-x-4`}
             onClick={updateAttended}
         >
-            {user.name}
+            <CustomCheckbox checked={attended}/>
+
+            <h1 className={`${attended ? 'text-green-400' : 'hover:text-neutral-400'} flex items-center space-x-4 select-none`}>{user.name}</h1>
         </button>
-    )
+    );
 }
 
 function TrackingEvent({ event, users }) {
@@ -181,13 +214,15 @@ function TrackingEvent({ event, users }) {
                     <div className="grid grid-cols-2">
                         <div className="flex flex-col items-center">
                             <h1 className="font-bold">Attendees:</h1>
-                            {
-                                attendees.map((user, i) => {
-                                    return (
-                                        <AttendeeCheck key={i} user={user} event={event} submitted={submitted} attendee={true} />
-                                    )
-                                })
-                            }
+                            <div className="overflow-x-auto max-h-[200px] flex flex-col">
+                                {
+                                    attendees.map((user, i) => {
+                                        return (
+                                            <AttendeeCheck key={i} user={user} event={event} submitted={submitted} attendee={true} />
+                                        )
+                                    })
+                                }
+                            </div>
                         </div>
                         <div className="flex flex-col items-center">
                             <h1 className="font-bold">Flake-ins?</h1>
