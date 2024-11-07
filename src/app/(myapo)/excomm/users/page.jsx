@@ -3,6 +3,7 @@
 import { AuthContext } from "@/supabase/client";
 import { sortById, uppercase } from "@/utils/utils";
 import { useContext, useEffect, useState } from "react";
+import { revalidateAllUsers } from "@/supabase/tracking";
 
 const grid_cols_width = [
     'grid-cols-0',
@@ -152,9 +153,18 @@ export default function UserTable() {
         getEventTypes();
     }, []);
 
+    async function regenerate()
+    {
+        await revalidateAllUsers();
+        window.location.reload()
+    }
+
     return (
         <div className="flex flex-col items-center space-y-4 overflow-y-auto overflow-x-scroll w-full">
             <h1 className="text-center text-xl text-neutral-600">User Table</h1>
+            <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white h-full" onClick={() =>{ regenerate() }}>
+                Regenerate Data (may take up to a few minutes)
+            </button>
             <div className={`grid ${grid_cols_width[creditRequirements.length + eventRequirements.length + 3]} w-full text-center`}>
                 <h1 className="text-start">Name</h1>
                 <h1>Email</h1>

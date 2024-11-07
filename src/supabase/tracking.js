@@ -18,7 +18,8 @@ export async function validateRequirements(events_list, user_id) {
         return acc;
     }, {});
     const credit_req_values = credit_reqs.reduce((acc, req) => {
-        acc[req.name] = req.name in events_list ? events_list[req.name].length : 0;
+        if (req.name == 'chairing') acc[req.name] = req.name in events_list ? events_list[req.name].length : 0;
+        else acc[ req.name ] = req.name in events_list ? events_list[ req.name ].reduce((sum, event) => sum + event.credit, 0) : 0;
         return acc;
     }, {});
     
@@ -87,10 +88,22 @@ export async function getUserEvents(user_id) {
   
     data.forEach((event) => {
         const event_type = event.event_types.requirement;
+        const credit_type = event.event_types.credit;
 
         // Initialize an empty array at the event_type index if it doesn't exist
-        if (!grouped[event_type]) {
-            grouped[event_type] = [];
+        if (event_type)
+        {
+            if (!grouped[event_type]) {
+                grouped[event_type] = [];
+            }
+            grouped[event_type].push(event);
+        }
+        if (credit_type)
+        {
+            if (!grouped[credit_type]) {
+                grouped[credit_type] = [];
+            }
+            grouped[credit_type].push(event);
         }
         if (event.event_chairs.some(chair => chair.user_id === user_id))
         {
@@ -99,13 +112,25 @@ export async function getUserEvents(user_id) {
             }
             grouped['chairing'].push(event);
         }
-
-        // Push the event into the appropriate event_type array
-        grouped[event_type].push(event);
     });
 
     await validateRequirements(grouped, user_id);
 
     return grouped;
 }
-  
+
+export async function revalidateAllUsers()
+{
+    const supabase = createSupabaseAdmin();
+    const userIds = await supabase
+        .from('users')
+        .select('id');
+    if (userIds.data)
+    {
+        const ids = userIds.data.map((d) => d.id);
+        for (let i = 0; i < ids.length; i++) {
+            const id = ids[i];
+            await getUserEvents(id)
+        }
+    }
+}
