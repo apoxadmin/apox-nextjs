@@ -2,8 +2,9 @@
 
 import { AuthContext } from "@/supabase/client";
 import { sortById, uppercase } from "@/utils/utils";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { revalidateAllUsers } from "@/supabase/tracking";
+import { ProfilePage } from "../../myprofile/page";
 
 const grid_cols_width = [
     'grid-cols-0',
@@ -46,8 +47,37 @@ const col_span_width = [
 ]
 
 function UserRow({ user, creditRequirements, eventRequirements }) {
+    const ref = useRef(null); 
+    const [modalOpen, setModalOpen] = useState(false);
+
+    useEffect(function mount() {
+        function closeEscape(event) {
+            if (event.key == "Escape") {
+                // Escape key pressed
+                ref.current.close();
+            }
+        };
+
+        window.addEventListener("keydown", closeEscape);
+        return function unmount() {
+            window.removeEventListener("keydown", closeEscape);
+        }
+    }, []);
+
+    function close() {
+        ref.current.close();
+        setModalOpen(false);
+    }
+    
+    function open()
+    {
+        ref.current.showModal();
+        setModalOpen(true);
+    }
+
     return (
-        <div className={`[&>*]:px-2 [&>*]:overflow-x-auto grid grid-cols-subgrid ${col_span_width[creditRequirements.length + eventRequirements.length + 3]} gap-x-1 divide-black text-center`}>
+        <button className={`[&>*]:px-2 [&>*]:overflow-x-auto grid grid-cols-subgrid ${col_span_width[ creditRequirements.length + eventRequirements.length + 3 ]} gap-x-1 divide-black text-center`}
+            onClick={() => { open() }}>
             <h1 className="text-start px-0 overflow-x-scroll text-nowrap">{user.name}</h1>
             <h1>{user.email}</h1>
             <h1 className="text-end">{uppercase(user.standings?.name || 'None')}</h1>
@@ -76,7 +106,17 @@ function UserRow({ user, creditRequirements, eventRequirements }) {
                     )
                 })
             }
-        </div>
+            <dialog ref={ref} className="modal">
+                <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+                    <div className="flex flex-col space-y-4 modal-box w-auto max-w-6xl p-8 overflow-hidden">
+                    {
+                        modalOpen &&
+                        <ProfilePage user_id={user?.auth_id}/>
+                    }
+                    </div>
+                </div>
+            </dialog>
+        </button>
     )
 }
 

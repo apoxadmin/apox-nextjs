@@ -48,7 +48,7 @@ const Grid = ({ rows, cols, user, reqData, creditRequirements, eventRequirements
                             {/* Display each tracked event under the progress bar */}
                             {trackedEvents[req.name]?.map((event, index) => (
                                 <div key={index} style={{ padding: '5px 0' }} className={"my-anchor-element" + req.name + index}>
-                                    <button className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full h-full">
+                                    <div className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full h-full">
                                         <div className="flex space-x-2">
                                             <h1>{event.name}</h1> {/* or event.name, depending on data structure */}
                                             <Tooltip anchorSelect={".my-anchor-element" + req.name + index} place="top" effect="float" className="z-50">
@@ -58,7 +58,7 @@ const Grid = ({ rows, cols, user, reqData, creditRequirements, eventRequirements
                                                 </div>
                                             </Tooltip>
                                         </div>
-                                    </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -84,7 +84,7 @@ const Grid = ({ rows, cols, user, reqData, creditRequirements, eventRequirements
                         </CircularProgressbarWithChildren>
                         {trackedEvents[req.name]?.map((event, index) => (
                             <div key={index} style={{ padding: '5px 0' }} className={"my-anchor-element" + req.name + index}>
-                                <button className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full h-full">
+                                <div className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full h-full">
                                     <div className="flex space-x-2">
                                         <h1>{event.name}</h1> {/* or event.name, depending on data structure */}
                                         <Tooltip anchorSelect={".my-anchor-element" + req.name + index} place="top" effect="float" className="z-50">
@@ -94,7 +94,7 @@ const Grid = ({ rows, cols, user, reqData, creditRequirements, eventRequirements
                                             </div>
                                         </Tooltip>
                                     </div>
-                                </button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -104,7 +104,7 @@ const Grid = ({ rows, cols, user, reqData, creditRequirements, eventRequirements
     );
   };
 
-export default function ProfilePage() {
+export function ProfilePage({ user_id }) {
     const supabase = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
     const [creditRequirements, setCreditRequirements] = useState([]);
@@ -134,8 +134,7 @@ export default function ProfilePage() {
             }
         }
         async function getUser() {
-            const authUser = await supabase.auth.getUser();
-            const user_id = authUser.data.user.id;
+            if (!user_id) return;
             const userResponse = await supabase
                 .from('users')
                 .select('*, standings!inner(*), class(*), credit_users_requirements(*), event_users_requirements(*)')
@@ -149,7 +148,7 @@ export default function ProfilePage() {
         getUser();
         getCreditRequirements();
         getEventRequirements();
-    }, []);
+    }, [user_id]);
     useEffect(() => {        
         async function getTrackedEvents()
         {
@@ -163,8 +162,7 @@ export default function ProfilePage() {
     useEffect(() => {
         async function getReqData()
         {
-            const authUser = await supabase.auth.getUser();
-            const user_id = authUser.data.user.id;
+            if (!user_id) return;
             const userResponse = await supabase
                 .from('users')
                 .select('*, standings!inner(*), class(*), credit_users_requirements(*), event_users_requirements(*)')
@@ -190,4 +188,22 @@ export default function ProfilePage() {
             <Grid rows={4} cols={4} user={userData} reqData={reqData} creditRequirements={creditRequirements} eventRequirements={eventRequirements} circleSize={200} padding={25} trackedEvents={trackedEvents}>meow</Grid>
         </div>
     )
+}
+
+export default function Page()
+{
+    const supabase = useContext(AuthContext);
+    const [ userID, setUserID ] = useState(null);
+    
+    useEffect(() => {
+        async function getUserID()
+        {            
+            const authUser = await supabase.auth.getUser();
+            const auth_id = authUser.data.user.id;
+            setUserID(auth_id)
+        }
+        getUserID();
+    }, [])
+
+    return <ProfilePage user_id={ userID } />
 }
