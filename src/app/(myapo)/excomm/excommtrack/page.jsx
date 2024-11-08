@@ -5,74 +5,7 @@ import { sortByField } from "@/utils/utils";
 import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 import { updateChair } from "@/supabase/event";
-
-/**
- *  Button component for Attendees
- *  Click on the name to mark as "attended"
- *  Once `submitted` is True, upserts "attended" status
- */
-function AttendeeCheck({ event, user, submitted, attendee = false }) {
-    const [attended, setAttended] = useState(false);
-    const supabase = useContext(AuthContext);
-    async function updateAttended() {
-        setAttended(!attended);
-    }
-    useEffect(() => {
-        setAttended(user.attended);
-    }, [user]);
-
-    useEffect(() => {
-        async function submitUser() {
-            if (attended) {
-                const { error } = await supabase.from('event_signups').upsert({ user_id: user.id, event_id: event.id, attended: attended, flake_in: !attendee }, { onConflict: 'user_id, event_id' }).select();
-                const event_req_name = event?.event_types?.requirement;
-                const credit_req_name = event?.event_types?.credit;
-                if (!error && event_req_name) {
-                    const checkReq = await supabase
-                        .from('event_users_requirements')
-                        .select('value')
-                        .eq('user_id', user.id)
-                        .eq('name', event_req_name)
-                        .maybeSingle();
-                    let value = 1;
-                    if (!checkReq.error && checkReq.data) {
-                        value = checkReq.data.value + 1;
-                    }
-                    const { error } = await supabase
-                        .from('event_users_requirements')
-                        .upsert({ user_id: user.id, value: value, name: event_req_name }, { onConflict: 'user_id, name' });
-                }
-                if (!error && credit_req_name) {
-                    const checkReq = await supabase
-                        .from('credit_users_requirements')
-                        .select('value')
-                        .eq('user_id', user.id)
-                        .eq('name', credit_req_name)
-                        .maybeSingle();
-                    let value = event?.credit;
-                    if (!checkReq.error && checkReq.data) {
-                        value += checkReq.data.value;
-                    }
-                    const { error } = await supabase
-                        .from('credit_users_requirements')
-                        .upsert({ user_id: user.id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
-                }
-            }
-        }
-        if (submitted) {
-            submitUser();
-        }
-    }, [submitted, attended]);
-
-    return (
-        <button
-            className={`${attended ? 'text-green-400' : 'hover:text-neutral-400'}`}
-            onClick={updateAttended}
-        >
-            {user.name}
-        </button>
-    )
-}
+import { AttendeeCheck } from "../../tracking/page";
 
 function TrackingEvent({ event, users }) {
     const [attendees, setAttendees] = useState([]);

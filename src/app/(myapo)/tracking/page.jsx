@@ -42,7 +42,7 @@ function CustomCheckbox({ checked }) {
       </div>
     );
   }
-function AttendeeCheck({ event, user, submitted, attendee = false }) {
+export function AttendeeCheck({ event, user, submitted, attendee = false }) {
     const [attended, setAttended] = useState(false);
     const supabase = useContext(AuthContext);
     async function updateAttended() {
