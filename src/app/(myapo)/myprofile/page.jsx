@@ -5,7 +5,7 @@ import { useContext, useEffect, useState, forwardRef } from "react";
 import { uppercase, sortById, lerp } from '@/utils/utils';
 import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
-import { getUserEvents } from "@/supabase/tracking";
+import { getUserReqs } from "@/supabase/tracking";
 import {Tooltip} from 'react-tooltip';
 
 const Grid = ({ rows, cols, user, reqData, creditRequirements, eventRequirements, circleSize, padding, trackedEvents}) => {
@@ -47,13 +47,13 @@ const Grid = ({ rows, cols, user, reqData, creditRequirements, eventRequirements
                         >
                             {/* Display each tracked event under the progress bar */}
                             {trackedEvents[req.name]?.map((event, index) => (
-                                <div key={index} style={{ padding: '5px 0' }} className={"my-anchor-element" + req.name + index}>
+                                <div key={index} style={{ padding: '5px 0' }} className={"my-anchor-element" + req.name.replace(/\s/g, "") + index}>
                                     <div className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full h-full">
                                         <div className="flex space-x-2">
                                             <h1>{event.name}</h1> {/* or event.name, depending on data structure */}
-                                            <Tooltip anchorSelect={".my-anchor-element" + req.name + index} place="top" effect="float" className="z-50">
+                                            <Tooltip anchorSelect={".my-anchor-element" + req.name.replace(/\s/g, "") + index} place="top" effect="float" className="z-50">
                                                 <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '500px'}}>
-                                                    <h1>{event.date}</h1>
+                                                    {event.date && <h1>{event.date}</h1>}
                                                     <h1>{event.description}</h1>
                                                 </div>
                                             </Tooltip>
@@ -83,13 +83,14 @@ const Grid = ({ rows, cols, user, reqData, creditRequirements, eventRequirements
                             <h1>{value + '/' + maxValue}</h1>
                         </CircularProgressbarWithChildren>
                         {trackedEvents[req.name]?.map((event, index) => (
-                            <div key={index} style={{ padding: '5px 0' }} className={"my-anchor-element" + req.name + index}>
-                                <div className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full h-full">
+                            <div key={index} style={{ padding: '5px 0' }} className={"my-anchor-element" + req.name.replace(/\s/g, "") + index}>
+                                <div className={`flex justify-between space-x-4 p-2 bg-${event.awarded ? 'blue' : 'red'}-500 rounded text-white w-full h-full`}>
                                     <div className="flex space-x-2">
-                                        <h1>{event.name}</h1> {/* or event.name, depending on data structure */}
-                                        <Tooltip anchorSelect={".my-anchor-element" + req.name + index} place="top" effect="float" className="z-50">
+                                        <h1>{event.name}</h1>
+                                        <Tooltip anchorSelect={".my-anchor-element" + req.name.replace(/\s/g, "") + index} place="top" effect="float" className="z-50">
                                             <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '500px'}}>
-                                                <h1>{event.date}</h1>
+                                                {event.date && <h1>{event.date}</h1>}
+                                                <h1>credit: {event.credit}</h1>
                                                 <h1>{event.description}</h1>
                                             </div>
                                         </Tooltip>
@@ -109,7 +110,7 @@ export function ProfilePage({ user_id }) {
     const [userData, setUserData] = useState(null);
     const [creditRequirements, setCreditRequirements] = useState([]);
     const [eventRequirements, setEventRequirements] = useState([]);
-    const [trackedEvents, setTrackedEvents] = useState([]);
+    const [trackedReqs, setTrackedReqs] = useState([]);
     const [reqData, setReqData] = useState([]);
     
     useEffect(() => {
@@ -150,13 +151,13 @@ export function ProfilePage({ user_id }) {
         getEventRequirements();
     }, [user_id]);
     useEffect(() => {        
-        async function getTrackedEvents()
+        async function getTrackedReqs()
         {
-            const userEvents = await getUserEvents(userData?.id);
-            setTrackedEvents(userEvents);
+            const userEvents = await getUserReqs(userData?.id);
+            setTrackedReqs(userEvents);
             console.log(userEvents)
         }
-        getTrackedEvents();
+        getTrackedReqs();
     }, [ userData ])
     
     useEffect(() => {
@@ -180,12 +181,12 @@ export function ProfilePage({ user_id }) {
             }            
         }
         getReqData();
-    }, [trackedEvents]);
+    }, [trackedReqs]);
 
     return (
         <div className="flex flex-col h-full items-center p-10 space-y-10 overflow-y-auto w-full">
             <h1 className="text-center text-xl text-neutral-700">My Profile</h1>
-            <Grid rows={4} cols={4} user={userData} reqData={reqData} creditRequirements={creditRequirements} eventRequirements={eventRequirements} circleSize={200} padding={25} trackedEvents={trackedEvents}>meow</Grid>
+            <Grid rows={4} cols={4} user={userData} reqData={reqData} creditRequirements={creditRequirements} eventRequirements={eventRequirements} circleSize={200} padding={25} trackedEvents={trackedReqs}>meow</Grid>
         </div>
     )
 }

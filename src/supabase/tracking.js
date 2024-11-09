@@ -53,7 +53,7 @@ export async function validateRequirements(events_list, user_id) {
     await Promise.all(creditUpsertPromises);
 }
 
-export async function getUserEvents(user_id) {
+export async function getUserReqs(user_id) {
     if (!user_id) return [];
     const supabase = createSupabaseAdmin();
 
@@ -84,6 +84,17 @@ export async function getUserEvents(user_id) {
         return [];
     }
 
+    const { data: awardedData, error: awardedError } = await supabase
+        .from('awarded_credit')
+        .select('*')
+        .eq('user_id', user_id);
+    
+    if (awardedError)
+    {
+        console.error('awarded credit issue could not return');
+        return [];
+    }
+    
     const grouped = {};
   
     data.forEach((event) => {
@@ -113,6 +124,31 @@ export async function getUserEvents(user_id) {
             grouped['chairing'].push(event);
         }
     });
+    const awardedCredit = awardedData.map((credit) => {
+        let updatedCredit = credit;
+        updatedCredit.awarded = true;
+        return updatedCredit;
+    });
+    awardedCredit.forEach((credit) => {
+        const event_type = credit.event_requirement;
+        const credit_type = credit.credit_requirement;        
+
+        // Initialize an empty array at the event_type index if it doesn't exist
+        if (event_type)
+        {
+            if (!grouped[event_type]) {
+                grouped[event_type] = [];
+            }
+            grouped[event_type].push(credit);
+        }
+        if (credit_type)
+        {
+            if (!grouped[credit_type]) {
+                grouped[credit_type] = [];
+            }
+            grouped[credit_type].push(credit);
+        }
+    })
 
     await validateRequirements(grouped, user_id);
 
@@ -130,7 +166,7 @@ export async function revalidateAllUsers()
         const ids = userIds.data.map((d) => d.id);
         for (let i = 0; i < ids.length; i++) {
             const id = ids[i];
-            await getUserEvents(id)
+            await getUserReqs(id)
         }
     }
 }
