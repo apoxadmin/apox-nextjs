@@ -134,7 +134,10 @@ export default function UserTable() {
     const [users, setUsers] = useState([]);
     const [creditRequirements, setCreditRequirements] = useState([]);
     const [eventRequirements, setEventRequirements] = useState([]);
-    const [eventTypes, setEventTypes] = useState([]);
+    const [ eventTypes, setEventTypes ] = useState([]);
+    const [ serviceHourTotal, setServiceHourTotal ] = useState(0);
+    const [ activeserviceHourTotal, setactiveServiceHourTotal ] = useState(0);
+    const [ pledgeserviceHourTotal, setpledgeServiceHourTotal ] = useState(0);
 
     useEffect(() => {
         async function getUsers() {
@@ -193,6 +196,26 @@ export default function UserTable() {
         getEventTypes();
     }, []);
 
+    useEffect(() =>
+    {
+        let t = 0;
+        let pledge = 0;
+        let active = 0;
+        users.forEach((user) => 
+        {
+            if (user[ 'service' ]) 
+            {
+                const val = user[ 'service' ]
+                t += val
+                if (user.standing == 5) pledge += val
+                else active += val
+            }
+        })
+        setServiceHourTotal(t)
+        setpledgeServiceHourTotal(pledge)
+        setactiveServiceHourTotal(active)
+    }, [users])
+
     async function regenerate()
     {
         await revalidateAllUsers();
@@ -202,7 +225,10 @@ export default function UserTable() {
     return (
         <div className="flex flex-col items-center space-y-4 overflow-y-auto overflow-x-scroll w-full">
             <h1 className="text-center text-xl text-neutral-600">User Table</h1>
-            <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white h-full" onClick={() =>{ regenerate() }}>
+            <p>Pledge Service Hour Total: { pledgeserviceHourTotal }</p>
+            <p>Active Service Hour Total: { activeserviceHourTotal }</p>
+            <p>Service Hour Total: { serviceHourTotal }</p>
+            <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white h-full" onClick={() => { regenerate() }}>
                 Regenerate Data (may take up to a few minutes)
             </button>
             <div className={`grid ${grid_cols_width[creditRequirements.length + eventRequirements.length + 3]} w-full text-center`}>

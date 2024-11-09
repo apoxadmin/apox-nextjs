@@ -96,6 +96,14 @@ export async function getUserReqs(user_id) {
     }
     
     const grouped = {};
+
+    function addReq(reqName, val)
+    {
+        if (!grouped[reqName]) {
+            grouped[reqName] = [];
+        }
+        grouped[reqName].push(val);
+    }
   
     data.forEach((event) => {
         const event_type = event.event_types.requirement;
@@ -104,24 +112,15 @@ export async function getUserReqs(user_id) {
         // Initialize an empty array at the event_type index if it doesn't exist
         if (event_type)
         {
-            if (!grouped[event_type]) {
-                grouped[event_type] = [];
-            }
-            grouped[event_type].push(event);
+            addReq(event_type, event)
         }
         if (credit_type)
         {
-            if (!grouped[credit_type]) {
-                grouped[credit_type] = [];
-            }
-            grouped[credit_type].push(event);
+            addReq(credit_type, event)
         }
         if (event.event_chairs.some(chair => chair.user_id === user_id))
         {
-            if (!grouped['chairing']) {
-                grouped['chairing'] = [];
-            }
-            grouped['chairing'].push(event);
+            addReq('chairing', event)
         }
     });
     const awardedCredit = awardedData.map((credit) => {
@@ -136,17 +135,12 @@ export async function getUserReqs(user_id) {
         // Initialize an empty array at the event_type index if it doesn't exist
         if (event_type)
         {
-            if (!grouped[event_type]) {
-                grouped[event_type] = [];
-            }
-            grouped[event_type].push(credit);
+            addReq(event_type, credit)
         }
         if (credit_type)
         {
-            if (!grouped[credit_type]) {
-                grouped[credit_type] = [];
-            }
-            grouped[credit_type].push(credit);
+            addReq(credit_type, credit)
+            if(credit_type == 'outside service') addReq('service', credit)
         }
     })
 
