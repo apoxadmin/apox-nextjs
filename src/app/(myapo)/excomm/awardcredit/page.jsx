@@ -218,7 +218,6 @@ export default function AwardCreditPage() {
                     <input {...register('credit', { required: true })} placeholder="Credit..." step="1"
                         id="capacityInput"
                         type="number"
-                        min="0"
                         onInput={
                             (e) => {
                                 let ref = document.querySelector('#capacityInput');
@@ -226,7 +225,7 @@ export default function AwardCreditPage() {
                                 if (value == "")
                                     ref.value = null;
                                 else
-                                    ref.value = Math.max(1, Math.round(value))
+                                    ref.value = Math.round(value)
                             }} className="input input-bordered bg-neutral-50 h-[40px] text-base" />
                 </label>
                 <label className="form-control">
