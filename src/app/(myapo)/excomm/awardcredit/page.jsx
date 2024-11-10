@@ -57,7 +57,6 @@ function UserCheck({ user, submitted, description, name, credit, isEventReq, req
                 }
                 if(isEventReq) row.event_requirement = reqName.name
                 else row.credit_requirement = reqName.name
-                // console.log(row)
                 const { data, error } = await supabase
                     .from('awarded_credit')
                     .insert(row)

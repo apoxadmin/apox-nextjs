@@ -293,7 +293,7 @@ function EventDay({ day, event, userData, setEvent }) {
                     {format(event?.start_time, 'p')}
                     {' '}
                 </span>
-                {event?.name}
+                {(event?.tracked ? "(tracked) " : "") + event?.name}
             </h1>
         </div>
     </button>
