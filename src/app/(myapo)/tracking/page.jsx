@@ -296,7 +296,6 @@ export default function TrackingPage() {
         }
         getUser();
         getUsers();
-
     }, []);
     useEffect(() => {
         async function getEvents() {

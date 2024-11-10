@@ -19,8 +19,8 @@ export default function ExCommDashboard() {
             <Widget path="/excomm/users">
                 Users
             </Widget>
-            <Widget path="/excomm/pledging">
-                Pledging
+            <Widget path="/excomm/awardcredit">
+                Award Credit
             </Widget>
             <Widget path="/excomm/admin">
                 Admin
@@ -28,8 +28,8 @@ export default function ExCommDashboard() {
             <Widget path="/excomm/excommtrack">
                 Tracking (Excomm)
             </Widget>
-            <Widget>
-                Finance
+            <Widget path="/excomm/pledging">
+                Pledging
             </Widget>
             <Widget>
                 Sergeant-at-Arms
