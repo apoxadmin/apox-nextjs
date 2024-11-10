@@ -82,22 +82,30 @@ const Grid = ({ rows, cols, user, reqData, creditRequirements, eventRequirements
                             <h1>{uppercase(req.name)}</h1>
                             <h1>{value + '/' + maxValue}</h1>
                         </CircularProgressbarWithChildren>
-                        {trackedEvents[req.name]?.map((event, index) => (
-                            <div key={index} style={{ padding: '5px 0' }} className={"my-anchor-element" + req.name.replace(/\s/g, "") + index}>
-                                <div className={`flex justify-between space-x-4 p-2 bg-${event.awarded ? 'blue' : 'red'}-500 rounded text-white w-full h-full`}>
-                                    <div className="flex space-x-2">
-                                        <h1>{event.name}</h1>
-                                        <Tooltip anchorSelect={".my-anchor-element" + req.name.replace(/\s/g, "") + index} place="top" effect="float" className="z-50">
-                                            <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '500px'}}>
-                                                {event.date && <h1>{event.date}</h1>}
-                                                <h1>credit: {event.credit}</h1>
-                                                <h1>{event.description}</h1>
-                                            </div>
-                                        </Tooltip>
+                        <div
+                        style={{
+                            maxHeight: '100px', // Set to desired scrollable height
+                            overflowY: 'auto',
+                            marginTop: '10px', // Optional margin between progress bar and events list
+                            paddingTop: '10px'
+                        }}>
+                        {trackedEvents[ req.name ]?.map((event, index) => (
+                                <div key={index} style={{ padding: '5px 0' }} className={"my-anchor-element" + req.name.replace(/\s/g, "") + index}>
+                                    <div className={`flex justify-between space-x-4 p-2 bg-${event.awarded ? 'blue' : 'red'}-500 rounded text-white w-full h-full`}>
+                                        <div className="flex space-x-2">
+                                            <h1>{event.name}</h1>
+                                            <Tooltip anchorSelect={".my-anchor-element" + req.name.replace(/\s/g, "") + index} place="top" effect="float" className="z-50">
+                                                <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '500px'}}>
+                                                    {event.date && <h1>{event.date}</h1>}
+                                                    <h1>credit: {event.credit}</h1>
+                                                    <h1>{event.description}</h1>
+                                                </div>
+                                            </Tooltip>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                         ))}
+                        </div>
                     </div>
                 )
             })}        
