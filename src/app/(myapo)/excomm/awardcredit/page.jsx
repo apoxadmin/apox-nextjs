@@ -108,12 +108,12 @@ export default function AwardCreditPage() {
     const supabase = createSupabaseClient();
 
     const onSubmit = (data) => {
-        console.log("MEPOW")
         setCreditName(data.name)
         setCredit(data.credit)
         setDescription(data.description)
         setToast(true)
         setSubmitted(true)
+        setTimeout(() => { setToast(false); }, 3000);
     };
 
     useEffect(() => {
