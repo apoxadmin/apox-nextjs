@@ -182,7 +182,7 @@ export default function AwardCreditPage() {
                                 </span>
                             </div>
                             <details className="dropdown" id="eventTypeDropdown">
-                                <summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">{eventType == null ? 'Event Type' : eventType.name}</summary>
+                                <summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">{eventType == null ? 'Credit Type' : eventType.name}</summary>
                                 <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                                     {
                                         creditTypes.map((event_type, i) => {
