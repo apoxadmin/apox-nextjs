@@ -388,7 +388,7 @@ export default function EventCalendar({ focusDay, userData }) {
 
     useEffect(() => {
         getEvents();
-    }, [focusDay]);
+    }, [ focusDay ]);
 
     return (
         <div className="flex flex-col h-full w-full">

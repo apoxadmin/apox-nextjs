@@ -51,6 +51,7 @@ export async function validateRequirements(events_list, user_id) {
     // Wait for all upsert operations to complete
     await Promise.all(eventUpsertPromises);
     await Promise.all(creditUpsertPromises);
+    console.log(`Finished validaing requirements for user with id: ${user_id}`)
 }
 
 export async function getUserReqs(user_id) {
@@ -163,4 +164,5 @@ export async function revalidateAllUsers()
             await getUserReqs(id)
         }
     }
+    console.log("Done verfiying all users")
 }
