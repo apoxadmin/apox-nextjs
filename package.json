@@ -12,6 +12,7 @@
     "@jaredreisinger/react-crossword": "^5.2.0",
     "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.44.3",
+    "add-to-calendar-button-react": "^2.7.3",
     "date-fns": "^3.6.0",
     "elkjs": "^0.9.3",
     "googleapis": "^140.0.1",

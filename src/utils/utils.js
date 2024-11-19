@@ -25,3 +25,16 @@ export function lerp(start, end, t) {
     if (t < 0) t = 0;
     return start + (end - start) * t;
 }
+
+export function convertToPST(timestamp) {
+    const date = new Date(timestamp);
+
+    const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Los_Angeles", 
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23"
+    });
+
+    return formatter.format(date);
+}

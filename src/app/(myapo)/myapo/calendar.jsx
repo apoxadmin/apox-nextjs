@@ -2,6 +2,9 @@ import { AuthContext } from "@/supabase/client";
 import { chairEvent, joinEvent, leaveEvent, unchairEvent, setDriver, removeDriver, unapproveEvent } from "@/supabase/event";
 import { eachDayOfInterval, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfToday, startOfWeek } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
+import { AddToCalendarButton } from "add-to-calendar-button-react";
+import { atcb_action } from "add-to-calendar-button";
+import { convertToPST } from "@/utils/utils";
 
 function EventModal({ supabase, event, setEvent, userData }) {
     const ref = useRef(null);
@@ -72,6 +75,26 @@ function EventModal({ supabase, event, setEvent, userData }) {
 
     });
 
+    useEffect(() => {
+        if (event) {
+            const config = {
+                name: event.name,
+                startDate: event.date,
+                startTime: event ? convertToPST(event?.start_time) : undefined,
+                endTime: event ? convertToPST(event?.end_time) : undefined,
+                endDate: endDate,
+                location: event.location,
+                options: ['Google'],
+                timeZone: "America/Los_Angeles"
+            };
+    
+            const button = document.getElementById('add-to-cal-btn');
+            if (button) {
+                button.addEventListener('click', () => atcb_action(config, button));
+            }
+        }
+    }, [event]);
+
     function convertToLink(inputString) {
         // Regular expression to match text wrapped in < and >
         const regex = /(https?:\/\/[^\s]+)/g;
@@ -94,19 +117,33 @@ function EventModal({ supabase, event, setEvent, userData }) {
         });
     }
 
+    function compareTimes(time1, time2) {
+        const date1 = new Date(`1970-01-01T${time1.split("T")[1].split("+")[0]}Z`);
+        const date2 = new Date(`1970-01-01T${time2.split("T")[1].split("+")[0]}Z`);
+    
+        return date1 - date2; // Positive if time1 > time2, negative if time2 > time1, 0 if equal
+    }
+
+    const endDate =
+        event && compareTimes(event?.start_time, event?.end_time) < 0
+            ? new Date(new Date(event?.date).setDate(new Date(event?.date).getDate() + 1))
+                .toISOString()
+                .split("T")[0]
+            : event?.date;
+
     return (
         <dialog ref={ref} className="modal">
             <div className="modal-box flex flex-col space-y-4 max-h-[90vh] overflow-y-hidden">
                 {
-                isCreator && 
-                <div className="flex justify-end">
-                    <button onClick={() => 
-                        {
-                            unapproveEvent(event?.id);
-                            window.location.reload();
-                        }
-                    } className="text-red-500">Delete event</button>
-                </div>
+                    isCreator && 
+                    <div className="flex justify-end">
+                        <button onClick={() => 
+                            {
+                                unapproveEvent(event?.id);
+                                window.location.reload();
+                            }
+                        } className="text-red-500">Delete event</button>
+                    </div>
                 }
                 <div className="flex justify-between">
                     <h1 className="text-neutral-600">
@@ -142,7 +179,19 @@ function EventModal({ supabase, event, setEvent, userData }) {
                             })()
                         }
                         </span>
-                    </h1>
+                    </h1>                    
+                    {
+                        event &&
+                        <div className="flex justify-center">
+                            <button
+                                className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-xl select-none"
+                                id='add-to-cal-btn'
+                                    
+                            >
+                                add to gcal
+                            </button>
+                        </div>
+                    }
                 </div>
                 <div className="flex flex-col space-y-2 overflow-auto">
                     <h1 className="text-center text-lg">Attendees ({attendees?.length} / {event?.capacity})</h1>
@@ -189,14 +238,14 @@ function EventModal({ supabase, event, setEvent, userData }) {
                                     className="text-white bg-red-500 hover:bg-red-700 py-2 px-4 rounded-full min-w-[100px]"
                                     onClick={() => { if (leaveEvent(userData?.id, event)) { unchairEvent(userData?.id, event); setTimeout(getAttendees, 500); setTimeout(getChairs, 500) } }}
                                 >
-                                    Leave
+                                    leave
                                 </button>
                                 :
                                 <button
                                     className="text-white bg-blue-500 hover:bg-blue-700 py-2 px-4 rounded-full min-w-[100px]"
                                     onClick={() => { if (joinEvent(userData?.id, event)) setTimeout(getAttendees, 500); }}
                                 >
-                                    Sign up
+                                    sign up
                                 </button>
                         )
                     }
@@ -206,7 +255,7 @@ function EventModal({ supabase, event, setEvent, userData }) {
                                 className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded-full min-w-[100px]"
                                 onClick={() => { if (unchairEvent(userData?.id, event)) setTimeout(getChairs, 500); }}
                             >
-                                Unchair
+                                unchair
                             </button>
                             :
                             chairs?.length < 2 &&
@@ -214,7 +263,7 @@ function EventModal({ supabase, event, setEvent, userData }) {
                                 className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-full min-w-[100px]"
                                 onClick={() => { if (chairEvent(userData?.id, event)) setTimeout(getChairs, 500); }}
                             >
-                                Chair
+                                chair
                             </button>
                         )
                     }
@@ -224,14 +273,14 @@ function EventModal({ supabase, event, setEvent, userData }) {
                                 className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded-full min-w-[100px]"
                                 onClick={() => { if (removeDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
                             >
-                                Remove Driver
+                                remove driver
                             </button>
                             :
                             <button
                                 className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-full min-w-[100px]"
                                 onClick={() => { if (setDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
                             >
-                                Set Driver
+                                set driver
                             </button>
                         )
                     }
