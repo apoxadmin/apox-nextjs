@@ -123,13 +123,34 @@ function EventModal({ supabase, event, setEvent, userData }) {
     
         return date1 - date2; // Positive if time1 > time2, negative if time2 > time1, 0 if equal
     }
+    function isDayAfter(date1, date2) {
+    
+        // Ensure valid dates
+        if (isNaN(date1) || isNaN(date2)) {
+            throw new Error("Invalid date format");
+        }
+    
+        // Extract only the date parts by zeroing out the time
+        const date1UTC = new Date(Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()));
+        const date2UTC = new Date(Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()));
+    
+        // Calculate the difference in days
+        const differenceInDays = (date2UTC - date1UTC) / (1000 * 60 * 60 * 24);
+    
+        // Return true if time2 is exactly one calendar day after time1
+        return differenceInDays === 1;
+    }
+    
 
-    const endDate =
-        event && compareTimes(event?.start_time, event?.end_time) < 0
-            ? new Date(new Date(event?.date).setDate(new Date(event?.date).getDate() + 1))
-                .toISOString()
-                .split("T")[0]
-            : event?.date;
+    let endDate = event?.date;
+    if (event)
+    {
+        const date1 = new Date(`1970-01-01T${event.start_time.split("T")[ 1 ].split("+")[ 0 ]}Z`)
+        const date2 = new Date(`1970-01-01T${event.end_time.split("T")[1].split("+")[0]}Z`)
+        if(isDayAfter(date1, date2)) endDate = new Date(new Date(event?.date).setDate(new Date(event?.date).getDate() + 1))
+            .toISOString()
+            .split("T")[0]
+    }
 
     return (
         <dialog ref={ref} className="modal">
@@ -185,8 +206,7 @@ function EventModal({ supabase, event, setEvent, userData }) {
                         <div className="flex justify-center">
                             <button
                                 className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-xl select-none"
-                                id='add-to-cal-btn'
-                                    
+                                id='add-to-cal-btn'                                    
                             >
                                 add to gcal
                             </button>
