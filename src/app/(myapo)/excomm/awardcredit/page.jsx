@@ -224,7 +224,7 @@ export default function AwardCreditPage() {
                                 if (value == "")
                                     ref.value = null;
                                 else
-                                    ref.value = Math.round(value)
+                                    ref.value = parseFloat(value)
                             }} className="input input-bordered bg-neutral-50 h-[40px] text-base" />
                 </label>
                 <label className="form-control">
