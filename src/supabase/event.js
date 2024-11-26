@@ -101,6 +101,7 @@ export async function unapproveEvent(event_id) {
 }
 
 export async function updateChair(user_id, event_id) {
+    const supabase = supabaseAdmin;
     const credit_req_name = 'chairing';
     const checkReq = await supabase
         .from('credit_users_requirements')
