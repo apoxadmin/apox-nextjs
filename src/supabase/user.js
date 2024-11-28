@@ -100,7 +100,6 @@ export async function resetPassword(email) {
         console.log('Invalid user!', newAuthUserResponse.error)
         return false;
     }
-    delete userData.password;
 
     return true;
 }

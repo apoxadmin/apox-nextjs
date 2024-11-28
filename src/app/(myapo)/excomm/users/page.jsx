@@ -4,7 +4,7 @@ import { AuthContext } from "@/supabase/client";
 import { sortById, uppercase } from "@/utils/utils";
 import { useContext, useEffect, useState, useRef } from "react";
 import { revalidateAllUsers } from "@/supabase/tracking";
-import { ProfilePage } from "../../myprofile/page";
+import { RequirementsPage } from "../../myprofile/page";
 
 const grid_cols_width = [
     'grid-cols-0',
@@ -111,7 +111,7 @@ function UserRow({ user, creditRequirements, eventRequirements }) {
                     <div className="flex flex-col space-y-4 modal-box w-auto max-w-6xl p-8 overflow-hidden">
                     {
                         modalOpen &&
-                        <ProfilePage user_id={user?.auth_id}/>
+                        <RequirementsPage user_id={user?.auth_id}/>
                     }
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import { useContext, useEffect, useRef, useState } from "react"
 import { AddToCalendarButton } from "add-to-calendar-button-react";
 import { atcb_action } from "add-to-calendar-button";
 import { convertToPST } from "@/utils/utils";
+import { resetPassword } from "@/supabase/user";
 
 function EventModal({ supabase, event, setEvent, userData }) {
     const ref = useRef(null);
@@ -141,11 +142,10 @@ function EventModal({ supabase, event, setEvent, userData }) {
         return differenceInDays === 1;
     }
     
-
     let endDate = event?.date;
     if (event)
     {
-        const date1 = new Date(`1970-01-01T${event.start_time.split("T")[ 1 ].split("+")[ 0 ]}Z`)
+        const date1 = new Date(`1970-01-01T${event.start_time.split("T")[1].split("+")[0]}Z`)
         const date2 = new Date(`1970-01-01T${event.end_time.split("T")[1].split("+")[0]}Z`)
         if(isDayAfter(date1, date2)) endDate = new Date(new Date(event?.date).setDate(new Date(event?.date).getDate() + 1))
             .toISOString()
