@@ -72,6 +72,7 @@ function UpcomingEvents({ userData }) {
                     (event) => event.events.date >= endOfToday().toISOString()
                 );
                 upcoming = upcoming.map((event) => event.events);
+                upcoming = upcoming.sort((a, b) => new Date(a.date) - new Date(b.date));
                 const eventsByDate = upcoming.reduce((acc, event) => {
                     const eventDate = event.date.split('T')[ 0 ]; // Extract the date part
                     if (!acc[ eventDate ]) {
