@@ -1,6 +1,6 @@
 import { AuthContext } from "@/supabase/client";
 import { chairEvent, joinEvent, leaveEvent, unchairEvent, setDriver, removeDriver, unapproveEvent } from "@/supabase/event";
-import { eachDayOfInterval, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfToday, startOfWeek } from "date-fns";
+import { eachDayOfInterval, endOfDay, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfToday, startOfWeek } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
 import { AddToCalendarButton } from "add-to-calendar-button-react";
 import { atcb_action } from "add-to-calendar-button";
@@ -117,15 +117,7 @@ function EventModal({ supabase, event, setEvent, userData }) {
             return part;
         });
     }
-
-    function compareTimes(time1, time2) {
-        const date1 = new Date(`1970-01-01T${time1.split("T")[1].split("+")[0]}Z`);
-        const date2 = new Date(`1970-01-01T${time2.split("T")[1].split("+")[0]}Z`);
-    
-        return date1 - date2; // Positive if time1 > time2, negative if time2 > time1, 0 if equal
-    }
-    function isDayAfter(date1, date2) {
-    
+    function isDayAfter(date1, date2) {    
         // Ensure valid dates
         if (isNaN(date1) || isNaN(date2)) {
             throw new Error("Invalid date format");
@@ -150,6 +142,15 @@ function EventModal({ supabase, event, setEvent, userData }) {
         if(isDayAfter(date1, date2)) endDate = new Date(new Date(event?.date).setDate(new Date(event?.date).getDate() + 1))
             .toISOString()
             .split("T")[0]
+    }
+
+    function isTodayOrLater(dateString) {
+        const today = new Date(); // Get today's date
+        today.setHours(0, 0, 0, 0); // Normalize to start of the day
+        
+        const inputDate = new Date(dateString); // Convert the string to a Date object
+        
+        return inputDate >= today; // Check if the input date is today or later
     }
 
     return (
@@ -248,63 +249,66 @@ function EventModal({ supabase, event, setEvent, userData }) {
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-center space-x-4">
-                    {
-                        (isAfter(event?.date, startOfToday()) || userData?.privileged.length > 0) &&
-                        (
-                            attendees?.some(user => user.id === userData?.id) ?
-                                (isAfter(event?.date, endOfToday()) || userData?.privileged.length > 0) &&
+                {
+                    (isTodayOrLater(event?.date)) &&
+                    <div className="flex justify-center space-x-4">
+                        {
+                            (isAfter(event?.date, startOfToday()) || userData?.privileged.length > 0) &&
+                            (
+                                attendees?.some(user => user.id === userData?.id) ?
+                                    (isAfter(event?.date, endOfToday()) || userData?.privileged.length > 0) &&
+                                    <button
+                                        className="text-white bg-red-500 hover:bg-red-700 py-2 px-4 rounded-full min-w-[100px]"
+                                        onClick={() => { if (leaveEvent(userData?.id, event)) { unchairEvent(userData?.id, event); setTimeout(getAttendees, 500); setTimeout(getChairs, 500) } }}
+                                    >
+                                        leave
+                                    </button>
+                                    :
+                                    <button
+                                        className="text-white bg-blue-500 hover:bg-blue-700 py-2 px-4 rounded-full min-w-[100px]"
+                                        onClick={() => { if (joinEvent(userData?.id, event)) setTimeout(getAttendees, 500); }}
+                                    >
+                                        sign up
+                                    </button>
+                            )
+                        }
+                        {
+                            attendees?.some(user => user.id === userData?.id) && (chairs?.some(user => user.id == userData?.id) ?
                                 <button
-                                    className="text-white bg-red-500 hover:bg-red-700 py-2 px-4 rounded-full min-w-[100px]"
-                                    onClick={() => { if (leaveEvent(userData?.id, event)) { unchairEvent(userData?.id, event); setTimeout(getAttendees, 500); setTimeout(getChairs, 500) } }}
+                                    className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded-full min-w-[100px]"
+                                    onClick={() => { if (unchairEvent(userData?.id, event)) setTimeout(getChairs, 500); }}
                                 >
-                                    leave
+                                    unchair
+                                </button>
+                                :
+                                chairs?.length < 2 &&
+                                <button
+                                    className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-full min-w-[100px]"
+                                    onClick={() => { if (chairEvent(userData?.id, event)) setTimeout(getChairs, 500); }}
+                                >
+                                    chair
+                                </button>
+                            )
+                        }
+                        {
+                            attendees?.some(user => user.id === userData?.id) && (drivers?.some(user => user.id == userData?.id) ?
+                                <button
+                                    className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded-full min-w-[100px]"
+                                    onClick={() => { if (removeDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
+                                >
+                                    remove driver
                                 </button>
                                 :
                                 <button
-                                    className="text-white bg-blue-500 hover:bg-blue-700 py-2 px-4 rounded-full min-w-[100px]"
-                                    onClick={() => { if (joinEvent(userData?.id, event)) setTimeout(getAttendees, 500); }}
+                                    className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-full min-w-[100px]"
+                                    onClick={() => { if (setDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
                                 >
-                                    sign up
+                                    set driver
                                 </button>
-                        )
-                    }
-                    {
-                        attendees?.some(user => user.id === userData?.id) && (chairs?.some(user => user.id == userData?.id) ?
-                            <button
-                                className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded-full min-w-[100px]"
-                                onClick={() => { if (unchairEvent(userData?.id, event)) setTimeout(getChairs, 500); }}
-                            >
-                                unchair
-                            </button>
-                            :
-                            chairs?.length < 2 &&
-                            <button
-                                className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-full min-w-[100px]"
-                                onClick={() => { if (chairEvent(userData?.id, event)) setTimeout(getChairs, 500); }}
-                            >
-                                chair
-                            </button>
-                        )
-                    }
-                    {
-                        attendees?.some(user => user.id === userData?.id) && (drivers?.some(user => user.id == userData?.id) ?
-                            <button
-                                className="text-white bg-purple-500 hover:bg-purple-700 py-2 px-4 rounded-full min-w-[100px]"
-                                onClick={() => { if (removeDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
-                            >
-                                remove driver
-                            </button>
-                            :
-                            <button
-                                className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-full min-w-[100px]"
-                                onClick={() => { if (setDriver(userData?.id, event?.id)) setTimeout(getDrivers, 500); }}
-                            >
-                                set driver
-                            </button>
-                        )
-                    }
-                </div>
+                            )
+                        }
+                    </div>
+                }
             </div>
             <form method="dialog" className="modal-backdrop">
                 <button onClick={() => { setEvent(null); ref.current.close(); }}>close</button>
