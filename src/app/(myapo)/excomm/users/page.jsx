@@ -48,7 +48,8 @@ const col_span_width = [
 
 function UserRow({ user, creditRequirements, eventRequirements }) {
     const ref = useRef(null); 
-    const [modalOpen, setModalOpen] = useState(false);
+    const [ modalOpen, setModalOpen ] = useState(false);
+    const isPledge = user?.standing == 5;
 
     useEffect(function mount() {
         function closeEscape(event) {
@@ -89,7 +90,7 @@ function UserRow({ user, creditRequirements, eventRequirements }) {
                                 req.prefix
                             }
                             {
-                                user[req.name] || '0'
+                                (isPledge && req.actives_only) ? '' : (user[req.name] || '0')
                             }
                         </h1>
                     )
@@ -100,7 +101,7 @@ function UserRow({ user, creditRequirements, eventRequirements }) {
                     return (
                         <h1 key={i} className="text-end">
                             {
-                                user[req.name] || '0'
+                                (isPledge && req.actives_only) ? '' : (user[req.name] || '0')
                             }
                         </h1>
                     )
