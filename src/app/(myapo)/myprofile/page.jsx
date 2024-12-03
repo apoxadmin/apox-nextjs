@@ -68,8 +68,9 @@ function UpcomingEvents({ userData }) {
                 .select('*, events(*)')
                 .eq('user_id', userData?.id);
             if (upcomingEventData.data) {
+                const today = new Date().toISOString().split('T')[ 0 ];
                 let upcoming = upcomingEventData.data.filter(
-                    (event) => event.events.date >= endOfToday().toISOString()
+                    (event) => event.events.date >= today
                 );
                 upcoming = upcoming.map((event) => event.events);
                 upcoming = upcoming.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -87,6 +88,12 @@ function UpcomingEvents({ userData }) {
         getUpcomingEvents();
     }, [ userData ]);
 
+    function formatDate(dateString) {
+        const [year, month, day] = dateString.split('-'); // Extract parts of the date
+        const date = new Date(year, month - 1, day); // Month is 0-indexed
+        return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
+    }
+
     return (
         <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-6">
             <h1 className="text-xl font-bold text-gray-800 mb-4">Upcoming Events</h1>
@@ -98,7 +105,7 @@ function UpcomingEvents({ userData }) {
             >
                 {Object.keys(upcomingEvents).map((date, dateIndex) => (
                     <div key={dateIndex}>
-                        <h2 className="font-bold text-lg text-gray-700">{Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(date))}</h2>
+                        <h2 className="font-bold text-lg text-gray-700">{ formatDate(date) }</h2>
                         {upcomingEvents[ date ]?.map((event, eventIndex) => (
                             <div
                                 key={eventIndex}
