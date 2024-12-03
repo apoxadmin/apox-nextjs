@@ -145,12 +145,10 @@ function EventModal({ supabase, event, setEvent, userData }) {
     }
 
     function isTodayOrLater(dateString) {
-        const today = new Date(); // Get today's date
-        today.setHours(0, 0, 0, 0); // Normalize to start of the day
-        
-        const inputDate = new Date(dateString); // Convert the string to a Date object
-        
-        return inputDate >= today; // Check if the input date is today or later
+        const today = new Date().toISOString().split('T')[ 0 ];
+        console.log(dateString)
+        console.log(today)
+        return dateString >= today; // Check if the input date is today or later
     }
 
     return (
