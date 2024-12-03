@@ -146,8 +146,6 @@ function EventModal({ supabase, event, setEvent, userData }) {
 
     function isTodayOrLater(dateString) {
         const today = new Date().toISOString().split('T')[ 0 ];
-        console.log(dateString)
-        console.log(today)
         return dateString >= today; // Check if the input date is today or later
     }
 
