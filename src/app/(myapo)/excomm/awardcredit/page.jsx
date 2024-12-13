@@ -214,7 +214,7 @@ export default function AwardCreditPage() {
                             Amount of credit (eg num hours)
                         </span>
                     </div>
-                    <input {...register('credit', { required: true })} placeholder="Credit..." step="1"
+                    <input {...register('credit', { required: true })} placeholder="Credit..." step="0.01"
                         id="capacityInput"
                         type="number"
                         onWheel={(e) => e.target.blur()}
