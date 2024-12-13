@@ -217,15 +217,8 @@ export default function AwardCreditPage() {
                     <input {...register('credit', { required: true })} placeholder="Credit..." step="1"
                         id="capacityInput"
                         type="number"
-                        onInput={
-                            (e) => {
-                                let ref = document.querySelector('#capacityInput');
-                                const value = e.target.value;
-                                if (value == "")
-                                    ref.value = null;
-                                else
-                                    ref.value = parseFloat(value)
-                            }} className="input input-bordered bg-neutral-50 h-[40px] text-base" />
+                        onWheel={(e) => e.target.blur()}
+                        className="input input-bordered bg-neutral-50 h-[40px] text-base" />
                 </label>
                 <label className="form-control">
                     <div className="label">
