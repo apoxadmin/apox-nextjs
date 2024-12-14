@@ -459,8 +459,6 @@ function EventModal({ supabase, event, setEvent, userData }) {
                 <div className="flex justify-end gap-2">
                     <button onClick={() => 
                         {
-                            unapproveEvent(event?.id);
-                            window.location.reload();
                         }
                     } className="text-green-500">tracking info</button>
                     {
