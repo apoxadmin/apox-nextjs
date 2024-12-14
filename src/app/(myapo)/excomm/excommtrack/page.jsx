@@ -5,165 +5,21 @@ import { sortByField } from "@/utils/utils";
 import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 import { updateChair } from "@/supabase/event";
-import { AttendeeCheck } from "../../tracking/page";
+import { TrackingEvent } from "../../tracking/page";
 
-function TrackingEvent({ event, users }) {
-    const [attendees, setAttendees] = useState([]);
-    const supabase = useContext(AuthContext);
-    const ref = useRef(null);
-    const [submitted, setSubmitted] = useState(false);
-    const [driveURL, setDriveURL] = useState('');
-    const [mediaURL, setMediaURL] = useState('');
-    const [toast, setToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState('');
-
-    useEffect(() => {
-        if (event?.drive_link) {
-            setMediaURL(event?.drive_link);
-        }
-    }, [event]);
-
-    useEffect(() => {
-        async function getAttendees() {
-            const attendeesResponse = await supabase.from('event_signups').select('*, users(*)').eq('event_id', event.id);
-            setAttendees(attendeesResponse.data.map(attendee => { return { ...attendee.users, attended: attendee.attended } }));
-        }
-        async function getDriveURL() {
-            const response = await supabase
-                .from('urls')
-                .select()
-                .eq('name', 'drive')
-                .maybeSingle();
-            if (response.data) {
-                setDriveURL(response.data?.url);
-            }
-        }
-        getAttendees();
-        getDriveURL();
-    }, []);
-
-    useEffect(function mount() {
-        function closeEscape(event) {
-            if (event.key == "Escape") {
-                // Escape key pressed
-                ref.current.close();
-            }
-        };
-
-        window.addEventListener("keydown", closeEscape);
-        return function unmount() {
-            window.removeEventListener("keydown", closeEscape);
-        }
-    }, []);
-    async function updateEvent() {
-        const { error } = await supabase
-            .from('events')
-            .update({ tracked: true, drive_link: mediaURL })
-            .eq('id', event?.id);
+function submitTracking() {
+    console.log('Submitting')
+    setSubmitted(true);
+    for (const chair of event?.event_chairs) {
+        updateChair(chair.id, event?.id);
     }
-
-    function submitTracking() {
-        console.log('Submitting')
-        setSubmitted(true);
-        for (const chair of event?.event_chairs) {
-            updateChair(chair.id, event?.id);
-        }
-        updateEvent();
-        ref.current.close();
-        if (!mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
-            setToastMessage('Submitted with invalid drive link');
-            setToast(true);
-            setTimeout(() => { setToast(false); }, 3000);
-        }
+    updateEvent();
+    ref.current.close();
+    if (!mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
+        setToastMessage('Submitted with invalid drive link');
+        setToast(true);
+        setTimeout(() => { setToast(false); }, 3000);
     }
-
-    return (
-        <div>
-            <button className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full h-full" onClick={() => { ref.current.showModal(); }}>
-                <div className="flex space-x-2">
-                    <h1>{event?.event_types.abbreviation.toUpperCase()}</h1>
-                    <h1 className="text-nowrap overflow-x-hidden">{event?.name}</h1>
-                </div>
-                <h1 className="text-nowrap">{attendees?.length} / {event?.capacity}</h1>
-            </button>
-            <dialog ref={ref} className="modal">
-                <div className="flex flex-col space-y-4 modal-box">
-                    <div className="flex justify-between">
-                        <h1 className="text-neutral-600">
-                            {event?.event_types.name.split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join()}
-                        </h1>
-                        <h1 className="text-neutral-600">
-                            {`${format(event.start_time, 'p')} - ${format(event.end_time, 'p')}`}
-                        </h1>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                        <div className="flex flex-col text-center">
-                            <h1 className="font-bold text-lg">
-                                {event?.name}
-                            </h1>
-                            <h1 className="font-bold">
-                                @ {event?.location}
-                            </h1>
-                        </div>
-                        <h1 className="text-center">
-                            {event?.description}
-                        </h1>
-                    </div>
-                    <div className="grid grid-cols-2">
-                        <div className="flex flex-col items-center">
-                            <h1 className="font-bold">Attendees:</h1>
-                            {
-                                attendees.map((user, i) => {
-                                    return (
-                                        <AttendeeCheck key={i} user={user} event={event} submitted={submitted} attendee={true} />
-                                    )
-                                })
-                            }
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <h1 className="font-bold">Flake-ins?</h1>
-                            <div className="overflow-x-auto max-h-[200px] flex flex-col">
-                                {
-                                    users?.filter(user => !attendees.includes(user)).map((user, i) => {
-                                        return <AttendeeCheck key={i} user={user} event={event} submitted={submitted} />
-                                    })
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col">
-                        <h1>Collaborative Drive URL:</h1>
-                        <a className="text-xs text-blue-400" target="_blank" href={driveURL}>{driveURL}</a>
-                    </div>
-                    <div className="flex flex-col">
-                        <label>Submit link to the folder with photos/videos:</label>
-                        <input value={mediaURL} onChange={(e) => setMediaURL(e.target.value)} placeholder="https://drive.google.com/***" />
-                    </div>
-                    <div className="flex justify-center">
-                        <button
-                            className="bg-green-600 px-4 py-2 rounded-full"
-                            onClick={() => { submitTracking(); }}
-                        >
-                            <h1 className="text-white">
-                                Submit
-                            </h1>
-                        </button>
-                    </div>
-                </div>
-                <form method="dialog" className="modal-backdrop">
-                    <button onClick={() => { }}>close</button>
-                    {
-                        toast &&
-                        <div className="toast z-[1000]">
-                            <div className="alert alert-error shadow-lg text-center">
-                                <h1 className="text-white">{toastMessage}</h1>
-                            </div>
-                        </div>
-                    }
-                </form>
-            </dialog>
-        </div>
-    )
 }
 
 export default function TrackingPage() {
@@ -200,6 +56,7 @@ export default function TrackingPage() {
                 .from('events')
                 .select('*, tracked, *, event_types(*), event_chairs(*)')
                 .eq('tracked', false)
+                .eq('reviewed', true)
                 .lte('date', endOfToday().toISOString());
             if (eventsResponse.data) {
                 let eventsData = eventsResponse.data//.map((chair) => chair.events);
@@ -214,12 +71,12 @@ export default function TrackingPage() {
 
     }, [user]);
 
-    return <div className="flex flex-col space-y-8 items-center w-full p-10 overflow-y-auto">
+    return <div className="flex flex-col space-y-8 items-center w-full p-10 overflow-y-auto overflow-x-hidden">
         <h1 className="text-center text-xl text-neutral-700">Tracking</h1>
         <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
             {
                 events?.map((event, i) =>
-                    <TrackingEvent event={event} key={i} users={users} />
+                    <TrackingEvent event={event} key={i} users={users} submitTracking={submitTracking} />
                 )
             }
         </div>

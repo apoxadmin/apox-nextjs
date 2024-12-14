@@ -6,42 +6,37 @@ import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 import { updateChair } from "@/supabase/event";
 
-/**
- *  Button component for Attendees
- *  Click on the name to mark as "attended"
- *  Once `submitted` is True, upserts "attended" status
- */
 function CustomCheckbox({ checked }) {
-  
     return (
-      <div className="flex items-center space-x-4">
-        {/* Custom styled checkbox container */}
-        <div
-          className={`w-4 h-4 border-2 rounded-md cursor-pointer transition-all
+        <div className="flex items-center space-x-4">
+            {/* Custom styled checkbox container */}
+            <div
+                className={`w-4 h-4 border-2 rounded-md cursor-pointer transition-all
             ${checked ? 'bg-green-400 border-green-600' : 'border-gray-600'}
             flex items-center justify-center relative`}
-        >
-          {/* Checkmark inside the checkbox */}
-          {checked && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          )}
+                {/* Checkmark inside the checkbox */}
+                {checked && (
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                        />
+                    </svg>
+                )}
+            </div>
         </div>
-      </div>
     );
-  }
+}
+
 export function AttendeeCheck({ event, user, submitted, attendee = false }) {
     const [attended, setAttended] = useState(false);
     const supabase = useContext(AuthContext);
@@ -107,7 +102,24 @@ export function AttendeeCheck({ event, user, submitted, attendee = false }) {
     );
 }
 
-function TrackingEvent({ event, users }) {
+function submitTracking() {
+    console.log('Submitting')
+    if (mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
+        setSubmitted(true);
+        for (const chair of event?.event_chairs) {
+            updateChair(chair.id, event?.id);
+        }
+        updateEvent();
+        ref.current.close();
+        window.location.reload(); // to remove the event
+    } else {
+        setToastMessage('Invalid drive folder link!');
+        setToast(true);
+        setTimeout(() => { setToast(false); }, 3000);
+    }
+}
+
+export function TrackingEvent({ event, users, submitTracking }) {
     const [attendees, setAttendees] = useState([]);
     const supabase = useContext(AuthContext);
     const ref = useRef(null);
@@ -160,23 +172,6 @@ function TrackingEvent({ event, users }) {
             .from('events')
             .update({ tracked: true, drive_link: mediaURL })
             .eq('id', event?.id);
-    }
-
-    function submitTracking() {
-        console.log('Submitting')
-        if (mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
-            setSubmitted(true);
-            for (const chair of event?.event_chairs) {
-                updateChair(chair.id, event?.id);
-            }
-            updateEvent();
-            ref.current.close();
-            window.location.reload(); // to remove the event
-        } else {
-            setToastMessage('Invalid drive folder link!');
-            setToast(true);
-            setTimeout(() => { setToast(false); }, 3000);
-        }
     }
 
     return (
@@ -305,12 +300,14 @@ export default function TrackingPage() {
                 .select('*, events(tracked, *, event_types(*), event_chairs(*))')
                 .eq('user_id', user.id)
                 .eq('events.tracked', false)
+                .eq('events.reviewed', true)
                 .lte('events.date', endOfToday().toISOString());
             const chairedEventsResponse = await supabase
                 .from('event_chairs')
                 .select('*, events(tracked, *, event_types(*), event_chairs(*))')
                 .eq('user_id', user.id)
                 .eq('events.tracked', false)
+                .eq('events.reviewed', true)
                 .lte('events.date', endOfToday().toISOString());
             if (eventsResponse.data)
             {
@@ -337,12 +334,19 @@ export default function TrackingPage() {
 
     return <div className="flex flex-col space-y-8 items-center w-full p-10 overflow-y-auto">
         <h1 className="text-center text-xl text-neutral-700">Tracking</h1>
-        <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
+        {
+            events?.length == 0 ?
+            <h1>
+                no events to track oops!!
+            </h1>
+            :
+            <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
             {
                 events?.map((event, i) =>
-                    <TrackingEvent event={event} key={i} users={users} />
+                    <TrackingEvent event={event} key={i} users={users} submitTracking={submitTracking} />
                 )
             }
         </div>
+        }
     </div>
 }

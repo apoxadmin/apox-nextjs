@@ -23,7 +23,7 @@ export default function MyAPOPage() {
     const supabase = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
     const [focusDay, setFocusDay] = useState(startOfToday());
-    const [focusDays, setFocusDays] = useState([subMonths(focusDay, 1), startOfToday(), addMonths(focusDay, 1)]);
+    const [focusDays, setFocusDays] = useState([ subMonths(focusDay, 2), subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1), addMonths(focusDay, 2)]);
 
     async function getUserData() {
         const { data } = await supabase.auth.getUser();
@@ -40,7 +40,7 @@ export default function MyAPOPage() {
         getUserData();
     }, []);
     useEffect(() => {
-        setFocusDays([ subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1) ]);
+        setFocusDays([ subMonths(focusDay, 2), subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1), addMonths(focusDay, 2)]);
     }, [focusDay]);
 
     return (
@@ -48,7 +48,7 @@ export default function MyAPOPage() {
             <Swiper
                 className="w-0 flex bg-white rounded shadow-md flex-1"
                 runCallbacksOnInit={false}
-                initialSlide={1}
+                initialSlide={2}
                 speed={500}
                 draggable = {false}
                 modules={[ Navigation ]}

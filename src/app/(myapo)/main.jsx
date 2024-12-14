@@ -5,12 +5,22 @@ import Sidebar from "./sidebar"
 import Link from "next/link";
 import { AuthContext } from "@/supabase/client";
 import { logout } from "@/supabase/auth";
+import { isPrivileged } from "@/supabase/user";
 
 export default function Main({ children }) {
     const [open, setOpen] = useState(false);
     const [user, setUser] = useState(null);
     const profileRef = useRef(null);
     const supabase = useContext(AuthContext)
+    const [ privileged, setPrivileged ] = useState(false);
+    
+    useEffect(() => {
+        async function getPrivileged() {
+            const priv = await isPrivileged();
+            setPrivileged(priv);
+        }
+        getPrivileged();
+    })
 
     useEffect(function mount() {
         function closeEscape(event) {
@@ -64,9 +74,28 @@ export default function Main({ children }) {
     return (
         <div className="grow h-screen flex flex-col bg-neutral-50 w-full">
             <div className="flex py-3 px-8 justify-between items-center">
-                <Link href="/">
-                    <img className="h-[30px]" src="/logo_long.png" />
-                </Link>
+                <div className="flex flex-row gap-2 h-full items-center justify-center">
+                    <Link href="/">
+                        <img className="h-[30px] justify-center" src="/logo_long.png" />
+                    </Link>
+                    <Link href="/myapo" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+                        <h1>calendar</h1>
+                    </Link>
+                    <Link href="/myprofile" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+                        <h1>my tracking</h1>
+                    </Link>
+                    <Link href="/request" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+                        <h1>request</h1>
+                    </Link>
+                    {isPrivileged && 
+                        <Link href="/excomm" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+                            <h1>excomm</h1>
+                        </Link>
+                    }
+                    <Link href="/tracking" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+                        <h1>track an event</h1>
+                    </Link>
+                </div>
                 <div className="flex items-center space-x-8">
                     <label className="bg-neutral-200 input input-bordered flex justify-between items-center gap-2 h-[40px] drop-shadow-sm hover:drop-shadow-lg rounded-full transition ease-out delay-20 duration-150">
                         <input type="text" className="placeholder:text-neutral-400 text-neutral-600 text-sm grow w-[200px]" placeholder="Search" />
