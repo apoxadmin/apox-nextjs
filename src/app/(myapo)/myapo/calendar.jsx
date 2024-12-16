@@ -107,6 +107,37 @@ function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, s
     )
 }
 
+function EventTypeDropdown({ eventTypes, onSelect }) {
+    const [selectedValue, setSelectedValue] = useState(null);
+    const dropdownRef = useRef(null);
+
+    const handleSelect = (event_type) => {
+        setSelectedValue(event_type);
+        if (onSelect) {
+            onSelect(event_type);
+        }
+        // Close the dropdown
+        dropdownRef.current.open = false;
+    };
+
+    return (
+        <div className="relative inline-block w-full max-w-xs">
+            <details ref={dropdownRef} className="dropdown">
+                <summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">
+                    {selectedValue == null ? 'none' : selectedValue.name}
+                </summary>
+                <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-0">
+                    {eventTypes.map((event_type, i) => (
+                        <li key={i} onClick={() => handleSelect(event_type)}>
+                            <a>{event_type.name}</a>
+                        </li>
+                    ))}
+                </ul>
+            </details>
+        </div>
+    );    
+}
+
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export default function EventCalendar({ focusDay, userData }) {
     const supabase = useContext(AuthContext);
@@ -114,7 +145,26 @@ export default function EventCalendar({ focusDay, userData }) {
     const [focusEndDay, setFocusEndDay] = useState(endOfWeek(endOfMonth(focusDay)));
     const [monthDays, setMonthDays] = useState([]);
     const [events, setEvents] = useState([]);
+    const [eventTypes, setEventTypes] = useState([]);
     const [eventModal, setEventModal] = useState(null);
+    const [filter, setFilter] = useState(0);
+
+    useEffect(() => {
+        async function getEventTypes()
+        {
+            const typesResponse = await supabase
+                .from('event_types')
+                .select('*');
+            if (typesResponse.data) 
+            {
+                let types = typesResponse.data;
+                types.push({ id: 0, name: 'none' })
+                types.sort((a, b) => a.id - b.id)
+                setEventTypes(types);
+            }
+        }
+        getEventTypes();
+    }, [])
 
     useEffect(() => {
         const start = startOfWeek(startOfMonth(focusDay));
@@ -133,7 +183,13 @@ export default function EventCalendar({ focusDay, userData }) {
             .lte('date', focusEndDay.toISOString())
             .eq('reviewed', true)
             .order('date', { ascending: false });
-        const eventsList = eventsResponse?.data;
+        let eventsList = eventsResponse?.data;
+
+        if (filter != 0)
+        {
+            eventsList = eventsList.filter((event) => event.event_types.id == filter)
+        }
+
         const eventsMap = new Map();
         for (const event of eventsList) {
             var [YYYY, MM, DD] = event.date.split('-')
@@ -149,16 +205,33 @@ export default function EventCalendar({ focusDay, userData }) {
 
     useEffect(() => {
         getEvents();
-    }, [ focusDay ]);
+    }, [ focusDay, filter ]);
 
     return (
         <div className="flex flex-col h-full w-full">
             <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} userData={userData} />
-            <div className="flex items-center justify-center">
-                <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-prev hover:bg-stone-500 hover:text-white rounded-full">{ '<' }</button>
-                <h1 className="text-center text-neutral-500 text-xl py-2">{format(focusDay, 'LLLL y').toUpperCase()}</h1>
-                <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-next hover:bg-stone-500 hover:text-white rounded-full">{ '>' }</button>
+            <div className="flex items-center justify-between w-full p-2">
+                <div className="mr-auto flex items-center space-x-2">
+                    <label className="text-neutral-500 font-medium">filter: </label>
+                    <EventTypeDropdown
+                        eventTypes={eventTypes}
+                        onSelect={(event_type) => setFilter(event_type.id)}
+                    />
+                </div>
+                <div className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2">
+                    <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-prev hover:bg-stone-500 hover:text-white rounded-full">
+                        {'<'}
+                    </button>
+                    <h1 className="text-center text-neutral-500 text-xl py-2">
+                        {format(focusDay, 'LLLL y').toUpperCase()}
+                    </h1>
+                    <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-next hover:bg-stone-500 hover:text-white rounded-full">
+                        {'>'}
+                    </button>
+                </div>
             </div>
+
+
             <div className="grid grid-cols-7">
                 {
                     DAYS.map(day => {
