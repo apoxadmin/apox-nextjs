@@ -1,8 +1,9 @@
 import { AuthContext } from "@/supabase/client";
 import { eachDayOfInterval, endOfDay, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfToday, startOfWeek } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
-import { resetPassword } from "@/supabase/user";
 import { EventModal } from "./eventmodal";
+import "swiper/css";
+import 'swiper/css/navigation';
 
 function EventDay({ day, event, userData, setEvent }) {
     const includesUser = event?.event_signups?.some((signup) => signup.user_id === userData?.id);
@@ -107,64 +108,21 @@ function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, s
     )
 }
 
-function EventTypeDropdown({ eventTypes, onSelect }) {
-    const [selectedValue, setSelectedValue] = useState(null);
-    const dropdownRef = useRef(null);
+function compareTimeOfDay(date1, date2) {
+    const time1 = date1.getHours() * 3600000 + date1.getMinutes() * 60000 + date1.getSeconds() * 1000 + date1.getMilliseconds();
+    const time2 = date2.getHours() * 3600000 + date2.getMinutes() * 60000 + date2.getSeconds() * 1000 + date2.getMilliseconds();
 
-    const handleSelect = (event_type) => {
-        setSelectedValue(event_type);
-        if (onSelect) {
-            onSelect(event_type);
-        }
-        // Close the dropdown
-        dropdownRef.current.open = false;
-    };
-
-    return (
-        <div className="relative inline-block w-full max-w-xs">
-            <details ref={dropdownRef} className="dropdown">
-                <summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">
-                    {selectedValue == null ? 'none' : selectedValue.name}
-                </summary>
-                <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-0">
-                    {eventTypes.map((event_type, i) => (
-                        <li key={i} onClick={() => handleSelect(event_type)}>
-                            <a>{event_type.name}</a>
-                        </li>
-                    ))}
-                </ul>
-            </details>
-        </div>
-    );    
+    return time1 - time2;
 }
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-export default function EventCalendar({ focusDay, userData }) {
+export default function EventCalendar({ focusDay, userData, filter }) {
     const supabase = useContext(AuthContext);
     const [focusStartDay, setFocusStartDay] = useState(startOfWeek(startOfMonth(focusDay)));
     const [focusEndDay, setFocusEndDay] = useState(endOfWeek(endOfMonth(focusDay)));
     const [monthDays, setMonthDays] = useState([]);
     const [events, setEvents] = useState([]);
-    const [eventTypes, setEventTypes] = useState([]);
     const [eventModal, setEventModal] = useState(null);
-    const [filter, setFilter] = useState(0);
-
-    useEffect(() => {
-        async function getEventTypes()
-        {
-            const typesResponse = await supabase
-                .from('event_types')
-                .select('*');
-            if (typesResponse.data) 
-            {
-                let types = typesResponse.data;
-                types.push({ id: 0, name: 'none' })
-                types.sort((a, b) => a.id - b.id)
-                setEventTypes(types);
-            }
-        }
-        getEventTypes();
-    }, [])
 
     useEffect(() => {
         const start = startOfWeek(startOfMonth(focusDay));
@@ -200,7 +158,15 @@ export default function EventCalendar({ focusDay, userData }) {
                 eventsMap[date] = [event];
             }
         }
-        setEvents(eventsMap);
+        const eventsMapSorted = Object.fromEntries(
+            Object.entries(eventsMap).map(([key, val]) => {
+                // Sort the array of events by `start_time`
+                const sortedValues = val.sort((a, b) => compareTimeOfDay(new Date(a.start_time), new Date(b.start_time)));
+                // Return the key with the sorted array
+                return [key, sortedValues];
+            })
+        );
+        setEvents(eventsMapSorted);
     }
 
     useEffect(() => {
@@ -210,27 +176,11 @@ export default function EventCalendar({ focusDay, userData }) {
     return (
         <div className="flex flex-col h-full w-full">
             <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} userData={userData} />
-            <div className="flex items-center justify-between w-full p-2">
-                <div className="mr-auto flex items-center space-x-2">
-                    <label className="text-neutral-500 font-medium">filter: </label>
-                    <EventTypeDropdown
-                        eventTypes={eventTypes}
-                        onSelect={(event_type) => setFilter(event_type.id)}
-                    />
-                </div>
-                <div className="flex items-center justify-center absolute left-1/2 transform -translate-x-1/2">
-                    <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-prev hover:bg-stone-500 hover:text-white rounded-full">
-                        {'<'}
-                    </button>
-                    <h1 className="text-center text-neutral-500 text-xl py-2">
-                        {format(focusDay, 'LLLL y').toUpperCase()}
-                    </h1>
-                    <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-next hover:bg-stone-500 hover:text-white rounded-full">
-                        {'>'}
-                    </button>
-                </div>
+            <div className="flex items-center justify-center py-2">
+                <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-prev hover:bg-stone-500 hover:text-white rounded-full">{ '<' }</button>
+                <h1 className="text-center text-neutral-500 text-xl py-2">{format(focusDay, 'LLLL y').toUpperCase()}</h1>
+                <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-next hover:bg-stone-500 hover:text-white rounded-full">{ '>' }</button>
             </div>
-
 
             <div className="grid grid-cols-7">
                 {
