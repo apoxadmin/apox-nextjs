@@ -102,20 +102,22 @@ function EventTypeDropdown({ setFilter }) {
     };
 
     return (
-        <div className="absolute top-[75px] left-[60px] z-[1000] flex items-center gap-2">
-            <h1 className="">filter events:</h1>
-            <details ref={dropdownRef} className="dropdown">
-                <summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">
-                    {selectedValue == null ? 'none' : selectedValue.name}
-                </summary>
-                <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-0">
-                    {eventTypes.map((event_type, i) => (
-                        <li key={i} onClick={() => handleSelect(event_type)}>
-                            <a>{event_type.name}</a>
-                        </li>
-                    ))}
-                </ul>
-            </details>
+        <div className="relative flex">
+            <div className="absolute top-[10px] left-[10px] z-[1000] flex items-center gap-2">
+                <h1 className="w-[100px]">filter events:</h1>
+                <details ref={dropdownRef} className="dropdown">
+                    <summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">
+                        {selectedValue == null ? 'none' : selectedValue.name}
+                    </summary>
+                    <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow left-0">
+                        {eventTypes.map((event_type, i) => (
+                            <li key={i} onClick={() => handleSelect(event_type)}>
+                                <a>{event_type.name}</a>
+                            </li>
+                        ))}
+                    </ul>
+                </details>
+            </div>
         </div>
     );    
 }
