@@ -97,12 +97,12 @@ function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, s
                     day && getDate(day)
                 }
             </h1>
-            <div className="flex flex-col items-center space-y-[4px] md:space-y-[1px] pr-[2px] md:px-2 overflow-y-scroll">
-                {
-                    events?.map((event, i) =>
-                        <EventDay key={i} userData={userData} event={event} setEvent={setEvent} day={day} />
-                    )
-                }
+            <div className="flex flex-col items-center space-y-[4px] md:space-y-[1px] pr-[2px] md:px-2 overflow-y-auto">
+            {
+                events?.map((event, i) =>
+                    <EventDay key={i} userData={userData} event={event} setEvent={setEvent} day={day} />
+                )
+            }
             </div>
         </div>
     )
@@ -176,10 +176,11 @@ export default function EventCalendar({ focusDay, userData, filter }) {
     return (
         <div className="flex flex-col h-full w-full">
             <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} userData={userData} />
-            <div className="flex items-center justify-center py-2">
-                <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-prev hover:bg-stone-500 hover:text-white rounded-full">{ '<' }</button>
+            
+            <div className="flex items-center justify-center py-2 gap-4">
+                <button className="text-center text-neutral-500 text-xl py-2 px-8 custom-prev hover:bg-stone-500 hover:text-white rounded-full transition">{ '<' }</button>
                 <h1 className="text-center text-neutral-500 text-xl py-2">{format(focusDay, 'LLLL y').toUpperCase()}</h1>
-                <button className="text-center text-neutral-500 text-xl py-2 px-10 custom-next hover:bg-stone-500 hover:text-white rounded-full">{ '>' }</button>
+                <button className="text-center text-neutral-500 text-xl py-2 px-8 custom-next hover:bg-stone-500 hover:text-white rounded-full transition">{ '>' }</button>
             </div>
 
             <div className="grid grid-cols-7">

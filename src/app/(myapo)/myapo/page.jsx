@@ -103,7 +103,7 @@ function EventTypeDropdown({ setFilter }) {
 
     return (
         <div className="relative flex">
-            <div className="absolute top-[10px] left-[10px] z-[1000] flex items-center gap-2">
+            <div className="absolute top-[10px] left-[20px] z-[1000] flex items-center gap-2">
                 <h1 className="w-[100px]">filter events:</h1>
                 <details ref={dropdownRef} className="dropdown">
                     <summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">
