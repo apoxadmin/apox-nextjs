@@ -158,7 +158,8 @@ const Grid = ({ rows, cols, user, isPledge, reqData, creditRequirements, eventRe
             {eventRequirements.map((req, i) => {
                 let value = 0
                 if (user != null && req.name in reqData) value = reqData[ req.name ]
-                const maxValue = req.value
+                let maxValue = req.value
+                if(isPledge && i == 2) maxValue = 1
                 let t = value / maxValue
                 if (isPledge && req.actives_only) return null;
                 return (
@@ -299,7 +300,7 @@ export function RequirementsPage({ user_id }) {
             setTrackedReqs(userEvents);
         }
         getTrackedReqs();
-        if (eventRequirements)
+        if (eventRequirements && eventRequirements.length > 0)
         {
             let data = eventRequirements;
             if (isPledge) data[ 2 ].value = 1;
