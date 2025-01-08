@@ -7,21 +7,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { updateChair } from "@/supabase/event";
 import { TrackingEvent } from "../../tracking/page";
 
-function submitTracking() {
-    console.log('Submitting')
-    setSubmitted(true);
-    for (const chair of event?.event_chairs) {
-        updateChair(chair.id, event?.id);
-    }
-    updateEvent();
-    ref.current.close();
-    if (!mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
-        setToastMessage('Submitted with invalid drive link');
-        setToast(true);
-        setTimeout(() => { setToast(false); }, 3000);
-    }
-}
-
 export default function TrackingPage() {
     const [user, setUser] = useState(null);
     const [events, setEvents] = useState([]);
@@ -76,7 +61,7 @@ export default function TrackingPage() {
         <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
             {
                 events?.map((event, i) =>
-                    <TrackingEvent event={event} key={i} users={users} submitTracking={submitTracking} />
+                    <TrackingEvent event={event} key={i} users={users} validateLink={false} />
                 )
             }
         </div>

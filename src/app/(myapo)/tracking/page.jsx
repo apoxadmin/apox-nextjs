@@ -102,24 +102,7 @@ export function AttendeeCheck({ event, user, submitted, attendee = false }) {
     );
 }
 
-function submitTracking() {
-    console.log('Submitting')
-    if (mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
-        setSubmitted(true);
-        for (const chair of event?.event_chairs) {
-            updateChair(chair.id, event?.id);
-        }
-        updateEvent();
-        ref.current.close();
-        window.location.reload(); // to remove the event
-    } else {
-        setToastMessage('Invalid drive folder link!');
-        setToast(true);
-        setTimeout(() => { setToast(false); }, 3000);
-    }
-}
-
-export function TrackingEvent({ event, users, submitTracking }) {
+export function TrackingEvent({ event, users, validateLink }) {
     const [attendees, setAttendees] = useState([]);
     const supabase = useContext(AuthContext);
     const ref = useRef(null);
@@ -127,7 +110,40 @@ export function TrackingEvent({ event, users, submitTracking }) {
     const [driveURL, setDriveURL] = useState('');
     const [mediaURL, setMediaURL] = useState('');
     const [toast, setToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState('');
+    const [ toastMessage, setToastMessage ] = useState('');
+    
+    function submitTracking() {
+        console.log('Submitting')
+        if (validateLink)
+        {
+            if (mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
+                setSubmitted(true);
+                for (const chair of event?.event_chairs) {
+                    updateChair(chair.id, event?.id);
+                }
+                updateEvent();
+                ref.current.close();
+                window.location.reload(); // to remove the event
+            } else {
+                setToastMessage('Invalid drive folder link!');
+                setToast(true);
+                setTimeout(() => { setToast(false); }, 3000);
+            }
+        }
+        else
+        {
+            for (const chair of event?.event_chairs) {
+                updateChair(chair.id, event?.id);
+            }
+            updateEvent();
+            ref.current.close();
+            if (!mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
+                setToastMessage('Submitted with invalid drive link');
+                setToast(true);
+                setTimeout(() => { setToast(false); }, 3000);
+            }
+        }
+    }
 
     useEffect(() => {
         if (event?.drive_link) {
@@ -343,7 +359,7 @@ export default function TrackingPage() {
             <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
             {
                 events?.map((event, i) =>
-                    <TrackingEvent event={event} key={i} users={users} submitTracking={submitTracking} />
+                    <TrackingEvent event={event} key={i} users={users} validateLink={true} />
                 )
             }
         </div>
