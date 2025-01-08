@@ -69,7 +69,7 @@ export default function Main({ children }) {
         }
         if (supabase)
             getUser();
-    }, [supabase]);
+    }, [ supabase ]);
 
     return (
         <div className="grow h-screen flex flex-col bg-neutral-50 w-full">
@@ -87,7 +87,7 @@ export default function Main({ children }) {
                     <Link href="/request" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
                         <h1>request</h1>
                     </Link>
-                    {isPrivileged && 
+                    {privileged && 
                         <Link href="/excomm" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
                             <h1>excomm</h1>
                         </Link>
