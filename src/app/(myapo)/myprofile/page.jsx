@@ -13,30 +13,30 @@ function Profile({ user }) {
     const initials = user?.name
         .split(" ")                     // Split the name into words
         .filter(word => word)           // Remove any empty strings (e.g., extra spaces)
-        .map(word => word[0].toUpperCase()) // Get the first character of each word and capitalize it
-        .join(""); 
+        .map(word => word[ 0 ].toUpperCase()) // Get the first character of each word and capitalize it
+        .join("");
 
-        return (
-            <div className="bg-white shadow-lg rounded-lg p-6 w-[300px] flex flex-col gap-5">
-              <h1 className="text-xl font-bold text-gray-800 mb-4">Profile Info</h1>
-              <div className="avatar placeholder justify-center">
+    return (
+        <div className="bg-white shadow-lg rounded-lg p-6 w-[300px] flex flex-col gap-5">
+            <h1 className="text-xl font-bold text-gray-800 mb-4">Profile Info</h1>
+            <div className="avatar placeholder justify-center">
                 <div className="bg-blue-800 hover:bg-blue-700 text-neutral-200 w-[150px] rounded-full shadow-lg flex items-center justify-center">
-                  <span className="text-6xl font-bold">{initials}</span>
+                    <span className="text-6xl font-bold">{initials}</span>
                 </div>
-              </div>
-              <div className="text-gray-700 space-y-2">
-                <p>
-                  <strong>Name:</strong> {user?.name}
-                </p>
-                <p>
-                  <strong>Pledge Class:</strong> {user?.class.symbol}
-                </p>
-                <p>
-                  <strong>Standing:</strong> {user?.standings?.name}
-                </p>
-              </div>
             </div>
-          );          
+            <div className="text-gray-700 space-y-2">
+                <p>
+                    <strong>Name:</strong> {user?.name}
+                </p>
+                <p>
+                    <strong>Pledge Class:</strong> {user?.class.symbol}
+                </p>
+                <p>
+                    <strong>Standing:</strong> {user?.standings?.name}
+                </p>
+            </div>
+        </div>
+    );
 }
 
 function ReqCompletionBar({ completion })
@@ -142,8 +142,6 @@ function UpcomingEvents({ userData }) {
         </div>
     );
 }
-
-
 
 const Grid = ({ rows, cols, user, isPledge, reqData, creditRequirements, eventRequirements, circleSize, padding, trackedEvents }) => {
     const gridStyle = {
@@ -301,6 +299,12 @@ export function RequirementsPage({ user_id }) {
             setTrackedReqs(userEvents);
         }
         getTrackedReqs();
+        if (eventRequirements)
+        {
+            let data = eventRequirements;
+            if (isPledge) data[ 2 ].value = 1;
+            setEventRequirements(data);
+        }
     }, [ userData ])
 
     useEffect(() => {
