@@ -40,7 +40,7 @@ function CustomCheckbox({ checked }) {
 export function AttendeeCheck({ event, user, submitted, attendee = false }) {
     const [attended, setAttended] = useState(false);
     const supabase = useContext(AuthContext);
-    async function updateAttended() {
+    function updateAttended() {
         setAttended(!attended);
     }
     useEffect(() => {
@@ -49,8 +49,10 @@ export function AttendeeCheck({ event, user, submitted, attendee = false }) {
 
     useEffect(() => {
         async function submitUser() {
+            console.log(attended)
             if (attended) {
-                const { error } = await supabase.from('event_signups').upsert({ user_id: user.id, event_id: event.id, attended: attended, flake_in: !attendee }, { onConflict: 'user_id, event_id' }).select();
+                const { error } = await supabase
+                    .from('event_signups').upsert({ user_id: user.id, event_id: event.id, attended: attended, flake_in: !attendee }, { onConflict: 'user_id, event_id' }).select();
                 const event_req_name = event?.event_types?.requirement;
                 const credit_req_name = event?.event_types?.credit;
                 if (!error && event_req_name) {
@@ -132,6 +134,7 @@ export function TrackingEvent({ event, users, validateLink }) {
         }
         else
         {
+            setSubmitted(true);
             for (const chair of event?.event_chairs) {
                 updateChair(chair.id, event?.id);
             }
