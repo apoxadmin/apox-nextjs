@@ -159,6 +159,7 @@ const Grid = ({ rows, cols, user, isPledge, reqData, creditRequirements, eventRe
                 let value = 0
                 if (user != null && req.name in reqData) value = reqData[ req.name ]
                 let maxValue = req.value
+                if (maxValue == 0) return null;
                 let t = value / maxValue
                 if (isPledge && req.actives_only) return null;
                 return (
@@ -203,6 +204,7 @@ const Grid = ({ rows, cols, user, isPledge, reqData, creditRequirements, eventRe
                 let value = 0
                 if (user != null && req.name in reqData) value = reqData[ req.name ]
                 const maxValue = req.value
+                if (maxValue == 0) return null;
                 let t = value / maxValue
                 if (isPledge && req.actives_only) return null;
                 return (
@@ -314,10 +316,8 @@ export function RequirementsPage({ user_id }) {
                 for (let override of overrideResponse.data)
                 {
                     if (override.event_req) eventData[ override.event_req - 1 ].value = override.value;
-                    else eventData[ override.credit_req - 1 ].value = override.value;
+                    else creditData[ override.credit_req - 1 ].value = override.value;
                 }
-                console.log(eventData)
-                console.log(creditData)
 
                 setEventRequirements(eventData)
                 setCreditRequirements(creditData)
