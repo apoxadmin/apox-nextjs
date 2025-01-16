@@ -159,7 +159,6 @@ const Grid = ({ rows, cols, user, isPledge, reqData, creditRequirements, eventRe
                 let value = 0
                 if (user != null && req.name in reqData) value = reqData[ req.name ]
                 let maxValue = req.value
-                if(isPledge && i == 2) maxValue = 1
                 let t = value / maxValue
                 if (isPledge && req.actives_only) return null;
                 return (
@@ -299,13 +298,33 @@ export function RequirementsPage({ user_id }) {
             const userEvents = await getUserReqs(userData?.id);
             setTrackedReqs(userEvents);
         }
-        getTrackedReqs();
-        if (eventRequirements && eventRequirements.length > 0)
+        async function getOverrides()
         {
-            let data = eventRequirements;
-            if (isPledge) data[ 2 ].value = 1;
-            setEventRequirements(data);
+            if (userData && creditRequirements.length > 0 && eventRequirements.length > 0)
+            {
+                const overrideResponse = await supabase
+                    .from('requirement_overrides')
+                    .select('*')
+                    .eq('standing', userData.standing)
+                if (!overrideResponse.data) return; // no overrides
+                
+                let eventData = eventRequirements;
+                let creditData = creditRequirements;
+                
+                for (let override of overrideResponse.data)
+                {
+                    if (override.event_req) eventData[ override.event_req - 1 ].value = override.value;
+                    else eventData[ override.credit_req - 1 ].value = override.value;
+                }
+                console.log(eventData)
+                console.log(creditData)
+
+                setEventRequirements(eventData)
+                setCreditRequirements(creditData)
+            }
         }
+        getOverrides();
+        getTrackedReqs();
     }, [ userData ])
 
     useEffect(() => {
