@@ -6,7 +6,7 @@ import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 import { updateChair } from "@/supabase/event";
 
-function CustomCheckbox({ checked }) {
+export function CustomCheckbox({ checked }) {
     return (
         <div className="flex items-center space-x-4">
             {/* Custom styled checkbox container */}
@@ -49,7 +49,6 @@ export function AttendeeCheck({ event, user, submitted, attendee = false }) {
 
     useEffect(() => {
         async function submitUser() {
-            console.log(attended)
             if (attended) {
                 const { error } = await supabase
                     .from('event_signups').upsert({ user_id: user.id, event_id: event.id, attended: attended, flake_in: !attendee }, { onConflict: 'user_id, event_id' }).select();

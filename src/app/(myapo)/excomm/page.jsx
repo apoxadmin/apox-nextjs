@@ -31,8 +31,8 @@ export default function ExCommDashboard() {
             <Widget path="/excomm/pledging">
                 Pledging
             </Widget>
-            <Widget>
-                Sergeant-at-Arms
+            <Widget path="/excomm/addtoevent">
+                Add User To Event
             </Widget>
             <Widget>
                 Historian

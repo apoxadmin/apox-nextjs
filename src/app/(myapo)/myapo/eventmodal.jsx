@@ -359,6 +359,9 @@ function TrackingInfoPage({ setShowTrackingInfo, event, attendees }) {
                     back
                 </button>
             </div>
+            <div>
+                <h1>event id: {event?.id}</h1>
+            </div>
             <div className="flex items-center gap-2">
                 <input
                     type="checkbox"
