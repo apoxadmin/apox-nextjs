@@ -56,8 +56,13 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
 };
 
 function CustomNode({ data }) {
+    console.log(data)
+    const colors =
+    [
+        "red-300","blue-300","purple-300"
+    ]
     return (
-        <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400">
+        <div className={`px-4 py-2 shadow-md rounded-md bg-${colors[data.family - 1]} border-2 border-stone-400`}>
             <div className="flex max-w-[150px]">
                 <div className="ml-2">
                     <div className="text-lg text-black font-bold">{data.name}</div>
@@ -122,7 +127,7 @@ function TreeViz() {
 
     React.useEffect(() => {
         async function fetchUsers() {
-            let users = (await supabase.from('family_tree').select('id, name, big, class(*)')).data;
+            let users = (await supabase.from('family_tree').select('id, name, big, class(*), family')).data;
 
             if (users) {
                 let _userNodes = [];
