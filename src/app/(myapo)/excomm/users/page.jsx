@@ -46,6 +46,43 @@ const col_span_width = [
     'col-span-16',
 ]
 
+function generateCSV(user)
+{
+    if (!user) return null;
+    let row = 
+    {
+        name: user?.name,
+        standing: user?.standings.name,
+        class: user?.class.name
+    }
+    user.event_users_requirements.forEach(r =>
+    {
+        row[ r.name ] = r.value;   
+    })
+    user.credit_users_requirements.forEach(r =>
+    {
+        row[ r.name ] = r.value;   
+    })
+    return row;
+}
+
+function downloadCSV(data)
+{    
+    const csvContent = [
+        Object.keys(data[0]).join(","),  // Headers
+        ...data.map(row => Object.values(row).join(","))
+    ].join("\n");
+    
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "data.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);    
+}
+
 function UserRow({ user, creditRequirements, eventRequirements }) {
     const ref = useRef(null); 
     const [ modalOpen, setModalOpen ] = useState(false);
@@ -155,9 +192,9 @@ export default function UserTable() {
                     for (let event_req of user.event_users_requirements) {
                         user[event_req.name] = event_req.value;
                     }
-                    delete user.credit_users_requirements;
                 }
                 usersData.sort(compareName);
+                // console.log(usersData.filter(u => u.standing != 5).map(u => u.name).join(", "))
                 setUsers(usersData);
             }
         }

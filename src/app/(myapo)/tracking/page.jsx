@@ -254,7 +254,7 @@ export function TrackingEvent({ event, users, validateLink }) {
                     </div>
                     <div className="flex flex-col">
                         <label>Submit link to the folder with photos/videos:</label>
-                        <input value={mediaURL} onChange={(e) => setMediaURL(e.target.value)} placeholder="https://drive.google.com/***" />
+                        <input value={mediaURL} onChange={(e) => setMediaURL(e.target.value)} placeholder="https://drive.google.com/drive/folders/***"/>
                     </div>
                     <div className="flex justify-center">
                         <button
