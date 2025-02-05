@@ -23,17 +23,16 @@ const elkOptions = {
 const position = { x: 0, y: 0 };
 
 const getLayoutedElements = (nodes, edges, options = {}) => {
+    // Sort nodes by their family property
+    const sortedNodes = [...nodes].sort((a, b) => a.data.family - b.data.family);
+
     const graph = {
         id: 'root',
         layoutOptions: options,
-        children: nodes.map((node) => ({
+        children: sortedNodes.map((node) => ({
             ...node,
-            // Adjust the target and source handle positions based on the layout
-            // direction.
             targetPosition: 'top',
             sourcePosition: 'bottom',
-
-            // Hardcode a width and height for elk to use when layouting.
             width: 200,
             height: 100,
         })),
@@ -45,25 +44,21 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
         .then((layoutedGraph) => ({
             nodes: layoutedGraph.children.map((node) => ({
                 ...node,
-                // React Flow expects a position property on the node instead of `x`
-                // and `y` fields.
                 position: { x: node.x, y: node.y },
             })),
-
             edges: layoutedGraph.edges,
         }))
         .catch(console.error);
 };
 
 function CustomNode({ data }) {
-    console.log(data)
     const colors =
     [
-        "red-300","blue-300","purple-300"
+        "red-300","purple-300","blue-300"
     ]
     return (
-        <div className={`px-4 py-2 shadow-md rounded-md bg-${colors[data.family - 1]} border-2 border-stone-400`}>
-            <div className="flex max-w-[150px]">
+        <div className={`px-2 py-2 shadow-md rounded-md bg-${colors[data.family - 1]} border-2 border-stone-600`}>
+            <div className="flex w-[200px]">
                 <div className="ml-2">
                     <div className="text-lg text-black font-bold">{data.name}</div>
                     <div className="text-gray-500">{data.class.symbol}</div>
@@ -128,7 +123,7 @@ function TreeViz() {
     React.useEffect(() => {
         async function fetchUsers() {
             let users = (await supabase.from('family_tree').select('id, name, big, class(*), family')).data;
-
+    
             if (users) {
                 let _userNodes = [];
                 let _userEdges = [];
@@ -138,12 +133,12 @@ function TreeViz() {
                         _userEdges.push({ id: `e${user.big}-${user.id}`, source: `${user.big}`, target: `${user.id}`, type: 'smoothstep' });
                     }
                 }
-
+    
                 setTreeData({ nodes: _userNodes, edges: _userEdges });
             }
         }
         fetchUsers();
-    }, []);
+    }, []);    
 
     return (
         <ReactFlow

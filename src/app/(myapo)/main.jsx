@@ -95,6 +95,9 @@ export default function Main({ children }) {
                     <Link href="/tracking" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
                         <h1>track an event</h1>
                     </Link>
+                    <Link href="/myevents" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+                        <h1>my events</h1>
+                    </Link>
                     <Link href="/family" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
                         <h1>family tree</h1>
                     </Link>

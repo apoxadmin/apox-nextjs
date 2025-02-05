@@ -34,9 +34,6 @@ export default function ExCommDashboard() {
             <Widget path="/excomm/addtoevent">
                 Add User To Event
             </Widget>
-            <Widget>
-                Historian
-            </Widget>
         </div>
     )
 }
