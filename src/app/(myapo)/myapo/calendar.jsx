@@ -122,6 +122,7 @@ export default function EventCalendar({ focusDay, userData, filter }) {
     const [focusEndDay, setFocusEndDay] = useState(endOfWeek(endOfMonth(focusDay)));
     const [monthDays, setMonthDays] = useState([]);
     const [events, setEvents] = useState([]);
+    const [shiftList, setShiftList] = useState([]);
     const [eventModal, setEventModal] = useState(null);
 
     useEffect(() => {
@@ -142,6 +143,8 @@ export default function EventCalendar({ focusDay, userData, filter }) {
             .eq('reviewed', true)
             .order('date', { ascending: false });
         let eventsList = eventsResponse?.data;
+        setShiftList(eventsList.filter(x => x.event_of_shift != null));
+        eventsList = eventsList.filter(x => x.event_of_shift == null) // filter out shifts
 
         if (filter != 0)
         {
@@ -175,7 +178,7 @@ export default function EventCalendar({ focusDay, userData, filter }) {
 
     return (
         <div className="flex flex-col h-full w-full">
-            <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} userData={userData} />
+            <EventModal supabase={supabase} event={eventModal} setEvent={setEventModal} userData={userData} shiftList={shiftList} />
             
             <div className="flex items-center justify-center py-2 gap-4">
                 <button className="text-center text-neutral-500 text-xl py-2 px-8 custom-prev hover:bg-stone-500 hover:text-white rounded-full transition">{ '<' }</button>

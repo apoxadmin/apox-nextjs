@@ -172,7 +172,7 @@ export function MyEvent({ event, users }) {
     )
 }
 
-export default function TrackingPage() {
+export default function MyEventsPage() {
     const [user, setUser] = useState(null);
     const [events, setEvents] = useState([]);
     const [users, setUsers] = useState([]);
@@ -205,6 +205,8 @@ export default function TrackingPage() {
             const eventsResponse = await supabase
                 .from('events')
                 .select('tracked, *, event_types(*), event_chairs(*)')
+                .eq('tracked', false)
+                .eq('reviewed', true);
             if (eventsResponse.data) 
             {
                 events = eventsResponse.data.filter(event => event.creator == user.id);
@@ -218,7 +220,6 @@ export default function TrackingPage() {
         }
         if (user)
             getEvents();
-
     }, [user]);
 
     return <div className="flex flex-col space-y-8 items-center w-full p-10 overflow-y-auto">
@@ -226,7 +227,7 @@ export default function TrackingPage() {
         {
             events?.length == 0 ?
             <h1>
-                you have not created any events!!
+                you have not created any events!! once you create an event it will appear here and you can edit it
             </h1>
             :
             <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">

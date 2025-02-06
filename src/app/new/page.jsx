@@ -1,6 +1,5 @@
 'use client'
 
-
 import { createUser, deleteUser } from '@/supabase/user'
 import { useState } from 'react';
 

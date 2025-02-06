@@ -48,20 +48,45 @@ function isTodayOrLater(dateString) {
     return dateString >= today; // Check if the input date is today or later
 }
 
-export function EventModal({ supabase, event, setEvent, userData }) {
+function configureAddToCal(event, id)
+{
+    if (event) {
+        const config = {
+            name: event.name,
+            startDate: event.date,
+            startTime: event ? convertToPST(event?.start_time) : undefined,
+            endTime: event ? convertToPST(event?.end_time) : undefined,
+            endDate: event.date,
+            location: event.location,
+            options: ['Google'],
+            timeZone: "America/Los_Angeles"
+        };
+
+        const button = document.getElementById(id);
+        if (button) {
+            button.addEventListener('click', () => atcb_action(config, button));
+        }
+    }
+}
+
+export function EventModal({ supabase, event, setEvent, userData, shiftList }) {
     const ref = useRef(null);
-    const [dateString, setDateString] = useState('');
-    const [attendees, setAttendees] = useState([]);
+    const [ dateString, setDateString ] = useState('');
     const [signups, setSignups] = useState([]);
     const [drivers, setDrivers] = useState([]);
     const [chairs, setChairs] = useState([]);
     const [isCreator, setCreator] = useState(false);
-    const [showTrackingInfo, setShowTrackingInfo] = useState(false);
+    const [showTrackingInfo, setShowTrackingInfo] = useState(false);    
+    const [ shifts, setShifts ] = useState([]);
+    
+    function getShifts() {
+        let s = shiftList.filter(e => e.event_of_shift == event?.id);
+        setShifts(s);
+    }
 
     async function getAttendees() {
         const attendeesResponse = await supabase?.from('event_signups').select('*, users (*)').eq('event_id', event?.id);
         if (attendeesResponse?.data) {
-            setAttendees(attendeesResponse.data.map((user) => user.users));
             setSignups(attendeesResponse.data);
         }
     }
@@ -95,12 +120,16 @@ export function EventModal({ supabase, event, setEvent, userData }) {
             getChairs();
             getDrivers();
             getCreator();
+            if (event.has_shifts)
+            {
+                getShifts();
+            }
         } else {
-            setAttendees([]);
             setChairs([]);
             setDrivers([])
             setDateString('');
             setCreator(false);
+            setShifts([]);
         }
     }, [event, ref]);
 
@@ -120,26 +149,16 @@ export function EventModal({ supabase, event, setEvent, userData }) {
     });
 
     useEffect(() => {
-        if (event) {
-            const config = {
-                name: event.name,
-                startDate: event.date,
-                startTime: event ? convertToPST(event?.start_time) : undefined,
-                endTime: event ? convertToPST(event?.end_time) : undefined,
-                endDate: endDate,
-                location: event.location,
-                options: ['Google'],
-                timeZone: "America/Los_Angeles"
-            };
-    
-            const button = document.getElementById('add-to-cal-btn');
-            if (button) {
-                button.addEventListener('click', () => atcb_action(config, button));
-            }
+        if (!event?.has_shifts) configureAddToCal(event, 'add-to-cal-btn');
+        else
+        {
+            shifts.forEach((shift, i) =>
+            {
+                configureAddToCal(shift, 'add-to-cal-btn' + (i + 1))
+            })
         }
-    }, [event]);
+    }, [event, shifts]);
     
-    let endDate = event?.date;
     if (event)
     {
         const date1 = new Date(`1970-01-01T${event.start_time.split("T")[1].split("+")[0]}Z`)
@@ -156,8 +175,8 @@ export function EventModal({ supabase, event, setEvent, userData }) {
                     showTrackingInfo ?
                         <TrackingInfoPage setShowTrackingInfo={setShowTrackingInfo} event={event} attendees={signups}/>
                         :
-                        <EventModalInfo event={event} attendees={attendees} setShowTrackingInfo={setShowTrackingInfo} dateString={dateString}
-                            drivers={drivers} chairs={chairs} isCreator={isCreator} userData={userData}/>
+                        <EventModalInfo shifts={shifts} event={event} setShowTrackingInfo={setShowTrackingInfo} dateString={dateString}
+                            drivers={drivers} chairs={chairs} isCreator={isCreator} userData={userData} supabase={supabase}/>
                 }
             </div>
             <form method="dialog" className="modal-backdrop">
@@ -167,72 +186,76 @@ export function EventModal({ supabase, event, setEvent, userData }) {
     )
 }
 
-function EventModalInfo({ event, attendees, setShowTrackingInfo, dateString, drivers, chairs, isCreator, userData }) {
-    return (
-    <div className="flex flex-col space-y-4">
-        <div className="flex justify-between">
-            <h1 className="text-neutral-600">
-                {event?.event_types.name.split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}
-            </h1>
-            <h1 className="text-neutral-600">
-                {dateString}
-            </h1>
-        </div>
-        <div className="flex justify-end gap-2">
-            <button onClick={() => {
-                setShowTrackingInfo(true)
-            }
-            } className="text-green-500">tracking info</button>
-            {
-                isCreator &&
-                <button onClick={() => {
-                    unapproveEvent(event?.id);
-                    window.location.reload();
-                }
-                } className="text-red-500">delete event</button>
-            }
-        </div>
-        <div className="flex flex-col space-y-2">
-            <div className="flex flex-col text-center">
-                <h1 className="font-bold text-lg">
-                    <span className="swiper-no-swiping">
-                        {event?.name}
-                    </span>
-                </h1>
-                <h1 className="font-bold">
-                    <span className="swiper-no-swiping">
-                        @ {event?.location}
-                    </span>
-                </h1>
-            </div>
-            <h1 className="text-center">
-                <span className="swiper-no-swiping">
-                    {
-                        (() => {
-                            const formatted = convertToLink(event?.description);
-                            return (
-                                <span className="swiper-no-swiping">
-                                    {formatted}
-                                </span>
-                            );
-                        })()
-                    }
-                </span>
-            </h1>
-            {
-                event &&
-                <div className="flex justify-center">
-                    <button
-                        className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-xl select-none"
-                        id='add-to-cal-btn'
-                    >
-                        add to gcal
-                    </button>
-                </div>
-            }
-        </div>
+function AttendeeInfo({ isShift, supabase, event, userData, shiftNum })
+{
+    const [ attendees, setAttendees ] = useState([]);
+    const [ drivers, setDrivers ] = useState([]);
+    const [chairs, setChairs] = useState([]);
+    
+    async function getAttendees() {
+        const attendeesResponse = await supabase?.from('event_signups').select('*, users (*)').eq('event_id', event?.id);
+        if (attendeesResponse?.data) {
+            setAttendees(attendeesResponse.data.map((user) => user.users));
+        }
+    }
+
+    async function getChairs() {
+        const chairsResponse = await supabase?.from('event_chairs').select('users (*)').eq('event_id', event?.id);
+        if (chairsResponse?.data) {
+            setChairs(chairsResponse.data.map((user) => user.users));
+        }
+    }
+
+    async function getDrivers() {
+        const driversResponse = await supabase?.from('event_signups').select('users (*)').eq('driving', true).eq('event_id', event?.id);
+        if (driversResponse?.data) {
+            setDrivers(driversResponse.data.map((user) => user.users));
+        }
+    }
+    
+    useEffect(() => {
+        if (event) {
+            getAttendees();
+            getChairs();
+            getDrivers();
+        } else {
+            setAttendees([]);
+            setChairs([]);
+            setDrivers([])
+        }
+    }, [ event ]);
+    
+    return ( 
+    <div className={`swiper-no-swiping ${isShift ? "bg bg-[#252a30] p-2 rounded-xl" : ""}`}>
         <div className="flex flex-col space-y-2 overflow-auto max-h-[40vh]">
-            <h1 className="text-center text-lg">Attendees ({attendees?.length} / {event?.capacity})</h1>
+            {
+                    isShift ?
+                    <div className="flex-col">
+                        <div className="flex justify-between">
+                            <h1 className="text-left text-lg">
+                                Shift {shiftNum}
+                            </h1>
+                            <div className="flex justify-center">
+                                <button
+                                    className="text-white bg-slate-600 hover:bg-slate-700 py-1 px-4 rounded-xl select-none"
+                                    id={'add-to-cal-btn' + shiftNum}
+                                >
+                                    add to gcal
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex justify-between">
+                            <h1 className="text-left text-lg">
+                                Attendees ({attendees?.length} / {event?.capacity})
+                            </h1>
+                            <h1 className="text-right text-lg">
+                                {new Date(event?.start_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })} - {new Date(event?.end_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
+                            </h1>
+                        </div>
+                    </div>                    
+                    :
+                    <h1 className="text-center text-lg">Attendees ({attendees?.length} / {event?.capacity})</h1>
+            }
             {
                 attendees?.length == 0 && <h1 className="text-center text-neutral-500">None yet!</h1>
             }
@@ -268,7 +291,7 @@ function EventModalInfo({ event, attendees, setShowTrackingInfo, dateString, dri
         </div>
         {
             (isTodayOrLater(event?.date)) &&
-            <div className="flex justify-center space-x-4">
+            <div className="flex justify-center space-x-4 py-2">
                 {
                     (isAfter(event?.date, startOfToday()) || userData?.privileged.length > 0) &&
                     (
@@ -325,6 +348,88 @@ function EventModalInfo({ event, attendees, setShowTrackingInfo, dateString, dri
                     )
                 }
             </div>
+        }
+        </div>
+    )
+}
+
+function EventModalInfo({ shifts, event, supabase, setShowTrackingInfo, dateString, isCreator, userData })
+{
+    return (
+    <div className="flex flex-col space-y-2">
+        <div className="flex justify-between">
+            <h1 className="text-neutral-600">
+                {event?.event_types.name.split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}
+            </h1>
+            <h1 className="text-neutral-600">
+                {dateString}
+            </h1>
+        </div>
+        <div className="flex justify-end gap-2">
+            <button onClick={() => {
+                setShowTrackingInfo(true)
+            }
+            } className="text-green-500">tracking info</button>
+            {
+                isCreator &&
+                <button onClick={() => {
+                    unapproveEvent(event?.id);
+                    window.location.reload();
+                }
+                } className="text-red-500">delete event</button>
+            }
+        </div>
+        <div className="flex flex-col space-y-2">
+            <div className="flex flex-col text-center">
+                <h1 className="font-bold text-lg">
+                    <span className="swiper-no-swiping">
+                        {event?.name}
+                    </span>
+                </h1>
+                <h1 className="font-bold">
+                    <span className="swiper-no-swiping">
+                        @ {event?.location}
+                    </span>
+                </h1>
+            </div>
+            <h1 className="text-center">
+                <span className="swiper-no-swiping">
+                    {
+                        (() => {
+                            const formatted = convertToLink(event?.description);
+                            return (
+                                <span className="swiper-no-swiping">
+                                    {formatted}
+                                </span>
+                            );
+                        })()
+                    }
+                </span>
+            </h1>
+        </div>
+        {
+            (event && !event?.has_shifts) &&
+            <div className="flex justify-center">
+                <button
+                    className="text-white bg-green-600 hover:bg-green-800 py-2 px-4 rounded-xl select-none"
+                    id='add-to-cal-btn'
+                >
+                    add to gcal
+                </button>
+            </div>
+        }
+        {
+            shifts.length == 0 ?
+                <AttendeeInfo isShift={false} event={event} supabase={supabase} userData={userData} />
+                :
+                <div className="flex flex-col gap-2 overflow-y-auto max-h-[400px]">
+                    {
+                        shifts.map((shift, i) =>
+                        {
+                            return <AttendeeInfo shiftNum={i + 1} isShift={true} key={i} event={shift} supabase={supabase} userData={userData} />
+                        })
+                    }
+                </div>
         }
     </div >)
 }

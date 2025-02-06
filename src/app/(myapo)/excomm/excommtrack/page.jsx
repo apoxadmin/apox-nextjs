@@ -42,6 +42,7 @@ export default function TrackingPage() {
                 .select('*, tracked, *, event_types(*), event_chairs(*)')
                 .eq('tracked', false)
                 .eq('reviewed', true)
+                .eq('has_shifts', false)
                 .lte('date', endOfToday().toISOString());
             if (eventsResponse.data) {
                 let eventsData = eventsResponse.data//.map((chair) => chair.events);
