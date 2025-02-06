@@ -52,12 +52,17 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
 };
 
 function CustomNode({ data }) {
+    const inactiveColors =
+    [
+        "blue-100","blue-100","blue-100"
+    ]
     const colors =
     [
         "red-300","purple-300","blue-300"
     ]
+    console.log(data)
     return (
-        <div className={`px-2 py-2 shadow-md rounded-md bg-${colors[data.family - 1]} border-2 border-stone-600`}>
+        <div className={`px-2 py-2 shadow-md rounded-md bg-${data.active ? inactiveColors[data.family - 1] : colors[data.family - 1]} border-2 border-stone-600`}>
             <div className="flex w-[200px]">
                 <div className="ml-2">
                     <div className="text-lg text-black font-bold">{data.name}</div>
@@ -122,12 +127,13 @@ function TreeViz() {
 
     React.useEffect(() => {
         async function fetchUsers() {
-            let users = (await supabase.from('family_tree').select('id, name, big, class(*), family')).data;
+            let users = (await supabase.from('family_tree').select('id, name, big, class(*), family, auth_id')).data;
     
             if (users) {
                 let _userNodes = [];
                 let _userEdges = [];
                 for (let user of users) {
+                    user.active = user.auth_id == null;
                     _userNodes.push({ id: `${user.id}`, position, type: 'custom', data: user });
                     if (user.big) {
                         _userEdges.push({ id: `e${user.big}-${user.id}`, source: `${user.big}`, target: `${user.id}`, type: 'smoothstep' });
