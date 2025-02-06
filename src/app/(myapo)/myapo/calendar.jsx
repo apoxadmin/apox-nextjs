@@ -41,6 +41,8 @@ function EventDay({ day, event, userData, setEvent }) {
             style = `hover:bg-stone-600 hover:text-white bg-stone-300`;
         if (eventTypeId == 12)
             style = `hover:bg-indigo-800 hover:text-white bg-indigo-300`;
+        if (eventTypeId == 13)
+            style = `hover:bg-emerald-300 hover:text-white bg-emerald-400`;
     }
     return <button
         onClick={() => setEvent(event)}
