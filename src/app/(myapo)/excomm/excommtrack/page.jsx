@@ -57,8 +57,16 @@ export default function TrackingPage() {
 
     }, [user]);
 
-    return <div className="flex flex-col space-y-8 items-center w-full p-10 overflow-y-auto overflow-x-hidden">
-        <h1 className="text-center text-xl text-neutral-700">Tracking</h1>
+    return <div className="flex flex-col space-y-2 items-center w-full p-10 overflow-y-auto overflow-x-hidden">
+        <h1 className="text-center text-xl text-neutral-700">excomm tracking</h1>
+        <h2>
+            quick note!
+            use this page if someone asked you to track an event which nobody signed up for (or if they have issues with tracking
+            this is usually the page to use). this page also bypasses the need for a drive link so if you
+            can't find it you can submit without one.
+        </h2>
+        <h2>green events are shifts</h2>
+        <h2>red events are full events</h2>
         <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
             {
                 events?.map((event, i) =>

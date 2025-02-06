@@ -81,6 +81,7 @@ export function EventModal({ supabase, event, setEvent, userData, shiftList }) {
     
     function getShifts() {
         let s = shiftList.filter(e => e.event_of_shift == event?.id);
+        s.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
         setShifts(s);
     }
 
@@ -233,7 +234,7 @@ function AttendeeInfo({ isShift, supabase, event, userData, shiftNum })
                     <div className="flex-col">
                         <div className="flex justify-between">
                             <h1 className="text-left text-lg">
-                                Shift {shiftNum}
+                                shift {shiftNum}
                             </h1>
                             <div className="flex justify-center">
                                 <button
@@ -246,7 +247,7 @@ function AttendeeInfo({ isShift, supabase, event, userData, shiftNum })
                         </div>
                         <div className="flex justify-between">
                             <h1 className="text-left text-lg">
-                                Attendees ({attendees?.length} / {event?.capacity})
+                                attendees ({attendees?.length} / {event?.capacity})
                             </h1>
                             <h1 className="text-right text-lg">
                                 {new Date(event?.start_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })} - {new Date(event?.end_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}

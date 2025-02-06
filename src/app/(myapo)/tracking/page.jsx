@@ -194,7 +194,7 @@ export function TrackingEvent({ event, users, validateLink }) {
 
     return (
         <div>
-            <button className="flex justify-between space-x-4 p-2 bg-red-500 rounded text-white w-full h-full" onClick={() => { ref.current.showModal(); }}>
+            <button className={`flex justify-between space-x-4 p-2 ${event?.event_of_shift == null ? "bg-red-500" : "bg-green-500"} rounded text-white w-full h-full`} onClick={() => { ref.current.showModal(); }}>
                 <div className="flex space-x-2">
                     <h1>{event?.event_types.abbreviation.toUpperCase()}</h1>
                     <h1 className="text-nowrap overflow-x-hidden">{event?.name}</h1>

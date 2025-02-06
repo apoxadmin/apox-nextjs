@@ -13,9 +13,13 @@ export async function requestEvent(user_id, data) {
         data.reviewed = true;
     }
 
-    const { error } = await supabase.from('events').insert(data);
-    if (error)
+    const response = await supabase.from('events').insert(data).select();
+    if (response.error)
+    {
+        console.log(response.error);
         return false;
+    }
+    else return response;
 }
 
 export async function deleteEvent(event_id) {
