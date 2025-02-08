@@ -113,7 +113,7 @@ export function TrackingEvent({ event, users, validateLink }) {
     const [toast, setToast] = useState(false);
     const [ toastMessage, setToastMessage ] = useState('');
     
-    function submitTracking() {
+    async function submitTracking() {
         console.log('Submitting')
         if (validateLink)
         {
@@ -139,6 +139,11 @@ export function TrackingEvent({ event, users, validateLink }) {
             }
             updateEvent();
             ref.current.close();
+
+            // const auditlogResponse = await supabase
+            //     .from('audit_log')
+            //     .insert({event_id: event.id, user: user_id})
+
             if (!mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
                 setToastMessage('Submitted with invalid drive link');
                 setToast(true);

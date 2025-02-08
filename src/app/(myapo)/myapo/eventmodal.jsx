@@ -72,7 +72,7 @@ function configureAddToCal(event, id)
 export function EventModal({ supabase, event, setEvent, userData, shiftList }) {
     const ref = useRef(null);
     const [ dateString, setDateString ] = useState('');
-    const [signups, setSignups] = useState([]);
+    const [ signups, setSignups ] = useState({});
     const [drivers, setDrivers] = useState([]);
     const [chairs, setChairs] = useState([]);
     const [isCreator, setCreator] = useState(false);
@@ -86,9 +86,30 @@ export function EventModal({ supabase, event, setEvent, userData, shiftList }) {
     }
 
     async function getAttendees() {
-        const attendeesResponse = await supabase?.from('event_signups').select('*, users (*)').eq('event_id', event?.id);
-        if (attendeesResponse?.data) {
-            setSignups(attendeesResponse.data);
+        if (!event.has_shifts || shifts.length == 0)
+        {
+            const attendeesResponse = await supabase?.from('event_signups').select('*, users (*)').eq('event_id', event?.id);
+            if (attendeesResponse?.data) {
+                setSignups({ [event.id]: attendeesResponse.data });
+            }
+        }
+        else
+        {
+            let signupList = {};
+
+            await Promise.all(
+                shifts.map(async (shift) => {
+                    const attendeesResponse = await supabase?.from('event_signups')
+                        .select('*, users (*)')
+                        .eq('event_id', shift.id);
+
+                    if (attendeesResponse?.data) {
+                        signupList[shift.id] = attendeesResponse.data;
+                    }
+                })
+            );
+
+            setSignups(signupList);
         }
     }
 
@@ -115,16 +136,16 @@ export function EventModal({ supabase, event, setEvent, userData, shiftList }) {
 
     useEffect(() => {
         if (event) {
+            if (event.has_shifts)
+            {
+                getShifts();
+            }
             ref.current.showModal();
             setDateString(`${format(event.start_time, 'p')} - ${format(event.end_time, 'p')}`);
             getAttendees();
             getChairs();
             getDrivers();
             getCreator();
-            if (event.has_shifts)
-            {
-                getShifts();
-            }
         } else {
             setChairs([]);
             setDrivers([])
@@ -132,7 +153,12 @@ export function EventModal({ supabase, event, setEvent, userData, shiftList }) {
             setCreator(false);
             setShifts([]);
         }
-    }, [event, ref]);
+    }, [ event, ref ]);
+    
+    useEffect(() => 
+    {
+        if(event) getAttendees();
+    }, [ shifts ]);
 
     useEffect(function mount() {
         function closeEscape(event) {
@@ -174,7 +200,7 @@ export function EventModal({ supabase, event, setEvent, userData, shiftList }) {
             <div className="modal-box flex flex-col space-y-4 max-h-[90vh] overflow-hidden">
                 {
                     showTrackingInfo ?
-                        <TrackingInfoPage setShowTrackingInfo={setShowTrackingInfo} event={event} attendees={signups}/>
+                        <TrackingInfoPage setShowTrackingInfo={setShowTrackingInfo} event={event} attendees={signups} shifts={shifts}/>
                         :
                         <EventModalInfo shifts={shifts} event={event} setShowTrackingInfo={setShowTrackingInfo} dateString={dateString}
                             drivers={drivers} chairs={chairs} isCreator={isCreator} userData={userData} supabase={supabase}/>
@@ -435,7 +461,8 @@ function EventModalInfo({ shifts, event, supabase, setShowTrackingInfo, dateStri
     </div >)
 }
 
-function TrackingInfoPage({ setShowTrackingInfo, event, attendees }) {
+function TrackingInfo({ event, attendees, shiftNum })
+{
     // State for categorized attendees
     const [flakeOut, setFlakeOut] = useState([]);
     const [trackedUsers, setTrackedUsers] = useState([]);
@@ -453,20 +480,12 @@ function TrackingInfoPage({ setShowTrackingInfo, event, attendees }) {
         setTrackedUsers(trackedGroup);
         setFlakeIn(flakeInGroup);
         console.log(attendees)
-    }, [attendees]);
-
-    return (
-        <div className="flex flex-col space-y-4">
-            <div className="flex justify-end gap-2">
-                <button
-                    onClick={() => setShowTrackingInfo(false)}
-                    className="text-green-500"
-                >
-                    back
-                </button>
-            </div>
-            <div>
+    }, [ attendees ]);
+    
+    return <div>
+        <div>
                 <h1>event id: {event?.id}</h1>
+                {shiftNum && <h1>shift {shiftNum}</h1>}
             </div>
             <div className="flex items-center gap-2">
                 <input
@@ -487,7 +506,7 @@ function TrackingInfoPage({ setShowTrackingInfo, event, attendees }) {
                     </label>
                     :
                     <label htmlFor="tracking-checkbox" className="text-lg font-medium">
-                        event has not been tracked yet (contact chair)
+                        {shiftNum ? "shift" : "event"} has not been tracked yet (contact chair)
                     </label>
                 }
             </div>
@@ -524,6 +543,33 @@ function TrackingInfoPage({ setShowTrackingInfo, event, attendees }) {
                     </div>
                 </div>
             )}
+    </div>
+}
+
+function TrackingInfoPage({ setShowTrackingInfo, event, attendees, shifts }) {
+    return (
+        <div className="flex flex-col space-y-4 swiper-no-swiping">
+            <div className="flex justify-end gap-2">
+                <button
+                    onClick={() => setShowTrackingInfo(false)}
+                    className="text-green-500"
+                >
+                    back
+                </button>
+            </div>
+            {
+                event?.has_shifts ?
+                <div className="flex flex-col gap-10 overflow-y-auto max-h-[400px]">
+                    {
+                        shifts.map((shift, i) =>
+                        {
+                            return <TrackingInfo key={i} shiftNum={i + 1} event={shift} attendees={attendees[ shift.id ]}/>
+                        })
+                    }
+                </div>
+                :
+                <TrackingInfo event={event} attendees={attendees[ event?.id ]} />
+            }
         </div>
     );
 }
