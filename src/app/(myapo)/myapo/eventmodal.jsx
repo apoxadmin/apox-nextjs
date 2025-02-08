@@ -261,13 +261,13 @@ function AttendeeInfo({ isShift, supabase, event, userData, shiftNum })
                 attendees?.length == 0 && <h1 className="text-center text-neutral-500">None yet!</h1>
             }
             <div className="flex flex-col overflow-auto">
-                <div className="grid grid-cols-2">
+                <div className="grid grid-cols-2 gap-1">
                     {
                         attendees?.map((user, i) => {
                             const isDriver = drivers?.some(driver => driver.id == user.id);
                             let bg = isDriver ? 'bg-purple-600 text-white' : '';
                             bg = chairs?.some(chair => chair.id == user.id) ? 'bg-green-600 text-white' : bg;
-                            return <div key={i} className={`${bg} flex flex-col border border-black p-2 overflow-x-hidden`}>
+                            return <div key={i} className={`${bg} flex flex-col border border-black rounded-xl p-2 overflow-x-hidden`}>
                                 <h1 className="swiper-no-swiping">
                                     {user.name + (isDriver ? ' (driver)' : '')}
                                 </h1>
