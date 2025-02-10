@@ -206,6 +206,7 @@ export default function MyEventsPage() {
                 .from('events')
                 .select('tracked, *, event_types(*), event_chairs(*)')
                 .eq('tracked', false)
+                .eq('has_shifts', false)
                 .eq('reviewed', true);
             if (eventsResponse.data) 
             {
