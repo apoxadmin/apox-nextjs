@@ -253,7 +253,7 @@ function AttendeeInfo({ isShift, supabase, event, userData, shiftNum })
     }, [ event ]);
     
     return ( 
-    <div className={`swiper-no-swiping bg-white dark:bg-[#252a30] p-2 rounded-xl text-white dark:text-slate-300`}>
+    <div className={`swiper-no-swiping dark:bg-[#252a30] p-2 rounded-xl text-white dark:text-slate-300`}>
         <div className="flex flex-col space-y-2 overflow-auto max-h-[40vh]">
             {
                     isShift ?
