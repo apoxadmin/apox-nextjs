@@ -317,7 +317,7 @@ function AttendeeInfo({ isShift, supabase, event, userData, shiftNum })
             </div>
         </div>
         {
-            (isTodayOrLater(event?.date)) &&
+            (isTodayOrLater(event?.date)) ?
             <div className="flex justify-center space-x-4 py-2">
                 {
                     (isAfter(event?.date, startOfToday()) || userData?.privileged.length > 0) &&
@@ -374,7 +374,11 @@ function AttendeeInfo({ isShift, supabase, event, userData, shiftNum })
                         </button>
                     )
                 }
-            </div>
+                </div>
+                :
+                <div className="text-center text-neutral-500 p-2">
+                    It is too late to sign up, contact the chairs to flake in!
+                </div>
         }
         </div>
     )
@@ -449,7 +453,7 @@ function EventModalInfo({ shifts, event, supabase, setShowTrackingInfo, dateStri
             shifts.length == 0 ?
                 <AttendeeInfo isShift={false} event={event} supabase={supabase} userData={userData} />
                 :
-                <div className="flex flex-col gap-2 overflow-y-auto max-h-[400px]">
+                <div className="flex flex-col gap-2 overflow-y-auto max-h-[400px] pb-6">
                     {
                         shifts.map((shift, i) =>
                         {
