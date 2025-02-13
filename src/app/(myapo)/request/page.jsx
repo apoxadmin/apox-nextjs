@@ -168,14 +168,14 @@ export default function RequestPage() {
                     <div className="label">
                         <span className="label-text">Max Capacity</span>
                     </div>
-                    <input {...register("capacity", { valueAsNumber: true, required: true })} type="number" placeholder="Capacity.." step="1" min="1" className="input input-bordered bg-neutral-50 h-[40px] text-base" />
+                    <input {...register("capacity", { valueAsNumber: true, required: true })} type="number" placeholder="" step="1" min="1" className="input input-bordered bg-neutral-50 h-[40px] text-base" />
                 </label>
                 {eventType && (eventType.name === "service" || eventType.name === "fundraising" || eventType.name == "flyering") && (
                     <label className="form-control">
                         <div className="label">
                             <span className="label-text">{eventType === "service" ? "Service Hours" : "Credit"}</span>
                         </div>
-                        <input {...register("credit")} type="number" placeholder="10" step="0.1" min="0" className="input input-bordered bg-neutral-50 h-[40px] text-base" />
+                        <input {...register("credit")} type="number" placeholder="" step="0.1" min="0" className="input input-bordered bg-neutral-50 h-[40px] text-base" />
                     </label>
                 )}
                 <button type="submit" className="btn">
