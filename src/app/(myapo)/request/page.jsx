@@ -12,6 +12,7 @@ export default function RequestPage() {
     const [eventTypes, setEventTypes] = useState([]);
     const [userData, setUserData] = useState(null);
     const [toast, setToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
     const [shiftsEnabled, setShiftsEnabled] = useState(false);
     const [shifts, setShifts] = useState([{ start: "", end: "" }, { start: "", end: "" }]); // Default 2 shifts
     const supabase = createSupabaseClient();
@@ -22,7 +23,16 @@ export default function RequestPage() {
     register("event_type", { required: true });
     register("date", { required: true });
 
-    async function onSubmit (data) {
+    async function onSubmit(data) {
+        if (!data.event_type || !data.name || !data.description || !data.location || !data.date
+            || !shifts[ 0 ].start || !shifts[ 0 ].end || !data.capacity
+            || ((eventType.name === "service" || eventType.name === "fundraising" || eventType.name == "flyering") && !data.credit)) {
+            setToastMessage("Please fill in all required fields.");
+            setToast(true);
+            setTimeout(() => setToast(false), 5000);
+            return;
+        }
+
         if (shiftsEnabled) {
             let main_event = {...data};
             main_event.start_time = shifts[0].start;
@@ -45,6 +55,7 @@ export default function RequestPage() {
             data.end_time = shifts[ 0 ].end;
             data.has_shifts = false;
             if (requestEvent(userData.id, data)) {
+                setToastMessage("Event successfully created!")
                 setToast(true);
                 setTimeout(() => {
                     setToast(false);
@@ -185,7 +196,7 @@ export default function RequestPage() {
             {toast && (
                 <div className="toast">
                     <div className="alert alert-success shadow-lg text-center">
-                        <h1 className="text-white">Event created!</h1>
+                        <h1 className="text-white">{toastMessage}</h1>
                     </div>
                 </div>
             )}

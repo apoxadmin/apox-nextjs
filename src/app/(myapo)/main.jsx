@@ -73,7 +73,7 @@ export default function Main({ children }) {
 
     return (
         <div className="grow h-screen flex flex-col bg-neutral-50 w-full">
-            <div className="flex py-3 px-8 justify-between items-center">
+            <div className="flex py-3 px-8 justify-between items-center overflow-x-auto overflow-y-hidden min-h-[64px]">
                 <div className="flex flex-row gap-2 h-full items-center justify-center">
                     <Link href="/">
                         <img className="h-[30px] justify-center" src="/logo_long.png" />
@@ -93,7 +93,7 @@ export default function Main({ children }) {
                         </Link>
                     }
                     <Link href="/tracking" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
-                        <h1>track an event</h1>
+                        <h1>track event</h1>
                     </Link>
                     <Link href="/myevents" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
                         <h1>my events</h1>

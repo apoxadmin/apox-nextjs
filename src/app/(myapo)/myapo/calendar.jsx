@@ -1,9 +1,10 @@
 import { AuthContext } from "@/supabase/client";
-import { eachDayOfInterval, endOfDay, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfToday, startOfWeek } from "date-fns";
+import { addMonths, eachDayOfInterval, endOfDay, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfToday, startOfWeek, subMonths } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
 import { EventModal } from "./eventmodal";
 import "swiper/css";
 import 'swiper/css/navigation';
+import React from "react";
 
 function EventDay({ day, event, userData, setEvent }) {
     const includesUser = event?.event_signups?.some((signup) => signup.user_id === userData?.id);
@@ -63,14 +64,15 @@ function EventDay({ day, event, userData, setEvent }) {
     </button>
 }
 
-function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, setEvent }) {
-    const [color, setColor] = useState(isSameMonth(focusDay, day) ? (isToday(focusDay) ? 'bg-blue-100' : '') : 'bg-neutral-200 hover:bg-neutral-100');
+export function MonthDayComponent({ userData, focusDay, day, index, fiveRows, events, setEvent }) {
+    const [color, setColor] = useState(isSameMonth(focusDay, day) ? (isToday(day) ? 'bg-blue-100' : '') : 'bg-neutral-200 hover:bg-neutral-100');
     let textColor = isToday(day) ? 'text-neutral-600' : '';
     let position = "";
 
     useEffect(() => {
-        setColor(isSameMonth(focusDay, day) ? (isToday(day) ? 'bg-blue-100' : '') : 'bg-neutral-200 hover:bg-neutral-100');
-    }, [focusDay]);
+        const newcolor = isSameMonth(focusDay, day) ? (isToday(day) ? 'bg-blue-100' : '') : 'bg-neutral-200 hover:bg-neutral-100';
+        setColor(newcolor);
+    }, [ focusDay ]);
 
     const [popover, setPopover] = useState(false);
 
@@ -117,42 +119,27 @@ function compareTimeOfDay(date1, date2) {
     return time1 - time2;
 }
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-export default function EventCalendar({ focusDay, userData, filter }) {
+export const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+export default function EventCalendar({ focusDay, userData, filter, events, shiftList }) {
     const supabase = useContext(AuthContext);
-    const [focusStartDay, setFocusStartDay] = useState(startOfWeek(startOfMonth(focusDay)));
-    const [focusEndDay, setFocusEndDay] = useState(endOfWeek(endOfMonth(focusDay)));
     const [monthDays, setMonthDays] = useState([]);
-    const [events, setEvents] = useState([]);
-    const [shiftList, setShiftList] = useState([]);
     const [eventModal, setEventModal] = useState(null);
+    const [filteredEvents, setFilteredEvents] = useState([]);
 
     useEffect(() => {
         const start = startOfWeek(startOfMonth(focusDay));
         const end = endOfWeek(endOfMonth(focusDay));
         const days = eachDayOfInterval(interval(start, end));
-        setFocusStartDay(start);
-        setFocusEndDay(end);
         setMonthDays(days);
-    }, [focusDay]);
-
-    async function getEvents() {
-        const eventsResponse = await supabase
-            .from('events')
-            .select('*, event_types(*), event_signups(*), event_chairs(*)')
-            .gte('date', focusStartDay.toISOString())
-            .lte('date', focusEndDay.toISOString())
-            .eq('reviewed', true)
-            .order('date', { ascending: false });
-        let eventsList = eventsResponse?.data;
-        setShiftList(eventsList.filter(x => x.event_of_shift != null));
-        eventsList = eventsList.filter(x => x.event_of_shift == null) // filter out shifts
-
+    }, [ focusDay ]);
+    
+    useEffect(() => {
+        if(!events) return
+        let eventsList = events;
         if (filter != 0)
         {
-            eventsList = eventsList.filter((event) => event.event_types.id == filter)
+            eventsList = events.filter((event) => event.event_types.id == filter)            
         }
-
         const eventsMap = new Map();
         for (const event of eventsList) {
             var [YYYY, MM, DD] = event.date.split('-')
@@ -171,12 +158,8 @@ export default function EventCalendar({ focusDay, userData, filter }) {
                 return [key, sortedValues];
             })
         );
-        setEvents(eventsMapSorted);
-    }
-
-    useEffect(() => {
-        getEvents();
-    }, [ focusDay, filter ]);
+        setFilteredEvents(eventsMapSorted)
+    }, [filter, events])
 
     return (
         <div className="flex flex-col h-full w-full">
@@ -212,7 +195,7 @@ export default function EventCalendar({ focusDay, userData, filter }) {
                             day={day}
                             index={i}
                             fiveRows={monthDays.length > 28}
-                            events={events[day.toLocaleDateString()] || []}
+                            events={(filteredEvents[day.toLocaleDateString()] || [])}
                             setEvent={setEventModal}
                         />
                     }
