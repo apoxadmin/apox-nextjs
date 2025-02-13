@@ -207,7 +207,8 @@ export default function MyEventsPage() {
                 .select('tracked, *, event_types(*), event_chairs(*)')
                 .eq('tracked', false)
                 .eq('has_shifts', false)
-                .eq('reviewed', true);
+                .eq('reviewed', true)
+                .gte('date', endOfToday().toISOString());;
             if (eventsResponse.data) 
             {
                 events = eventsResponse.data.filter(event => event.creator == user.id);
