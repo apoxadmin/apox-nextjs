@@ -70,7 +70,7 @@ export default function TrackingPage() {
         <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
             {
                 events?.map((event, i) =>
-                    <TrackingEvent event={event} key={i} users={users} validateLink={false} />
+                    <TrackingEvent tracking_type={2} event={event} key={i} users={users} validateLink={false} user={user}/>
                 )
             }
         </div>

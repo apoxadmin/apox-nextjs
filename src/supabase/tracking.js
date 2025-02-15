@@ -164,5 +164,22 @@ export async function revalidateAllUsers()
             await getUserReqs(id)
         }
     }
-    console.log("Done verfiying all users")
+    console.log("Done verifying all users")
+}
+
+export async function markEventTracked(event, mediaURL, user, trackType) {
+    const supabase = createSupabaseAdmin();
+    const { error } = await supabase
+        .from('events')
+        .update({ tracked: true, drive_link: mediaURL })
+        .eq('id', event?.id);
+    if(error) console.log(error)
+    const auditLogResponse = await supabase
+        .from('audit_log')
+        .insert({
+            event: event?.id, user: user?.id,
+            description: `event '${event?.name}' tracked by ${user?.name}`,
+            tracking_type: trackType
+        })
+    if(auditLogResponse.error) console.log(auditLogResponse.error)
 }

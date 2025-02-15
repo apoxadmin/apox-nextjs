@@ -5,6 +5,7 @@ import { sortByField } from "@/utils/utils";
 import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 import { updateChair } from "@/supabase/event";
+import { markEventTracked } from "@/supabase/tracking";
 
 export function CustomCheckbox({ checked }) {
     return (
@@ -103,7 +104,7 @@ export function AttendeeCheck({ event, user, submitted, attendee = false }) {
     );
 }
 
-export function TrackingEvent({ event, users, validateLink }) {
+export function TrackingEvent({ event, users, validateLink, user, tracking_type = 1 }) {
     const [attendees, setAttendees] = useState([]);
     const supabase = useContext(AuthContext);
     const ref = useRef(null);
@@ -122,7 +123,7 @@ export function TrackingEvent({ event, users, validateLink }) {
                 for (const chair of event?.event_chairs) {
                     updateChair(chair.id, event?.id);
                 }
-                updateEvent();
+                markEventTracked(event, mediaURL, user, tracking_type);
                 ref.current.close();
                 window.location.reload(); // to remove the event
             } else {
@@ -137,12 +138,8 @@ export function TrackingEvent({ event, users, validateLink }) {
             for (const chair of event?.event_chairs) {
                 updateChair(chair.id, event?.id);
             }
-            updateEvent();
+            markEventTracked(event, mediaURL, user, tracking_type);
             ref.current.close();
-
-            // const auditlogResponse = await supabase
-            //     .from('audit_log')
-            //     .insert({event_id: event.id, user: user_id})
 
             if (!mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
                 setToastMessage('Submitted with invalid drive link');
@@ -190,12 +187,6 @@ export function TrackingEvent({ event, users, validateLink }) {
             window.removeEventListener("keydown", closeEscape);
         }
     }, []);
-    async function updateEvent() {
-        const { error } = await supabase
-            .from('events')
-            .update({ tracked: true, drive_link: mediaURL })
-            .eq('id', event?.id);
-    }
 
     return (
         <div>
@@ -366,7 +357,7 @@ export default function TrackingPage() {
             <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
             {
                 events?.map((event, i) =>
-                    <TrackingEvent event={event} key={i} users={users} validateLink={true} />
+                    <TrackingEvent event={event} key={i} users={users} validateLink={true} user={user} />
                 )
             }
         </div>

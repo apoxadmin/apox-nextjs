@@ -5,8 +5,9 @@ import { sortByField } from "@/utils/utils";
 import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 import { updateChair } from "@/supabase/event";
+import { TrackingEvent } from "../tracking/page";
 
-export function MyEvent({ event, users }) {
+export function EditingEvent({ event, users }) {
     const supabase = useContext(AuthContext);
     const ref = useRef(null);
     const [toast, setToast] = useState(false);
@@ -176,6 +177,7 @@ export default function MyEventsPage() {
     const [user, setUser] = useState(null);
     const [events, setEvents] = useState([]);
     const [users, setUsers] = useState([]);
+    const [trackedEvents, setTrackedEvents] = useState([]);
     const supabase = useContext(AuthContext);
 
     useEffect(() => {
@@ -220,12 +222,28 @@ export default function MyEventsPage() {
                 setEvents(events);
             }
         }
+        
+        async function getTrackedEvents() {
+            const trackedResponse = await supabase
+                .from('audit_log')
+                .select('*, event(*)')
+                .eq('user', user?.id);
+            let data = trackedResponse.data;
+            if (data) {
+                data = data.map(e => e.event)
+                setTrackedEvents(data);
+            }
+        }
         if (user)
+        {
             getEvents();
+            getTrackedEvents();
+        }
     }, [user]);
 
     return <div className="flex flex-col space-y-8 items-center w-full p-10 overflow-y-auto">
-        <h1 className="text-center text-xl text-neutral-700">My Events</h1>
+        <EditTrackingPage />
+        <h1 className="text-center text-xl text-neutral-700">Events Created</h1>
         {
             events?.length == 0 ?
             <h1>
@@ -235,10 +253,80 @@ export default function MyEventsPage() {
             <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
             {
                 events?.map((event, i) =>
-                    <MyEvent event={event} key={i} users={users} />
+                    <EditingEvent event={event} key={i} users={users} />
                 )
             }
-        </div>
+            </div>
+        }
+    </div>
+}
+
+function EditTrackingPage() {
+    const [user, setUser] = useState(null);
+    const [events, setEvents] = useState([]);
+    const [users, setUsers] = useState([]);
+    const supabase = useContext(AuthContext);
+
+    useEffect(() => {
+        async function getUser() {
+            const auth = await supabase.auth.getUser();
+            const userResponse = await supabase.from('users').select().eq('auth_id', auth.data.user.id).maybeSingle();
+            setUser(userResponse.data);
+        }
+        async function getUsers() {
+            const usersResponse = await supabase
+                .from('users')
+                .select('*, standings!inner(name)')
+                .neq('standings.name', 'alumni');
+            let data = usersResponse.data;
+            if (data) {
+                const sortByName = (a, b) => sortByField(a, b, 'name');
+                data.sort(sortByName);
+                setUsers(data);
+            }
+        }
+        getUser();
+        getUsers();
+    }, []);
+    useEffect(() => {
+        async function getEvents() {
+            let events = []
+            const eventsResponse = await supabase
+                .from('audit_log')
+                .select('*, event(*, event_types(*), event_chairs(*))')
+                .eq('user', user?.id)
+                .eq('tracking_type', 1);
+            const data = eventsResponse.data;
+            if (data) {
+                events = data.map(e => e.event)
+            }
+            if (events.length != 0)
+            {
+                const sortByStart = (a, b) => { return sortByField(a, b, 'date') };
+                events.sort(sortByStart);
+                console.log(events)
+                setEvents(events);
+            }
+        }
+        if (user)
+            getEvents();
+    }, [user]);
+
+    return <div className="flex flex-col space-y-8 items-center w-full p-10">
+        <h1 className="text-center text-xl text-neutral-700">Edit Tracking</h1>
+        {
+            events?.length == 0 ?
+            <h1>
+                no events to track oops!!
+            </h1>
+            :
+            <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
+            {
+                events?.map((event, i) =>
+                    <TrackingEvent event={event} key={i} users={users} validateLink={true} user={user} tracking_type={3} />
+                )
+            }
+            </div>
         }
     </div>
 }
