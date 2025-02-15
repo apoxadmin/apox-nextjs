@@ -317,7 +317,7 @@ function EditTrackingPage() {
         {
             events?.length == 0 ?
             <h1>
-                no events to track oops!!
+                you have not tracked any events! once you track an event it will appear here and you can add/remove tracked users
             </h1>
             :
             <div className="grid grid-cols-4 auto-rows-fr gap-x-2 gap-y-2">
