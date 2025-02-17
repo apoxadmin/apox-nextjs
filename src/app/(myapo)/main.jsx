@@ -13,14 +13,24 @@ export default function Main({ children }) {
     const profileRef = useRef(null);
     const supabase = useContext(AuthContext)
     const [ privileged, setPrivileged ] = useState(false);
+    const [ links, setLinks ] = useState([]);
     
     useEffect(() => {
         async function getPrivileged() {
             const priv = await isPrivileged();
             setPrivileged(priv);
         }
+        async function getLinks()
+        {
+            const linksResponse = await supabase.from('urls').select('*');
+            if (linksResponse.data)
+            {
+                setLinks(linksResponse.data);
+            }
+        }
         getPrivileged();
-    })
+        getLinks();
+    }, [])
 
     useEffect(function mount() {
         function closeEscape(event) {
@@ -103,6 +113,7 @@ export default function Main({ children }) {
                     </Link>
                 </div>
                 <div className="flex items-center space-x-8">
+                    {/*
                     <label className="bg-neutral-200 input input-bordered flex justify-between items-center gap-2 h-[40px] drop-shadow-sm hover:drop-shadow-lg rounded-full transition ease-out delay-20 duration-150">
                         <input type="text" className="placeholder:text-neutral-400 text-neutral-600 text-sm grow w-[200px]" placeholder="Search" />
                         <svg
@@ -116,13 +127,14 @@ export default function Main({ children }) {
                                 clipRule="evenodd" />
                         </svg>
                     </label>
+                    */}
                     <div className="dropdown dropdown-end dropdown-hover" ref={profileRef}>
                         <div tabIndex={0} role="button" className="avatar placeholder cursor-pointer">
                             <div className="bg-blue-800 hover:bg-blue-700 text-neutral-200 w-8 h-8 rounded-full shadow-lg">
                                 <span className="text-sm">{user?.initials}</span>
                             </div>
                         </div>
-                        <div tabIndex={0} className="dropdown-content menu bg-white z-50 shadow-lg rounded-lg p-4">
+                        <div tabIndex={0} className="dropdown-content menu bg-white fixed z-50 shadow-lg rounded-lg p-4">
                             <div className="flex flex-col space-y-2">
                                 <h1 className="text-nowrap text-neutral-600">{user?.name}</h1>
                                 <Link href="/myprofile" className="w-full text-neutral-600 text-start">Profile</Link>
@@ -134,7 +146,7 @@ export default function Main({ children }) {
                 </div>
             </div>
             <div className="flex w-screen grow overflow-y-auto">
-                <Sidebar visible={open} />
+                <Sidebar visible={open} links={links} />
                 <div className="flex grow bg-white shadow-lg rounded-tl-lg border border-neutral-200 border-[1.5px]">
                     <div className="mx-2">
                         <button className="relative group" onClick={() => setOpen(!open)}>
