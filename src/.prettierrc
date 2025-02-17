@@ -1,4 +1,9 @@
 {
-    "tabWidth": 4,
-    "useTabs": true
+	"tabWidth": 4,
+	"useTabs": true,
+	"bracketSameLine": true,
+	"jsxBracketSameLine": true,
+	"printWidth": 160,
+	"arrowParens": "avoid",
+	"trailingComma": "none"
 }
