@@ -67,10 +67,10 @@ export default function MyAPOPage() {
 	const [focusDay, setFocusDay] = useState(startOfToday());
 	const [focusDays, setFocusDays] = useState([subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1)]);
 	const [monthEventMap, setMonthEventMap] = useState({});
+	const [filter, setFilter] = useState(0);
 
 	const searchParams = useSearchParams();
 
-	const search = searchParams.get("event_type");
 	async function getUserData() {
 		const { data } = await supabase.auth.getUser();
 		if (data) {
@@ -78,20 +78,22 @@ export default function MyAPOPage() {
 			setUserData(user.data);
 		}
 	}
+	const search = searchParams.get("event_type");
 	async function isValidEventType(event_type) {
-		const typesResponse = await supabase.from("event_types").select("name");
-		console.log(typesResponse);
-		let names_list = new Set(typesResponse["data"].map(item => item.name));
-		console.log(names_list);
-		if (names_list.has(event_type)) {
-			return true;
-		} else {
-			return false;
+		const typesResponse = await supabase.from("event_types").select("id, name");
+		console.log(typesResponse)
+		for (let i = 0; i < typesResponse["data"].length; i++) {
+			if (typesResponse["data"][i].name === event_type) {
+				setFilter(i)
+				return
+			}
 		}
+		setFilter(0)
 	}
-	const [filter, setFilter] = useState(isValidEventType(search) ?? 0);
+	
 	useEffect(() => {
 		getUserData();
+		isValidEventType(search)
 	}, []);
 	useEffect(() => {
 		async function changeCache() {
@@ -120,7 +122,7 @@ export default function MyAPOPage() {
 
 	return (
 		<div className="flex grow">
-			<EventTypeDropdown setFilter={setFilter} />
+			<EventTypeDropdown filter={filter} setFilter={setFilter} />
 			<Swiper
 				key={focusDay.toISOString()}
 				className="w-0 flex bg-white rounded shadow-md flex-1"
@@ -157,10 +159,10 @@ export default function MyAPOPage() {
 	);
 }
 
-function EventTypeDropdown({ setFilter }) {
+function EventTypeDropdown({ filter, setFilter }) {
 	const supabase = useContext(AuthContext);
-	const [selectedValue, setSelectedValue] = useState(null);
 	const [eventTypes, setEventTypes] = useState([]);
+	const [selectedValue, setSelectedValue] = useState(null);
 	const dropdownRef = useRef(null);
 
 	useEffect(() => {
@@ -171,10 +173,11 @@ function EventTypeDropdown({ setFilter }) {
 				types.push({ id: 0, name: "none" });
 				types.sort((a, b) => a.id - b.id);
 				setEventTypes(types);
+				setSelectedValue({name: types[filter].name})
 			}
 		}
 		getEventTypes();
-	}, []);
+	}, [filter, supabase]);
 
 	const handleSelect = event_type => {
 		setSelectedValue(event_type);
