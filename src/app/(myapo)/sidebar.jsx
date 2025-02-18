@@ -6,7 +6,8 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { AuthContext } from "@/supabase/client";
 import { logout } from "@/supabase/auth";
 
-const buttonClassName = "px-4 py-4 rounded-lg hover:text-neutral-800 hover:bg-neutral-200 hover:cursor-pointer transition ease-out delay-20 duration-150";
+const buttonClassName =
+	"px-4 py-4 rounded-lg hover:text-neutral-800 hover:bg-neutral-200 hover:cursor-pointer transition ease-out delay-20 duration-150 lowercase";
 
 const openInNewTab = url => {
 	const newWindow = window.open(url, "_blank", "noopener,noreferrer");
@@ -76,9 +77,6 @@ export default function Sidebar({ links, visible = true }) {
 	return (
 		<div className={`min-w-[240px] ${visible ? "" : "hidden"}`}>
 			<div className="flex flex-col text-neutral-500">
-				{links?.map((link, i) => {
-					return <SidebarLink key={i} name={link.display_name} url={link.url} />;
-				})}
 				<div className="flex items-center justify-end space-x-8 mr-5 mt-5">
 					<Link href="/">
 						<img className="h-[30px] justify-center" src="/logo_long.png" />
@@ -118,15 +116,18 @@ export default function Sidebar({ links, visible = true }) {
 					<SidebarButton name="Settings" />
 					*/}
 				</div>
+				{links?.map((link, i) => {
+					return <SidebarLink key={i} name={link.display_name} url={link.url} />;
+				})}
 				{/* <SidebarButton name="Crossword" url="/crossword" /> */}
 				{/* <SidebarLink name="Gas Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLScp47-NYgZm-Gp7XGkTf7jYeHHdinqfI2TZ9KkI4wQ1yXEexA/viewform?usp=sf_link" />
                 <SidebarLink name="Regular Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLSco5IJ_mG_dN8xNbPuDKF-P19KA1GXa88KaWgqoXysYMhsMvw/viewform?usp=sf_link" />
                 <SidebarLink name="Rule Violations" url="https://docs.google.com/forms/d/e/1FAIpQLSfcZlkaLwu42CiQLi_9exH5A100DGQu5VPJWkzvhw0ChYWucA/viewform" /> */}
 				<Link className={buttonClassName} href="/myapo">
-					<h1>Calendar</h1>
+					<h1>calendar</h1>
 				</Link>
 				<Link className={buttonClassName} href="/myprofile">
-					<h1>My Tracking</h1>
+					<h1>my tracking</h1>
 				</Link>
 				<Link className={buttonClassName} href="/request">
 					<h1>Request</h1>
