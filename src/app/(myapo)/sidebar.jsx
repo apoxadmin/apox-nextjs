@@ -32,35 +32,19 @@ function SidebarLink({ name, url = "/" }) {
 	);
 }
 
-export default function Sidebar({ visible = true }) {
+export default function Sidebar({ links, visible = true }) {
 	return (
 		<div className={`min-w-[240px] ${visible ? "" : "hidden"}`}>
 			<div className="flex flex-col text-neutral-500">
-				{/* <SidebarButton name="Crossword" url="/crossword" /> */}
-				{/* <SidebarLink name="Gas Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLScp47-NYgZm-Gp7XGkTf7jYeHHdinqfI2TZ9KkI4wQ1yXEexA/viewform?usp=sf_link" />
-                <SidebarLink name="Regular Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLSco5IJ_mG_dN8xNbPuDKF-P19KA1GXa88KaWgqoXysYMhsMvw/viewform?usp=sf_link" />
-                <SidebarLink name="Rule Violations" url="https://docs.google.com/forms/d/e/1FAIpQLSfcZlkaLwu42CiQLi_9exH5A100DGQu5VPJWkzvhw0ChYWucA/viewform" /> */}
-				<SidebarLink
-					name="Test Bank Request Form"
-					url="https://forms.gle/Scb8DBhEtusHcHeY8"
-				/>
-				<SidebarLink
-					name="Collaborative Drive"
-					url="https://drive.google.com/drive/folders/1qBdA5DpNJLhywhIyjHTC-lY3FZVVcmZ0?usp=sharing"
-				/>
-				<SidebarLink
-					name="Constitution"
-					url="https://docs.google.com/document/d/16X9QcZW2fyaNhXL24gkg9VghSQVVTqJo4xAyC17S-2w/edit?usp=sharing"
-				/>
-				{/* <SidebarLink name="Outside Service" url="https://forms.gle/UuSLmX42myFNF8sx9" />
-                <SidebarLink name="Big/Little Comp" url="https://docs.google.com/spreadsheets/d/12U-2avpz5loeUF7Wf4trf_xXwhSaTnVukvJsh0COvfs/edit?usp=sharing" /> */}
-				{/*<SidebarButton name="My Status" />
-                <SidebarButton name="My Family" />
-                <SidebarButton name="My Class" />
-                <SidebarButton name="Resources" />
-                <SidebarButton name="APOChat" />
-                <SidebarButton name="Settings" />
-                */}
+				{
+					links?.map((link, i) => {
+						return <SidebarLink
+							key={i}
+							name={link.display_name}
+							url={link.url}
+						/>
+					})
+				}
 			</div>
 		</div>
 	);
