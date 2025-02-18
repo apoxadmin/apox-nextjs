@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { useContext, useEffect, useRef, useState } from "react"
-import Sidebar from "./sidebar"
+import { useContext, useEffect, useRef, useState } from "react";
+import Sidebar from "./sidebar";
 import Link from "next/link";
 import { AuthContext } from "@/supabase/client";
 import { logout } from "@/supabase/auth";
@@ -32,54 +32,59 @@ export default function Main({ children }) {
         getLinks();
     }, [])
 
-    useEffect(function mount() {
-        function closeEscape(event) {
-            if (event.key == "Escape") {
-                // Escape key pressed
-                profileRef.current.open = false;
-            }
-        };
+	useEffect(() => {
+		async function getPrivileged() {
+			const priv = await isPrivileged();
+			setPrivileged(priv);
+		}
+		getPrivileged();
+	});
 
-        window.addEventListener("keydown", closeEscape);
-        return function unmount() {
-            window.removeEventListener("keydown", closeEscape);
-        }
+	useEffect(function mount() {
+		function closeEscape(event) {
+			if (event.key == "Escape") {
+				// Escape key pressed
+				profileRef.current.open = false;
+			}
+		}
 
-    }, []);
+		window.addEventListener("keydown", closeEscape);
+		return function unmount() {
+			window.removeEventListener("keydown", closeEscape);
+		};
+	}, []);
 
-    useEffect(() => {
-        function escape(e) {
-            document.querySelectorAll('.dropdown').forEach(function (dropdown) {
-                if (!dropdown.contains(e.target)) {
-                    // Click was outside the dropdown, close it
-                    dropdown.open = false;
-                }
-            });
-        }
-        window.addEventListener('click', escape);
+	useEffect(() => {
+		function escape(e) {
+			document.querySelectorAll(".dropdown").forEach(function (dropdown) {
+				if (!dropdown.contains(e.target)) {
+					// Click was outside the dropdown, close it
+					dropdown.open = false;
+				}
+			});
+		}
+		window.addEventListener("click", escape);
 
-        return () => {
-            window.removeEventListener('click', escape);
-        }
+		return () => {
+			window.removeEventListener("click", escape);
+		};
+	}, []);
 
-    }, []);
-
-    useEffect(() => {
-        async function getUser() {
-            const authId = (await supabase.auth.getUser())?.data.user.id;
-            const user = await supabase.from('users').select('name').eq('auth_id', authId).maybeSingle();
-            if (user.data) {
-                const name = user?.data?.name;
-                let initials = name.split(' ');
-                initials.forEach((subname, i) => initials[i] = subname[0]);
-                initials = initials.join('');
-                user.data.initials = initials;
-                setUser(user.data);
-            }
-        }
-        if (supabase)
-            getUser();
-    }, [ supabase ]);
+	useEffect(() => {
+		async function getUser() {
+			const authId = (await supabase.auth.getUser())?.data.user.id;
+			const user = await supabase.from("users").select("name").eq("auth_id", authId).maybeSingle();
+			if (user.data) {
+				const name = user?.data?.name;
+				let initials = name.split(" ");
+				initials.forEach((subname, i) => (initials[i] = subname[0]));
+				initials = initials.join("");
+				user.data.initials = initials;
+				setUser(user.data);
+			}
+		}
+		if (supabase) getUser();
+	}, [supabase]);
 
     return (
         <div className="grow h-screen flex flex-col bg-neutral-50 w-full">
