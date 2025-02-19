@@ -50,12 +50,19 @@ function isTodayOrLater(dateString) {
 
 function configureAddToCal(event, id) {
     if (event) {
+        const date1 = new Date(`1970-01-01T${event.start_time.split("T")[ 1 ].split("+")[ 0 ]}Z`)
+        const date2 = new Date(`1970-01-01T${event.end_time.split("T")[ 1 ].split("+")[ 0 ]}Z`)
+        let endDate = event.date;
+        if (isDayAfter(date1, date2)) endDate = new Date(new Date(event?.date).setDate(new Date(event?.date).getDate() + 1))
+            .toISOString()
+            .split("T")[ 0 ]
+        
         const config = {
             name: event.name,
             startDate: event.date,
             startTime: event ? convertToPST(event?.start_time) : undefined,
             endTime: event ? convertToPST(event?.end_time) : undefined,
-            endDate: event.date,
+            endDate: endDate,
             location: event.location,
             options: [ 'Google' ],
             timeZone: "America/Los_Angeles"
@@ -178,15 +185,6 @@ export function EventModal({ supabase, event, setEvent, userData, shiftList }) {
             })
         }
     }, [ event, shifts ]);
-
-    if (event) {
-        const date1 = new Date(`1970-01-01T${event.start_time.split("T")[ 1 ].split("+")[ 0 ]}Z`)
-        const date2 = new Date(`1970-01-01T${event.end_time.split("T")[ 1 ].split("+")[ 0 ]}Z`)
-        if (isDayAfter(date1, date2)) endDate = new Date(new Date(event?.date).setDate(new Date(event?.date).getDate() + 1))
-            .toISOString()
-            .split("T")[ 0 ]
-    }
-
     return (
         <dialog ref={ref} className="modal">
             <div className="modal-box flex flex-col space-y-4 max-h-[90vh] overflow-hidden">
