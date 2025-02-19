@@ -81,7 +81,6 @@ export default function MyAPOPage() {
 	const search = searchParams.get("event_type");
 	async function isValidEventType(event_type) {
 		const typesResponse = await supabase.from("event_types").select("id, name");
-		console.log(typesResponse)
 		for (let i = 0; i < typesResponse["data"].length; i++) {
 			if (typesResponse["data"][i].name === event_type) {
 				setFilter(i)

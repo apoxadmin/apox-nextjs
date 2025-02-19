@@ -5,19 +5,8 @@ import { createSupabaseServer } from "@/supabase/server";
 
 export async function isPrivileged() {
     const supabase = createSupabaseServer();
-    const authUser = await supabase.auth.getUser();
-    if (authUser.error)
-        return false;
-
-    const userResponse = await supabase
-        .from('users')
-        .select('id')
-        .eq('auth_id', authUser.data.user.id)
-        .maybeSingle();
-    if (userResponse.error)
-        return false;
-
-    const userId = userResponse.data.id;
+    
+    const userId = getCurrentUser().id;
     const privilegedResponse = await supabase
         .from('privileged')
         .select()
@@ -128,4 +117,32 @@ export async function deleteUser(userId) {
     //     return false;
     // }
     return true;
+}
+
+let user = null;
+export async function getCurrentUser()
+{
+    if (user) 
+    {
+        console.log("cached")
+        return user;
+    }
+    
+    console.log("retrieving current user data")
+
+    const supabase = createSupabaseServer();
+    const authUser = await supabase.auth.getUser();
+    if (authUser.error)
+        return null;
+
+    const userResponse = await supabase
+        .from('users')
+        .select('*')
+        .eq('auth_id', authUser.data.user.id)
+        .maybeSingle();
+    if (userResponse.error)
+        return null;
+
+    user = userResponse.data;
+    return user;
 }

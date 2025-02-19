@@ -497,11 +497,7 @@ function TrackingInfo({ event, attendees, shiftNum, supabase }) {
                 type="checkbox"
                 id={checkboxID}
                 checked={event?.tracked}
-                onChange={(e) => {
-                    if (event) {
-                        event.tracked = e.target.checked;
-                    }
-                }}
+                disabled={true}
                 className="form-checkbox h-5 w-5 text-green-500"
             />
             {
