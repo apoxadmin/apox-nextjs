@@ -34,29 +34,6 @@ export default function Main({ children }) {
         getLinks();
     }, [])
 
-	useEffect(() => {
-		async function getPrivileged() {
-			const priv = await isPrivileged();
-			setPrivileged(priv);
-		}
-		async function getLinks() {
-			const linksResponse = await supabase.from("urls").select("*");
-			if (linksResponse.data) {
-				setLinks(linksResponse.data);
-			}
-		}
-		getPrivileged();
-		getLinks();
-	}, []);
-
-	useEffect(() => {
-		async function getPrivileged() {
-			const priv = await isPrivileged();
-			setPrivileged(priv);
-		}
-		getPrivileged();
-	});
-
 	useEffect(function mount() {
 		function closeEscape(event) {
 			if (event.key == "Escape") {
@@ -103,54 +80,39 @@ export default function Main({ children }) {
             getUser();
     }, [ supabase ]);
 
-    return (
-        <div className="grow h-screen flex flex-col bg-neutral-50 w-full">
-            <div className="flex py-3 px-8 justify-between items-center min-h-[64px]">
-                <div className="flex flex-row gap-2 h-full items-center justify-center">
-                    <Link href="/">
-                        <img className="h-[30px] justify-center" src="/logo_long.png" />
-                    </Link>
-                    <Link href="/myapo" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
-                        <h1>calendar</h1>
-                    </Link>
-                    <Link href="/myprofile" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
-                        <h1>my tracking</h1>
-                    </Link>
-                    <Link href="/request" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
-                        <h1>request</h1>
-                    </Link>
-                    {privileged && 
-                        <Link href="/excomm" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
-                            <h1>excomm</h1>
-                        </Link>
-                    }
-                    <Link href="/tracking" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
-                        <h1>track event</h1>
-                    </Link>
-                    <Link href="/myevents" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
-                        <h1>my events</h1>
-                    </Link>
-                    <Link href="/family" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
-                        <h1>family tree</h1>
-                    </Link>
-                </div>
+	return (
+		<div className="grow h-screen flex flex-col bg-neutral-50 w-full">
+			<div className="hidden md:flex py-3 px-8 justify-between items-center overflow-x-auto overflow-y-hidden min-h-[64px]">
+				<div className="flex flex-row gap-2 h-full items-center justify-center">
+					<Link href="/">
+						<img className="h-[30px] justify-center" src="/logo_long.png" />
+					</Link>
+					<Link href="/myapo" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+						<h1>calendar</h1>
+					</Link>
+					<Link href="/myprofile" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+						<h1>my tracking</h1>
+					</Link>
+					<Link href="/request" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+						<h1>request</h1>
+					</Link>
+					{privileged && (
+						<Link href="/excomm" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+							<h1>excomm</h1>
+						</Link>
+					)}
+					<Link href="/tracking" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+						<h1>track event</h1>
+					</Link>
+					<Link href="/myevents" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+						<h1>my events</h1>
+					</Link>
+					<Link href="/family" className="flex items-center h-[30px] hover:bg-neutral-300 transition ease-out rounded-xl px-2">
+						<h1>family tree</h1>
+					</Link>
+				</div>
                 <div className="flex items-center space-x-8">
-                    {/*
-                    <label className="bg-neutral-200 input input-bordered flex justify-between items-center gap-2 h-[40px] drop-shadow-sm hover:drop-shadow-lg rounded-full transition ease-out delay-20 duration-150">
-                        <input type="text" className="placeholder:text-neutral-400 text-neutral-600 text-sm grow w-[200px]" placeholder="Search" />
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 16 16"
-                            fill="currentColor"
-                            className="h-4 w-4 opacity-70">
-                            <path
-                                fillRule="evenodd"
-                                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                                clipRule="evenodd" />
-                        </svg>
-                    </label>
-                    */}
-					<div className="dropdown dropdown-end dropdown-hover" ref={profileRef}>
+				<div className="dropdown dropdown-end dropdown-hover" ref={profileRef}>
 						<div tabIndex={0} role="button" className="avatar placeholder cursor-pointer">
 							<div className="bg-blue-800 hover:bg-blue-700 text-neutral-200 w-8 h-8 rounded-full shadow-lg">
 								<span className="text-sm">{user?.initials}</span>

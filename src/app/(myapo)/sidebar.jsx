@@ -8,19 +8,13 @@ import { logout } from "@/supabase/auth";
 
 const buttonClassName =
 	"px-4 py-4 rounded-lg hover:text-neutral-800 hover:bg-neutral-200 hover:cursor-pointer transition ease-out delay-20 duration-150 lowercase";
+const mobileButtonClassName =
+	"md:hidden px-4 py-4 rounded-lg hover:text-neutral-800 hover:bg-neutral-200 hover:cursor-pointer transition ease-out delay-20 duration-150 lowercase";
 
 const openInNewTab = url => {
 	const newWindow = window.open(url, "_blank", "noopener,noreferrer");
 	if (newWindow) newWindow.opener = null;
 };
-
-function SidebarButton({ name, url = "/" }) {
-	return (
-		<Link href={url} className={buttonClassName}>
-			{name}
-		</Link>
-	);
-}
 function SidebarLink({ name, url = "/" }) {
 	return (
 		<Link href={url} className={buttonClassName} rel="noopener noreferrer" target="_blank">
@@ -77,7 +71,7 @@ export default function Sidebar({ links, visible = true }) {
 	return (
 		<div className={`min-w-[240px] ${visible ? "" : "hidden"}`}>
 			<div className="flex flex-col text-neutral-500">
-				<div className="flex items-center justify-end space-x-8 mr-5 mt-5">
+				<div className="flex items-center justify-end space-x-8 mr-5 mt-5 md:hidden">
 					<Link href="/">
 						<img className="h-[30px] justify-center" src="/logo_long.png" />
 					</Link>
@@ -106,44 +100,31 @@ export default function Sidebar({ links, visible = true }) {
 							</div>
 						</div>
 					</div>
-					{/* <SidebarLink name="Outside Service" url="https://forms.gle/UuSLmX42myFNF8sx9" />
-					<SidebarLink name="Big/Little Comp" url="https://docs.google.com/spreadsheets/d/12U-2avpz5loeUF7Wf4trf_xXwhSaTnVukvJsh0COvfs/edit?usp=sharing" /> */}
-					{/*<SidebarButton name="My Status" />
-					<SidebarButton name="My Family" />
-					<SidebarButton name="My Class" />
-					<SidebarButton name="Resources" />
-					<SidebarButton name="APOChat" />
-					<SidebarButton name="Settings" />
-					*/}
 				</div>
 				{links?.map((link, i) => {
 					return <SidebarLink key={i} name={link.display_name} url={link.url} />;
 				})}
-				{/* <SidebarButton name="Crossword" url="/crossword" /> */}
-				{/* <SidebarLink name="Gas Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLScp47-NYgZm-Gp7XGkTf7jYeHHdinqfI2TZ9KkI4wQ1yXEexA/viewform?usp=sf_link" />
-                <SidebarLink name="Regular Reimbursement" url="https://docs.google.com/forms/d/e/1FAIpQLSco5IJ_mG_dN8xNbPuDKF-P19KA1GXa88KaWgqoXysYMhsMvw/viewform?usp=sf_link" />
-                <SidebarLink name="Rule Violations" url="https://docs.google.com/forms/d/e/1FAIpQLSfcZlkaLwu42CiQLi_9exH5A100DGQu5VPJWkzvhw0ChYWucA/viewform" /> */}
-				<Link className={buttonClassName} href="/myapo">
+				<Link className={mobileButtonClassName} href="/myapo">
 					<h1>calendar</h1>
 				</Link>
-				<Link className={buttonClassName} href="/myprofile">
+				<Link className={mobileButtonClassName} href="/myprofile">
 					<h1>my tracking</h1>
 				</Link>
-				<Link className={buttonClassName} href="/request">
+				<Link className={mobileButtonClassName} href="/request">
 					<h1>Request</h1>
 				</Link>
 				{privileged && (
-					<Link className={buttonClassName} href="/excomm">
+					<Link className={mobileButtonClassName} href="/excomm">
 						<h1>Excomm</h1>
 					</Link>
 				)}
-				<Link className={buttonClassName} href="/tracking">
+				<Link className={mobileButtonClassName} href="/tracking">
 					<h1>Track Event</h1>
 				</Link>
-				<Link className={buttonClassName} href="/myevents">
+				<Link className={mobileButtonClassName} href="/myevents">
 					<h1>My Events</h1>
 				</Link>
-				<Link className={buttonClassName} href="/family">
+				<Link className={mobileButtonClassName} href="/family">
 					<h1>Family Tree</h1>
 				</Link>
 			</div>
