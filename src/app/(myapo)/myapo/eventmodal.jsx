@@ -1,4 +1,4 @@
-import { chairEvent, joinEvent, leaveEvent, unchairEvent, setDriver, removeDriver, unapproveEvent } from "@/supabase/event";
+import { chairEvent, joinEvent, leaveEvent, unchairEvent, setDriver, removeDriver, unapproveEvent, deleteEvent } from "@/supabase/event";
 import { eachDayOfInterval, endOfDay, endOfMonth, endOfToday, endOfWeek, format, getDate, interval, isAfter, isSameDay, isSameMonth, isThisMonth, isToday, startOfMonth, startOfToday, startOfWeek } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react"
 import { atcb_action } from "add-to-calendar-button";
