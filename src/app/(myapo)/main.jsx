@@ -9,12 +9,30 @@ import { isPrivileged } from "@/supabase/user";
 import { getCurrentUser } from "@/supabase/user";
 
 export default function Main({ children }) {
-	const [open, setOpen] = useState(false);
-	const [user, setUser] = useState(null);
-	const profileRef = useRef(null);
-	const supabase = useContext(AuthContext);
-	const [privileged, setPrivileged] = useState(false);
-	const [links, setLinks] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [user, setUser] = useState(null);
+    const profileRef = useRef(null);
+    const supabase = useContext(AuthContext)
+    const [ privileged, setPrivileged ] = useState(false);
+    const [ links, setLinks ] = useState([]);
+    
+    useEffect(() => {
+        async function getPrivileged() {
+            const priv = await isPrivileged();
+            //console.log(priv);
+            setPrivileged(priv);
+        }
+        async function getLinks()
+        {
+            const linksResponse = await supabase.from('urls').select('*');
+            if (linksResponse.data)
+            {
+                setLinks(linksResponse.data);
+            }
+        }
+        getPrivileged();
+        getLinks();
+    }, [])
 
 	useEffect(() => {
 		async function getPrivileged() {

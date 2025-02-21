@@ -6,7 +6,7 @@ import { createSupabaseServer } from "@/supabase/server";
 export async function isPrivileged() {
     const supabase = createSupabaseServer();
     
-    const userId = getCurrentUser().id;
+    const userId = (await getCurrentUser()).id;
     const privilegedResponse = await supabase
         .from('privileged')
         .select()
