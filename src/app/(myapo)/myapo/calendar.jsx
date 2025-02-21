@@ -136,9 +136,9 @@ export default function EventCalendar({ focusDay, userData, filter, events, shif
     useEffect(() => {
         if(!events) return
         let eventsList = events;
-        if (filter != 0)
+        if (filter.length != 0)
         {
-            eventsList = events.filter((event) => event.event_types.id == filter)            
+            eventsList = events.filter((event) => filter.includes(event.event_types.id))            
         }
         const eventsMap = new Map();
         for (const event of eventsList) {

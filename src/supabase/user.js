@@ -124,11 +124,8 @@ export async function getCurrentUser()
 {
     if (user) 
     {
-        console.log("cached")
         return user;
     }
-    
-    console.log("retrieving current user data")
 
     const supabase = createSupabaseServer();
     const authUser = await supabase.auth.getUser();

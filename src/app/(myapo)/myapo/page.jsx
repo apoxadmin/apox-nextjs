@@ -67,7 +67,7 @@ export default function MyAPOPage() {
 	const [focusDay, setFocusDay] = useState(startOfToday());
 	const [focusDays, setFocusDays] = useState([subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1)]);
 	const [monthEventMap, setMonthEventMap] = useState({});
-	const [filter, setFilter] = useState(0);
+	const [filter, setFilter] = useState([]);
 
 	const searchParams = useSearchParams();
 
@@ -83,11 +83,11 @@ export default function MyAPOPage() {
 		const typesResponse = await supabase.from("event_types").select("id, name");
 		for (let i = 0; i < typesResponse["data"].length; i++) {
 			if (typesResponse["data"][i].name === event_type) {
-				setFilter(i)
+				setFilter([i])
 				return
 			}
 		}
-		setFilter(0)
+		setFilter([])
 	}
 	
 	useEffect(() => {
@@ -161,7 +161,7 @@ export default function MyAPOPage() {
 function EventTypeDropdown({ filter, setFilter }) {
 	const supabase = useContext(AuthContext);
 	const [eventTypes, setEventTypes] = useState([]);
-	const [selectedValue, setSelectedValue] = useState(null);
+	const [selectedValues, setSelectedValues] = useState([]);
 	const dropdownRef = useRef(null);
 
 	useEffect(() => {
@@ -172,31 +172,53 @@ function EventTypeDropdown({ filter, setFilter }) {
 				types.push({ id: 0, name: "none" });
 				types.sort((a, b) => a.id - b.id);
 				setEventTypes(types);
-				setSelectedValue({name: types[filter].name})
+				// Initialize selected values based on filter indices
+				setSelectedValues(types.filter((_, i) => filter.includes(i)));
 			}
 		}
 		getEventTypes();
 	}, [filter, supabase]);
 
-	const handleSelect = event_type => {
-		setSelectedValue(event_type);
-		setFilter(event_type.id);
-		// Close the dropdown
-		dropdownRef.current.open = false;
+	const handleSelect = (event_type, index) => {
+		let updatedValues, updatedFilter;
+		if (index == 0)
+		{
+			updatedFilter = [];
+			updatedValues = [];
+		}
+		else if (filter.includes(index)) {
+			// If already selected, remove it
+			updatedFilter = filter.filter(i => i !== index);
+			updatedValues = selectedValues.filter(e => e.id !== event_type.id);
+		} else {
+			// If not selected, add it
+			updatedFilter = [...filter, index];
+			updatedValues = [...selectedValues, event_type];
+		}
+
+		setSelectedValues(updatedValues);
+		setFilter(updatedFilter);
 	};
 
 	return (
-		<div className="relative flex">
+		<div className="relative">
 			<div className="absolute top-[10px] left-[20px] z-[1000] flex items-center gap-2">
 				<h1 className="hidden lg:block w-[100px]">filter events:</h1>
 				<details ref={dropdownRef} className="dropdown">
 					<summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">
-						{selectedValue == null ? "none" : selectedValue.name}
+						{selectedValues.length === 0 ? "none" : (selectedValues.length === 1 ? selectedValues[0].name : "mixed")}
 					</summary>
 					<ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-1 shadow left-0">
 						{eventTypes.map((event_type, i) => (
-							<li key={i} onClick={() => handleSelect(event_type)}>
-								<a>{event_type.name}</a>
+							<li key={i}>
+								<label className="items-center gap-2 cursor-pointer">
+									<input
+										type="checkbox"
+										checked={filter.includes(i)}
+										onChange={() => handleSelect(event_type, i)}
+									/>
+									{event_type.name}
+								</label>
 							</li>
 						))}
 					</ul>
