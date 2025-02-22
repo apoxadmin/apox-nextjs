@@ -82,7 +82,7 @@ export default function Main({ children }) {
 
 	return (
 		<div className="grow h-screen flex flex-col bg-neutral-50 w-full">
-			<div className="hidden md:flex py-3 px-8 justify-between items-center overflow-x-auto overflow-y-hidden min-h-[64px]">
+			<div className="hidden md:flex py-3 px-8 justify-between items-center min-h-[64px]">
 				<div className="flex flex-row gap-2 h-full items-center justify-center">
 					<Link href="/">
 						<img className="h-[30px] justify-center" src="/logo_long.png" />
