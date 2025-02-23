@@ -219,6 +219,9 @@ export function TrackingEvent({ event, users, validateLink, user, tracking_type 
                         <h1 className="text-center">
                             {event?.description}
                         </h1>
+                        <h1 className="text-center">
+                            click on the name of <strong>every</strong> person that came (not just you)
+                        </h1>
                     </div>
                     <div className="grid grid-cols-2">
                         <div className="flex flex-col items-center">
