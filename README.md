@@ -12,7 +12,7 @@ SUPABASE_SERVICE_ROLE=<service_role>
 all three values can be found in the supabase settings by going to project settings
 and data api
 
-5. ensure that react and next js are installed. run `npm i `to initialize
+5. ensure that react and next js are installed. run `npm i` to initialize
 all packages and `npm run dev` to start.
 
 the project should be ready to work on from here.

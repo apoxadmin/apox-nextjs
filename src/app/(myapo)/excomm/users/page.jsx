@@ -261,14 +261,16 @@ export default function UserTable() {
     }
 
     return (
-        <div className="flex flex-col items-center space-y-4 overflow-y-auto overflow-x-scroll w-full">
-            <h1 className="text-center text-xl text-neutral-600">User Table</h1>
-            <p>Pledge Service Hour Total: { pledgeserviceHourTotal }</p>
-            <p>Active Service Hour Total: { activeserviceHourTotal }</p>
-            <p>Service Hour Total: { serviceHourTotal }</p>
-            <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white h-full" onClick={() => { regenerate() }}>
-                Regenerate Data (may take up to a few minutes)
-            </button>
+        <div className="flex flex-col items-center space-y-4 overflow-y-auto">
+            <h1 className="text-center text-xl text-neutral-600">Users</h1>
+            <div className="flex justify-between gap-3">
+                <p className="bg-neutral-300 p-2 rounded-md text-black">Pledge Service Hour Total: { pledgeserviceHourTotal }</p>
+                <p className="bg-neutral-300 p-2 rounded-md text-black">Active Service Hour Total: { activeserviceHourTotal }</p>
+                <p className="bg-neutral-300 p-2 rounded-md text-black">Service Hour Total: { serviceHourTotal }</p>
+                <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white" onClick={() => { regenerate() }}>
+                    Regenerate Data (may take up to a few minutes)
+                </button>
+            </div>
             <div className={`grid ${grid_cols_width[creditRequirements.length + eventRequirements.length + 3]} w-full text-center`}>
                 <h1 className="text-start">Name</h1>
                 <h1>Email</h1>
@@ -277,14 +279,14 @@ export default function UserTable() {
                     {
                         creditRequirements.map((req, i) => {
                             return (
-                                <h1 key={i} className="text-end">{req.name}</h1>
+                                <h1 key={i} className="text-end px-2 truncate max-w-[150px]">{req.name}</h1>
                             )
                         })
                     }
                     {
                         eventRequirements.map((req, i) => {
                             return (
-                                <h1 key={i} className="text-end">{req.name}</h1>
+                                <h1 key={i} className="text-end px-2 truncate max-w-[150px]">{req.name}</h1>
                             )
                         })
                     }
