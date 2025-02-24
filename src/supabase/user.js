@@ -119,14 +119,8 @@ export async function deleteUser(userId) {
     return true;
 }
 
-let user = null;
 export async function getCurrentUser()
 {
-    if (user) 
-    {
-        return user;
-    }
-
     const supabase = createSupabaseServer();
     const authUser = await supabase.auth.getUser();
     if (authUser.error)
@@ -140,6 +134,6 @@ export async function getCurrentUser()
     if (userResponse.error)
         return null;
 
-    user = userResponse.data;
+    const user = userResponse.data;
     return user;
 }
