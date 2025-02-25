@@ -354,7 +354,8 @@ export function RequirementsPage({ user_id }) {
                         count++;
                     }
                 })
-                setCompletion(percent / count);
+                const comp = percent / count;
+                setCompletion(comp === NaN ? 0 : comp);
             }
         }
         getReqData();
