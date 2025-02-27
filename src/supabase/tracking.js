@@ -169,11 +169,11 @@ export async function revalidateAllUsers()
 
 export async function markEventTracked(event, mediaURL, user, trackType) {
     const supabase = createSupabaseAdmin();
-    const { error } = await supabase
+    const trackResponse = await supabase
         .from('events')
         .update({ tracked: true, drive_link: mediaURL })
         .eq('id', event?.id);
-    if(error) console.log(error)
+    if(trackResponse.error) console.log(trackResponse.error)
     const auditLogResponse = await supabase
         .from('audit_log')
         .insert({

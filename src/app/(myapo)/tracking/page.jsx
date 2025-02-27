@@ -120,10 +120,10 @@ export function TrackingEvent({ event, users, validateLink, user, tracking_type 
         {
             if (mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
                 setSubmitted(true);
+                markEventTracked(event, mediaURL, user, tracking_type);
                 for (const chair of event?.event_chairs) {
                     updateChair(chair.id, event?.id);
                 }
-                markEventTracked(event, mediaURL, user, tracking_type);
                 ref.current.close();
                 window.location.reload(); // to remove the event
             } else {
@@ -135,10 +135,10 @@ export function TrackingEvent({ event, users, validateLink, user, tracking_type 
         else
         {
             setSubmitted(true);
+            markEventTracked(event, mediaURL, user, tracking_type);
             for (const chair of event?.event_chairs) {
                 updateChair(chair.id, event?.id);
             }
-            markEventTracked(event, mediaURL, user, tracking_type);
             ref.current.close();
 
             if (!mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
@@ -258,7 +258,7 @@ export function TrackingEvent({ event, users, validateLink, user, tracking_type 
                     <div className="flex justify-center">
                         <button
                             className="bg-green-600 px-4 py-2 rounded-full"
-                            onClick={() => { submitTracking(); }}
+                            onClick={submitTracking}
                         >
                             <h1 className="text-white">
                                 Submit
