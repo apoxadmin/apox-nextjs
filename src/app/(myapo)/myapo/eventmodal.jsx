@@ -478,7 +478,7 @@ function TrackingInfo({ event, attendees, shiftNum, supabase }) {
                 .from('audit_log')
                 .select('*, user(*)')
                 .eq('event', event.id)
-                .eq('tracking_type', 1)
+                .neq('tracking_type', 3)
                 .maybeSingle();
             if (trackerResponse.data) {
                 setTracker(trackerResponse.data.user)
