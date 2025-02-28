@@ -6,6 +6,7 @@ import { useContext, useEffect, useState, useRef } from "react";
 import { revalidateAllUsers } from "@/supabase/tracking";
 import { RequirementsPage } from "../../myprofile/page";
 
+// note: also need to change gridTemplateColumns in tailwind.config.js if you change this:
 const grid_cols_width = [
     'grid-cols-0',
     'grid-cols-1',
@@ -23,7 +24,8 @@ const grid_cols_width = [
     'grid-cols-13',
     'grid-cols-14',
     'grid-cols-15',
-    'grid-cols-16'
+    'grid-cols-16',
+    'grid-cols-17'
 ]
 
 const col_span_width = [
@@ -44,6 +46,7 @@ const col_span_width = [
     'col-span-14',
     'col-span-15',
     'col-span-16',
+    'col-span-17'
 ]
 
 function generateCSV(user)
