@@ -479,7 +479,8 @@ function TrackingInfo({ event, attendees, shiftNum, supabase }) {
                 .select('*, user(*)')
                 .eq('event', event.id)
                 .neq('tracking_type', 3)
-                .maybeSingle();
+                .limit(1)
+                .single();
             if (trackerResponse.data) {
                 setTracker(trackerResponse.data.user)
             }
