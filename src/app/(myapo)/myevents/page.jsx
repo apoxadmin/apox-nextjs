@@ -295,7 +295,7 @@ function EditTrackingPage() {
                 .from('audit_log')
                 .select('*, event(*, event_types(*), event_chairs(*))')
                 .eq('user', user?.id)
-                .eq('tracking_type', 1);
+                .neq('tracking_type', 3);
             const data = eventsResponse.data;
             if (data) {
                 events = data.map(e => e.event)
