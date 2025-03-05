@@ -303,6 +303,7 @@ export default function UserTable() {
                 <p className="bg-neutral-300 p-2 rounded-md text-black">Alpha Service Hour Total: { famService[0] }</p>
                 <p className="bg-neutral-300 p-2 rounded-md text-black">Phi Service Hour Total: { famService[1] }</p>
                 <p className="bg-neutral-300 p-2 rounded-md text-black">Omega Service Hour Total: { famService[2] }</p>
+                <p className="bg-neutral-300 p-2 rounded-md text-black">Pledge Service Hour Total: { pledgeserviceHourTotal }</p>
                 <p className="bg-neutral-300 p-2 rounded-md text-black">Service Hour Total: { serviceHourTotal }</p>
                 <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white" onClick={() => { regenerate() }}>
                     Regenerate Data (may take up to a few minutes)
