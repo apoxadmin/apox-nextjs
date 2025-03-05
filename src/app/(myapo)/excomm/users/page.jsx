@@ -179,6 +179,8 @@ export default function UserTable() {
     const [ serviceHourTotal, setServiceHourTotal ] = useState(0);
     const [ activeserviceHourTotal, setactiveServiceHourTotal ] = useState(0);
     const [ pledgeserviceHourTotal, setpledgeServiceHourTotal ] = useState(0);
+    const [ famService, setFamService ] = useState([]);
+    const [ sortMode, setSortMode ] = useState([]);
 
     useEffect(() => {
         async function getUsers() {
@@ -242,6 +244,7 @@ export default function UserTable() {
         let t = 0;
         let pledge = 0;
         let active = 0;
+        let f = [ 0, 0, 0 ]
         users.forEach((user) => 
         {
             if (user[ 'service' ]) 
@@ -249,13 +252,43 @@ export default function UserTable() {
                 const val = user[ 'service' ]
                 t += val
                 if (user.standing == 5) pledge += val
-                else active += val
+                else active += val  
+                if (user.fam)
+                {
+                    f[ user.fam - 1 ] += val;
+                }
             }
         })
+        setFamService(f);
         setServiceHourTotal(t)
         setpledgeServiceHourTotal(pledge)
         setactiveServiceHourTotal(active)
-    }, [users])
+    }, [ users ])
+    
+    function sortByField(field, a, b) {
+        if (a[field] < b[field]) return -1;  // a should come before b
+        if (a[field] > b[field]) return 1;   // a should come after b
+        return 0;  // a and b are equal
+    }    
+    function setSort(field)
+    {
+        if (sortMode == [] || sortMode[0] != field)
+        {
+            setSortMode([ field, true ])
+            setUsers(users.sort((a, b) => sortByField(field, a, b)));
+        }
+        else if (sortMode[1])
+        {
+            // switch to descending
+            setSortMode([ field, false ]);
+            setUsers(users.sort((a, b) => -sortByField(field, a, b)));
+        }
+        else
+        {
+            setSortMode([]);
+            setUsers(users.sort((a, b) => sortByField("name", a, b)));
+        }
+    }
 
     async function regenerate()
     {
@@ -267,29 +300,31 @@ export default function UserTable() {
         <div className="flex flex-col items-center space-y-4 overflow-y-auto">
             <h1 className="text-center text-xl text-neutral-600">Users</h1>
             <div className="flex justify-between gap-3">
-                <p className="bg-neutral-300 p-2 rounded-md text-black">Pledge Service Hour Total: { pledgeserviceHourTotal }</p>
-                <p className="bg-neutral-300 p-2 rounded-md text-black">Active Service Hour Total: { activeserviceHourTotal }</p>
+                <p className="bg-neutral-300 p-2 rounded-md text-black">Alpha Service Hour Total: { famService[0] }</p>
+                <p className="bg-neutral-300 p-2 rounded-md text-black">Phi Service Hour Total: { famService[1] }</p>
+                <p className="bg-neutral-300 p-2 rounded-md text-black">Omega Service Hour Total: { famService[2] }</p>
                 <p className="bg-neutral-300 p-2 rounded-md text-black">Service Hour Total: { serviceHourTotal }</p>
                 <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white" onClick={() => { regenerate() }}>
                     Regenerate Data (may take up to a few minutes)
                 </button>
             </div>
+            <h1>sorting by: { sortMode.length == 0 ? "none" : `${sortMode[0]} (${sortMode[1] ? "ascending" : "descending"})`}</h1>
             <div className={`grid ${grid_cols_width[creditRequirements.length + eventRequirements.length + 3]} w-full text-center`}>
-                <h1 className="text-start">Name</h1>
+                <button className="text-start" onClick={() => setSort("name")}>Name</button>
                 <h1>Email</h1>
                 {/* <div className={`overflow-x-scroll grid grid-cols-subgrid ${col_span_width[creditRequirements.length + eventRequirements.length + 1]}`}> */}
-                    <h1 className="text-end">Standing</h1>
+                    <button onClick={() => setSort("standing")} className="text-end">Standing</button>
                     {
                         creditRequirements.map((req, i) => {
                             return (
-                                <h1 key={i} className="text-end px-2 truncate max-w-[150px]">{req.name}</h1>
+                                <button key={i} onClick={() => setSort(req.name)} className="text-end px-2 truncate max-w-[150px]">{req.name}</button>
                             )
                         })
                     }
                     {
                         eventRequirements.map((req, i) => {
                             return (
-                                <h1 key={i} className="text-end px-2 truncate max-w-[150px]">{req.name}</h1>
+                                <button key={i} onClick={() => setSort(req.name)} className="text-end px-2 truncate max-w-[150px]">{req.name}</button>
                             )
                         })
                     }
