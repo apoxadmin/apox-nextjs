@@ -56,6 +56,7 @@ function LoginPage() {
 						/>
 					</label>
 				</div>
+				{loading && <p className="text-blue-500 text-sm">trying login...</p>}
 				{error && <p className="text-red-500 text-sm">{error}</p>}
 				{success && <p className="text-green-500 text-sm">{success}</p>}
 				<button
