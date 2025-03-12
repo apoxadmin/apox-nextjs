@@ -3,7 +3,7 @@
 import { AuthContext } from "@/supabase/client";
 import { sortById, uppercase } from "@/utils/utils";
 import { useContext, useEffect, useState, useRef } from "react";
-import { revalidateAllUsers } from "@/supabase/tracking";
+import { getUserReqs } from "@/supabase/tracking";
 import { RequirementsPage } from "../../myprofile/page";
 
 // note: also need to change gridTemplateColumns in tailwind.config.js if you change this:
@@ -181,28 +181,29 @@ export default function UserTable() {
     const [ pledgeserviceHourTotal, setpledgeServiceHourTotal ] = useState(0);
     const [ famService, setFamService ] = useState([]);
     const [ sortMode, setSortMode ] = useState([]);
+    const [ progress, setProgress ] = useState(-1);
 
-    useEffect(() => {
-        async function getUsers() {
-            const usersResponse = await supabase
-                .from('users')
-                .select('*, standings!inner(*), class(*), credit_users_requirements(*), event_users_requirements(*)')
-                .neq('standings.name', 'alumni');
-            if (usersResponse.data) {
-                let usersData = usersResponse.data;
-                for (let user of usersData) {
-                    for (let credit of user.credit_users_requirements) {
-                        user[credit.name] = credit.value;
-                    }
-                    for (let event_req of user.event_users_requirements) {
-                        user[event_req.name] = event_req.value;
-                    }
+    async function getUsers() {
+        const usersResponse = await supabase
+            .from('users')
+            .select('*, standings!inner(*), class(*), credit_users_requirements(*), event_users_requirements(*)')
+            .neq('standings.name', 'alumni');
+        if (usersResponse.data) {
+            let usersData = usersResponse.data;
+            for (let user of usersData) {
+                for (let credit of user.credit_users_requirements) {
+                    user[credit.name] = credit.value;
                 }
-                usersData.sort(compareName);
-                // console.log(usersData.filter(u => u.standing != 5).map(u => u.name).join(", "))
-                setUsers(usersData);
+                for (let event_req of user.event_users_requirements) {
+                    user[event_req.name] = event_req.value;
+                }
             }
+            usersData.sort(compareName);
+            // console.log(usersData.filter(u => u.standing != 5).map(u => u.name).join(", "))
+            setUsers(usersData);
         }
+    }
+    useEffect(() => {
         async function getCreditRequirements() {
             const response = await supabase
                 .from('credit_requirements')
@@ -292,8 +293,15 @@ export default function UserTable() {
 
     async function regenerate()
     {
-        await revalidateAllUsers();
-        window.location.reload()
+        setProgress(0.0);
+        const ids = users.map((d) => d.id);
+        for (let i = 0; i < ids.length; i++) {
+            const id = ids[i];
+            await getUserReqs(id)
+            setProgress((i + 1) / ids.length * 100);
+        }
+        getUsers();
+        setTimeout(() => setProgress(-1), 2000);
     }
 
     return (
@@ -305,9 +313,27 @@ export default function UserTable() {
                 <p className="bg-neutral-300 p-2 rounded-md text-black">Omega Service Hour Total: { famService[2] }</p>
                 <p className="bg-neutral-300 p-2 rounded-md text-black">Pledge Service Hour Total: { pledgeserviceHourTotal }</p>
                 <p className="bg-neutral-300 p-2 rounded-md text-black">Service Hour Total: { serviceHourTotal }</p>
-                <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white" onClick={() => { regenerate() }}>
-                    Regenerate Data (may take up to a few minutes)
-                </button>
+                {
+                    progress == -1 ?
+                        <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white" onClick={() => { regenerate() }}>
+                            Regenerate Data (may take up to a few minutes)
+                        </button>
+                        :
+                        <div style={{ width: "300px", textAlign: "center" }}>
+                            <div style={{ width: "100%", backgroundColor: "#ddd", borderRadius: "10px", overflow: "hidden" }}>
+                                <div
+                                    style={{
+                                        width: `${progress}%`,
+                                        height: "20px",
+                                        backgroundColor: "red",
+                                        transition: "width 0.5s ease-in-out",
+                                    }}
+                                ></div>
+                            </div>
+                            <p>validating:</p>
+                            <p>{progress.toFixed(2)}%</p>
+                        </div>
+                }
             </div>
             <h1>sorting by: { sortMode.length == 0 ? "none" : `${sortMode[0]} (${sortMode[1] ? "ascending" : "descending"})`}</h1>
             <div className={`grid ${grid_cols_width[creditRequirements.length + eventRequirements.length + 3]} w-full text-center`}>
