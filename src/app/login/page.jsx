@@ -26,10 +26,12 @@ function LoginPage() {
 		loginUserWithEmailAndPassword(email, password)
 			.then(() => {
 				setSuccess("Login successful! Redirecting...");
+				setError(null);
 			})
 			.catch((err) => {
 				setError(err.message || "Login failed. Please try again.");
-			});
+			})
+			.finally(() => setLoading(false));
 	}
 
 	return (
