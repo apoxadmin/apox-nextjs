@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { loginUserWithEmailAndPassword } from "@/supabase/auth";
+import { resetPassword } from "@/supabase/user";
 
 function LoginPage() {
 	const [loading, setLoading] = useState(false);
@@ -22,16 +23,13 @@ function LoginPage() {
 			return;
 		}
 
-		try {
-			await loginUserWithEmailAndPassword(email, password);
-			setError(null);
-			setSuccess("Login successful! Redirecting...");
-			// Redirect logic can go here, e.g., router.push("/dashboard")
-		} catch (err) {
-			setError(err.message || "Login failed. Please try again.");
-		} finally {
-			setLoading(false);
-		}
+		loginUserWithEmailAndPassword(email, password)
+			.then(() => {
+				setSuccess("Login successful! Redirecting...");
+			})
+			.catch((err) => {
+				setError(err.message || "Login failed. Please try again.");
+			});
 	}
 
 	return (

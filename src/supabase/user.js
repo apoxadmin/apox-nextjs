@@ -89,6 +89,10 @@ export async function resetPassword(email) {
         console.log('Invalid user!', newAuthUserResponse.error)
         return false;
     }
+    else
+    {
+        console.log("changed password of user " + email + " to stinkyelliot")
+    }
 
     return true;
 }
