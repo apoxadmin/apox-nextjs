@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { loginUserWithEmailAndPassword } from "@/supabase/auth";
-import { resetPassword } from "@/supabase/user";
+import { changeEmail, resetPassword } from "@/supabase/user";
 
 function LoginPage() {
 	const [loading, setLoading] = useState(false);

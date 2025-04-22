@@ -97,6 +97,30 @@ export async function resetPassword(email) {
     return true;
 }
 
+export async function changeEmail(oldEmail, newEmail) {
+    const supabase = createSupabaseAdmin();
+    const { data, error } = await supabase.from('users').select('*').eq('email', oldEmail).maybeSingle();
+
+    const auth_id = data.auth_id;
+
+    const newAuthUser = {
+        email: newEmail,
+        password: "stinkyelliot",
+        email_confirm: true
+    };
+    const newAuthUserResponse = await supabase.auth.admin.updateUserById(auth_id, newAuthUser);
+    if (newAuthUserResponse.error) {
+        console.log('Invalid user!', newAuthUserResponse.error)
+        return false;
+    }
+    else
+    {
+        console.log("changed email to " + newEmail + " with password stinkyelliot")
+    }
+
+    return true;
+}
+
 /**
  * @param {string | undefined} userId User ID
  **/
