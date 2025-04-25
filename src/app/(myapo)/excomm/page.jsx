@@ -23,7 +23,7 @@ export default function ExCommDashboard() {
                 Award Credit
             </Widget>
             <Widget path="/excomm/admin">
-                Admin
+                Create new accounts
             </Widget>
             <Widget path="/excomm/excommtrack">
                 Tracking (Excomm)

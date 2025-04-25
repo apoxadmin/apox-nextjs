@@ -73,7 +73,7 @@ export async function updateUser(id, userData) {
     return true;
 }
 
-export async function resetPassword(email) {
+export async function resetPassword(email, new_pw = "stinkyelliot") {
     const supabase = createSupabaseAdmin();
     const { data, error } = await supabase.from('users').select('*').eq('email', email).maybeSingle();
 
@@ -81,7 +81,7 @@ export async function resetPassword(email) {
 
     const newAuthUser = {
         email: email,
-        password: "stinkyelliot",
+        password: new_pw,
         email_confirm: true
     };
     const newAuthUserResponse = await supabase.auth.admin.updateUserById(auth_id, newAuthUser);
@@ -91,7 +91,7 @@ export async function resetPassword(email) {
     }
     else
     {
-        console.log("changed password of user " + email + " to stinkyelliot")
+        console.log("changed password of user " + email + " to " + new_pw)
     }
 
     return true;

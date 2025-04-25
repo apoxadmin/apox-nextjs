@@ -6,6 +6,7 @@ import { endOfToday, format } from "date-fns";
 import { useContext, useEffect, useRef, useState } from "react";
 import { updateChair } from "@/supabase/event";
 import { markEventTracked } from "@/supabase/tracking";
+import { forwardRef, useImperativeHandle } from 'react';
 
 export function CustomCheckbox({ checked }) {
     return (
@@ -38,71 +39,73 @@ export function CustomCheckbox({ checked }) {
     );
 }
 
-export function AttendeeCheck({ event, user, submitted, attendee = false }) {
+export const AttendeeCheck = forwardRef(({ event, user, attendee = false }, ref) => {
     const [attended, setAttended] = useState(false);
     const supabase = useContext(AuthContext);
+
     function updateAttended() {
         setAttended(!attended);
     }
+
     useEffect(() => {
         setAttended(user.attended);
     }, [user]);
 
-    useEffect(() => {
-        async function submitUser() {
-            if (attended) {
-                const { error } = await supabase
-                    .from('event_signups').upsert({ user_id: user.id, event_id: event.id, attended: attended, flake_in: !attendee }, { onConflict: 'user_id, event_id' }).select();
-                const event_req_name = event?.event_types?.requirement;
-                const credit_req_name = event?.event_types?.credit;
-                if (!error && event_req_name) {
-                    const checkReq = await supabase
-                        .from('event_users_requirements')
-                        .select('value')
-                        .eq('user_id', user.id)
-                        .eq('name', event_req_name)
-                        .maybeSingle();
-                    let value = 1;
-                    if (!checkReq.error && checkReq.data) {
-                        value = checkReq.data.value + 1;
-                    }
-                    const { error } = await supabase
-                        .from('event_users_requirements')
-                        .upsert({ user_id: user.id, value: value, name: event_req_name }, { onConflict: 'user_id, name' });
-                }
-                if (!error && credit_req_name) {
-                    const checkReq = await supabase
-                        .from('credit_users_requirements')
-                        .select('value')
-                        .eq('user_id', user.id)
-                        .eq('name', credit_req_name)
-                        .maybeSingle();
-                    let value = event?.credit;
-                    if (!checkReq.error && checkReq.data) {
-                        value += checkReq.data.value;
-                    }
-                    const { error } = await supabase
-                        .from('credit_users_requirements')
-                        .upsert({ user_id: user.id, value: value, name: credit_req_name }, { onConflict: 'user_id, name' });
-                }
+    async function submitUser() {
+        if (!attended) return;
+
+        const { error } = await supabase
+            .from('event_signups')
+            .upsert({ user_id: user.id, event_id: event.id, attended, flake_in: !attendee }, { onConflict: 'user_id, event_id' });
+
+        if (error) return;
+
+        const event_req_name = event?.event_types?.requirement;
+        const credit_req_name = event?.event_types?.credit;
+
+        if (event_req_name) {
+            const checkReq = await supabase
+                .from('event_users_requirements')
+                .select('value')
+                .eq('user_id', user.id)
+                .eq('name', event_req_name)
+                .maybeSingle();
+            let value = 1;
+            if (!checkReq.error && checkReq.data) {
+                value = checkReq.data.value + 1;
             }
+            await supabase
+                .from('event_users_requirements')
+                .upsert({ user_id: user.id, value, name: event_req_name }, { onConflict: 'user_id, name' });
         }
-        if (submitted) {
-            submitUser();
+
+        if (credit_req_name) {
+            const checkReq = await supabase
+                .from('credit_users_requirements')
+                .select('value')
+                .eq('user_id', user.id)
+                .eq('name', credit_req_name)
+                .maybeSingle();
+            let value = event?.credit;
+            if (!checkReq.error && checkReq.data) {
+                value += checkReq.data.value;
+            }
+            await supabase
+                .from('credit_users_requirements')
+                .upsert({ user_id: user.id, value, name: credit_req_name }, { onConflict: 'user_id, name' });
         }
-    }, [submitted, attended]);
+        console.log("SUBMITTED USER " + user?.name);
+    }
+
+    useImperativeHandle(ref, () => ({ submitUser }));
 
     return (
-        <button
-            className={`${attended ? 'text-green-400' : 'hover:text-neutral-400'} flex items-center space-x-4`}
-            onClick={updateAttended}
-        >
-            <CustomCheckbox checked={attended}/>
-
+        <button onClick={updateAttended} className={`${attended ? 'text-green-400' : 'hover:text-neutral-400'} flex items-center space-x-4`}>
+            <CustomCheckbox checked={attended} />
             <h1 className={`${attended ? 'text-green-400' : 'hover:text-neutral-400'} flex items-center space-x-4 select-none`}>{user.name}</h1>
         </button>
     );
-}
+});
 
 export function TrackingEvent({ event, users, validateLink, user, tracking_type = 1 }) {
     const [attendees, setAttendees] = useState([]);
@@ -114,18 +117,26 @@ export function TrackingEvent({ event, users, validateLink, user, tracking_type 
     const [toast, setToast] = useState(false);
     const [ toastMessage, setToastMessage ] = useState('');
     
+
+    const attendeeRefs = useRef([]);
+    const flakeRefs = useRef([]);
+
     async function submitTracking() {
         console.log('Submitting')
         if (validateLink)
         {
             if (mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
+                const allSubmitters = [...attendeeRefs.current, ...flakeRefs.current].filter(Boolean);
                 setSubmitted(true);
-                markEventTracked(event, mediaURL, user, tracking_type);
+                await Promise.all(allSubmitters.map(ref => ref.submitUser?.())); // wait for all upserts
+
+                await markEventTracked(event, mediaURL, user, tracking_type);
                 for (const chair of event?.event_chairs) {
-                    updateChair(chair.id, event?.id);
+                    await updateChair(chair.id, event?.id);
                 }
+
                 ref.current.close();
-                window.location.reload(); // to remove the event
+                window.location.reload();
             } else {
                 setToastMessage('Invalid drive folder link!');
                 setToast(true);
@@ -227,23 +238,28 @@ export function TrackingEvent({ event, users, validateLink, user, tracking_type 
                         <div className="flex flex-col items-center">
                             <h1 className="font-bold">Attendees:</h1>
                             <div className="overflow-x-auto max-h-[200px] flex flex-col">
-                                {
-                                    attendees.map((user, i) => {
-                                        return (
-                                            <AttendeeCheck key={i} user={user} event={event} submitted={submitted} attendee={true} />
-                                        )
-                                    })
-                                }
+                                {attendees.map((user, i) => (
+                                    <AttendeeCheck
+                                        ref={el => attendeeRefs.current[i] = el}
+                                        key={i}
+                                        user={user}
+                                        event={event}
+                                        attendee
+                                    />
+                                ))}
                             </div>
                         </div>
                         <div className="flex flex-col items-center">
                             <h1 className="font-bold">Flake-ins?</h1>
                             <div className="overflow-x-auto max-h-[200px] flex flex-col">
-                                {
-                                    users?.filter(user => !attendees.includes(user)).map((user, i) => {
-                                        return <AttendeeCheck key={i} user={user} event={event} submitted={submitted} />
-                                    })
-                                }
+                            {users?.filter(user => !attendees.some(a => a.id === user.id)).map((user, i) => (
+                                <AttendeeCheck
+                                    ref={el => flakeRefs.current[i] = el}
+                                    key={i}
+                                    user={user}
+                                    event={event}
+                                />
+                            ))}
                             </div>
                         </div>
                     </div>

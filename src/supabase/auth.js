@@ -16,7 +16,7 @@ export async function loginUserWithEmailAndPassword(email, password) {
 		redirect("/myapo");
 	} else {
 		console.log(error);
-		return Promise.reject(new Error("Invalid login"));
+		return Promise.reject(new Error(error.message));
 	}
 }
 
