@@ -106,6 +106,7 @@ export const AttendeeCheck = forwardRef(({ event, user, attendee = false }, ref)
         </button>
     );
 });
+AttendeeCheck.displayName = 'AttendeeCheck';
 
 export function TrackingEvent({ event, users, validateLink, user, tracking_type = 1 }) {
     const [attendees, setAttendees] = useState([]);
