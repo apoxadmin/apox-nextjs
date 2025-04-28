@@ -52,6 +52,8 @@ export const AttendeeCheck = forwardRef(({ event, user, attendee = false }, ref)
     }, [user]);
 
     async function submitUser() {
+        console.log(user?.name)
+        console.log(attended)
         if (!attended) return;
 
         const { error } = await supabase
@@ -77,6 +79,7 @@ export const AttendeeCheck = forwardRef(({ event, user, attendee = false }, ref)
             await supabase
                 .from('event_users_requirements')
                 .upsert({ user_id: user.id, value, name: event_req_name }, { onConflict: 'user_id, name' });
+            console.log(user?.name + " updated")
         }
 
         if (credit_req_name) {
@@ -146,12 +149,17 @@ export function TrackingEvent({ event, users, validateLink, user, tracking_type 
         }
         else
         {
+            const allSubmitters = [...attendeeRefs.current, ...flakeRefs.current].filter(Boolean);
             setSubmitted(true);
-            markEventTracked(event, mediaURL, user, tracking_type);
+            await Promise.all(allSubmitters.map(ref => ref.submitUser?.())); // wait for all upserts
+
+            await markEventTracked(event, mediaURL, user, tracking_type);
             for (const chair of event?.event_chairs) {
-                updateChair(chair.id, event?.id);
+                await updateChair(chair.id, event?.id);
             }
+
             ref.current.close();
+            window.location.reload();
 
             if (!mediaURL.startsWith('https://drive.google.com/drive/folders/')) {
                 setToastMessage('Submitted with invalid drive link');
