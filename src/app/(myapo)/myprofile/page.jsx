@@ -300,6 +300,9 @@ export function RequirementsPage({ user_id }) {
             const userEvents = await getUserReqs(userData?.id);
             setTrackedReqs(userEvents);
         }
+        getTrackedReqs();
+    }, [ userData ])
+    useEffect(() => {
         async function getOverrides()
         {
             if (userData && creditRequirements.length > 0 && eventRequirements.length > 0)
@@ -324,7 +327,6 @@ export function RequirementsPage({ user_id }) {
             }
         }
         getOverrides();
-        getTrackedReqs();
     }, [ userData, eventRequirements, creditRequirements ])
 
     useEffect(() => {
