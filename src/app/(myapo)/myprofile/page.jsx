@@ -325,7 +325,7 @@ export function RequirementsPage({ user_id }) {
         }
         getOverrides();
         getTrackedReqs();
-    }, [ userData ])
+    }, [ userData, eventRequirements, creditRequirements ])
 
     useEffect(() => {
         async function getReqData() {
