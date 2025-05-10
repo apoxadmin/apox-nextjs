@@ -375,7 +375,7 @@ function AttendeeInfo({ isShift, supabase, event, userData, shiftNum }) {
 
 function EventModalInfo({ shifts, event, supabase, setShowTrackingInfo, dateString, isCreator, userData }) {
     return (
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2 overflow-y-auto">
             <div className="flex justify-between">
                 <h1 className="text-neutral-600">
                     {event?.event_types.name.split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}
