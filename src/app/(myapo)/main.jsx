@@ -139,7 +139,7 @@ export default function Main({ children }) {
 					</div>
 				</div>
 			</div>
-			<div className="flex w-screen grow overflow-y-auto">
+			<div className="flex w-screen grow overflow-y-auto overflow-x-hidden">
 				<Sidebar visible={open} links={links} />
 				<div className="flex grow bg-white shadow-lg rounded-tl-lg border border-neutral-200 border-[1.5px]">
 					<div className="mx-2">

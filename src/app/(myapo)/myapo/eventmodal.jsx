@@ -243,7 +243,7 @@ function AttendeeInfo({ isShift, supabase, event, userData, shiftNum }) {
 
     return (
         <div className={`swiper-no-swiping dark:bg-[#252a30] p-2 rounded-xl text-white dark:text-slate-300`}>
-            <div className="flex flex-col space-y-2 overflow-auto max-h-[40vh]">
+            <div className="flex flex-col space-y-2 overflow-auto max-h-[30vh]">
                 {
                     isShift ?
                         <div className="flex-col">
@@ -441,7 +441,7 @@ function EventModalInfo({ shifts, event, supabase, setShowTrackingInfo, dateStri
                 shifts.length == 0 ?
                     <AttendeeInfo isShift={false} event={event} supabase={supabase} userData={userData} />
                     :
-                    <div className="flex flex-col gap-2 overflow-y-auto max-h-[400px] pb-6">
+                    <div className="flex flex-col gap-2 overflow-y-auto max-h-[300px]">
                         {
                             shifts.map((shift, i) => {
                                 return <AttendeeInfo shiftNum={i + 1} isShift={true} key={i} event={shift} supabase={supabase} userData={userData} />
@@ -449,7 +449,7 @@ function EventModalInfo({ shifts, event, supabase, setShowTrackingInfo, dateStri
                         }
                     </div>
             }
-        </div >)
+        </div>)
 }
 
 function TrackingInfo({ event, attendees, shiftNum, supabase }) {
