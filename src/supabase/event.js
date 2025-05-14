@@ -37,7 +37,7 @@ export async function joinEvent(user_id, event) {
     if (joinQuery?.data.some(signUp => signUp.user_id === user_id)) {
         return false;
     }
-    if (joinQuery?.data.length === event?.capacity) {
+    if (joinQuery?.data.length >= event?.capacity) {
         return false;
     }
     const { error } = await supabase.from('event_signups').insert({ user_id, event_id: event?.id });
