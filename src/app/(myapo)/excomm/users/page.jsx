@@ -49,33 +49,45 @@ const col_span_width = [
     'col-span-17'
 ]
 
-function generateCSV(user)
-{
+function generateCSVRow(user) {
     if (!user) return null;
-    let row = 
-    {
+    let row = {
         name: user?.name,
-        standing: user?.standings.name,
-        class: user?.class.name
-    }
-    user.event_users_requirements.forEach(r =>
-    {
-        row[ r.name ] = r.value;   
-    })
-    user.credit_users_requirements.forEach(r =>
-    {
-        row[ r.name ] = r.value;   
-    })
+        standing: user?.standings?.name,
+        class: user?.class?.name
+    };
+    user.event_users_requirements.forEach(r => {
+        row[r.name] = r.value;
+    });
+    user.credit_users_requirements.forEach(r => {
+        row[r.name] = r.value;
+    });
     return row;
 }
 
-function downloadCSV(data)
-{    
+function generateCSVData(users) {
+    const rows = users.map(generateCSVRow);
+
+    // Collect all unique headers
+    const allHeaders = new Set();
+    rows.forEach(row => {
+        Object.keys(row).forEach(key => allHeaders.add(key));
+    });
+
+    const headers = Array.from(allHeaders);
+
+    // Build CSV content
     const csvContent = [
-        Object.keys(data[0]).join(","),  // Headers
-        ...data.map(row => Object.values(row).join(","))
+        headers.join(","), // header row
+        ...rows.map(row => headers.map(h => `"${row[h] ?? ""}"`).join(",")) // data rows
     ].join("\n");
-    
+
+    return csvContent;
+}
+
+function downloadCSVFromUsers(users) {
+    const csvContent = generateCSVData(users);
+
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -83,7 +95,12 @@ function downloadCSV(data)
     a.download = "data.csv";
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);    
+    document.body.removeChild(a);
+}
+
+function downloadTracker(users)
+{
+    downloadCSVFromUsers(users)
 }
 
 function UserRow({ user, creditRequirements, eventRequirements }) {
@@ -315,9 +332,14 @@ export default function UserTable() {
                 <p className="bg-neutral-300 p-2 rounded-md text-black">Service Hour Total: { serviceHourTotal }</p>
                 {
                     progress == -1 ?
-                        <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white" onClick={() => { regenerate() }}>
-                            Regenerate Data (may take up to a few minutes)
-                        </button>
+                        <div className="flex gap-2">
+                            <button className="justify-between space-x-4 p-2 bg-red-500 rounded text-white" onClick={() => { regenerate() }}>
+                                Regenerate Data (may take up to a few minutes)
+                            </button>
+                            <button className="justify-between space-x-4 p-2 bg-blue-500 rounded text-white" onClick={() => { downloadTracker(users) }}>
+                                Download Tracker as .csv
+                            </button>
+                        </div>
                         :
                         <div style={{ width: "300px", textAlign: "center" }}>
                             <div style={{ width: "100%", backgroundColor: "#ddd", borderRadius: "10px", overflow: "hidden" }}>
