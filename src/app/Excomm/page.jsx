@@ -13,7 +13,7 @@ const positions = [
   },
   {
     title: "Admin Vice President: Kyla Daez",
-    image: "/BKadminVp1.jpeg",
+    image: "/BKadminVP1.jpeg",
     blurb: "When I entered college, I thought I would focus more on career oriented goals, but I felt that community service would be fulfilling for myself. I became close to my line, p-bros, and fam that are now long-lasting friendships. APO allows me to network with different majors to learn more about the person and not stay in the engineering field. I did not expect the benefits that this fraternity gave me. #LFS",
   },
   {
