@@ -48,13 +48,13 @@ const positions = [
   },
     {
     title: "Finance Vice President: Hailey Brown",
-    image: "/BKavp2.JPG",
+    image: "/BKfinance1.JPG",
     blurb:
       "Joining Alpha Phi Omega felt like a natural step for me because I’ve always believed in the power of service to build character and community. APO gave me a chance to turn my passion for volunteering into meaningful action while surrounding myself with people who care deeply. It’s helped me grow personally and professionally in ways I didn’t expect.",
   },
     {
     title: "Finance Vice President: Morgan Nguyen",
-    image: "/BKavp2.JPG",
+    image: "/BKfinance2.JPG",
     blurb:
       "I initially joined APO because I wanted to be involved in community service activities. I stayed in APO because of the people I met who have become my close friends! Whether it's late-night study hours or random eats across the county, APO has really made my time as a transfer a college experience.",
   },
