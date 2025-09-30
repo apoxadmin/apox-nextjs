@@ -13,12 +13,12 @@ const positions = [
   },
   {
     title: "Admin Vice President: Kyla Daez",
-    image: "/BKadminVP1.jpeg",
+    image: "/BKavp1.JPG",
     blurb: "When I entered college, I thought I would focus more on career oriented goals, but I felt that community service would be fulfilling for myself. I became close to my line, p-bros, and fam that are now long-lasting friendships. APO allows me to network with different majors to learn more about the person and not stay in the engineering field. I did not expect the benefits that this fraternity gave me. #LFS",
   },
   {
     title: "Admin Vice President: Sean Lee Phu",
-    image: "/BKavp.PNG",
+    image: "/BKavp2.JPG",
     blurb:
       "I joined Alpha Phi Omega because I wanted to be part of something bigger than myself—a community built on leadership, friendship, and service. Giving back has always been important to me, and APO gave me a space where I could grow while helping others. It’s more than just a service organization; it feels like home.",
   },
@@ -48,13 +48,13 @@ const positions = [
   },
     {
     title: "Finance Vice President: Hailey Brown",
-    image: "/BKavp.PNG",
+    image: "/BKavp2.JPG",
     blurb:
       "Joining Alpha Phi Omega felt like a natural step for me because I’ve always believed in the power of service to build character and community. APO gave me a chance to turn my passion for volunteering into meaningful action while surrounding myself with people who care deeply. It’s helped me grow personally and professionally in ways I didn’t expect.",
   },
     {
     title: "Finance Vice President: Morgan Nguyen",
-    image: "/BKavp.PNG",
+    image: "/BKavp2.JPG",
     blurb:
       "I initially joined APO because I wanted to be involved in community service activities. I stayed in APO because of the people I met who have become my close friends! Whether it's late-night study hours or random eats across the county, APO has really made my time as a transfer a college experience.",
   },
