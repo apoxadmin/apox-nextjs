@@ -32,8 +32,6 @@ select:-webkit-autofill:focus {
   color: white;
 }
 
-
-
 /*
 @media (prefers-color-scheme: dark) {
   :root {
@@ -48,3 +46,24 @@ select:-webkit-autofill:focus {
     text-wrap: balance;
   }
 } */
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 6px;
+  border: 3px solid white;
+}
+
+/* Firefox scrollbar */
+body {
+  scrollbar-color: gray white;
+  scrollbar-width: thin;
+}
