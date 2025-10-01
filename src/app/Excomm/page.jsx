@@ -74,7 +74,7 @@ const positions = [
     title: "Pledge Parent: Chloe Liu",
     image: "/BKpp1.JPG",
     blurb:
-      "I joined APO because I was looking for a community thay would welcome me and help me find my place at UCLA. It is one of the best decisions I've made and I am grateful for all the amazing people that made this campus feel like a second home. The meaningful relationships I've formed through APO are what keep me coming back every term for more shenanigans!",
+      "I joined APO because I was looking for a community that would welcome me and help me find my place at UCLA. It is one of the best decisions I've made and I am grateful for all the amazing people that have made this campus feel like a second home. The meaningful relationships I've formed through APO are what keep me coming back every term for more shenanigans!",
   },
     {
     title: "Pledge Parent: Yahir Perez",
