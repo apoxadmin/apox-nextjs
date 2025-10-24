@@ -3,8 +3,8 @@
 import sendEmail from "@/mailer/mailer";
 import { AuthContext } from "@/supabase/client";
 import React, { useContext, useEffect, useState, useRef, useMemo } from "react";
-import EventCalendar, { DAYS, MonthDayComponent } from "./calendar";
-import { addMonths, format, subMonths } from "date-fns";
+import EventCalendar, { DAYS, MonthDayComponent, WeekCalendar } from "./calendar";
+import { addMonths, addWeeks, format, subMonths, subWeeks } from "date-fns";
 import {
 	eachDayOfInterval,
 	endOfDay,
@@ -68,6 +68,7 @@ export default function MyAPOPage() {
 	const [focusDays, setFocusDays] = useState([subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1)]);
 	const [monthEventMap, setMonthEventMap] = useState({});
 	const [filter, setFilter] = useState([]);
+	const [monthView, setMonthView] = useState(true);
 
 	const searchParams = useSearchParams();
 
@@ -96,7 +97,8 @@ export default function MyAPOPage() {
 	}, []);
 	useEffect(() => {
 		async function changeCache() {
-			const newFocus = [subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1)];
+			const newFocus = monthView ? [ subMonths(focusDay, 1), focusDay, addMonths(focusDay, 1) ]
+			: [ subWeeks(focusDay, 1), focusDay, addWeeks(focusDay, 1) ];
 			setFocusDays(newFocus);
 
 			// Create a new copy of monthEventMap (immutable update)
@@ -117,12 +119,13 @@ export default function MyAPOPage() {
 		}
 
 		changeCache();
-	}, [focusDay]);
-
+	}, [ focusDay, monthView ]);
+	
 	return (
 		<div className="flex grow">
-			<EventTypeDropdown filter={filter} setFilter={setFilter} />
-			<Swiper
+			<EventTypeDropdown filter={filter} setFilter={setFilter} monthView={monthView} setMonthView={setMonthView} />
+			{
+				<Swiper
 				key={focusDay.toISOString()}
 				className="w-0 flex bg-white rounded shadow-md flex-1"
 				runCallbacksOnInit={false}
@@ -132,9 +135,11 @@ export default function MyAPOPage() {
 				modules={[Navigation]}
 				onSlideChangeTransitionEnd={swiper => {
 					if (swiper.realIndex > swiper.previousIndex) {
-						setFocusDay(addMonths(focusDay, 1));
+						if (monthView) setFocusDay(addMonths(focusDay, 1));
+						else setFocusDay(addWeeks(focusDay, 1));
 					} else if (swiper.realIndex < swiper.previousIndex) {
-						setFocusDay(subMonths(focusDay, 1));
+						if (monthView) setFocusDay(subMonths(focusDay, 1));
+						else setFocusDay(subWeeks(focusDay, 1));
 					}
 				}}
 				navigation={{
@@ -143,22 +148,35 @@ export default function MyAPOPage() {
 				}}>
 				{focusDays.map(day => (
 					<SwiperSlide key={day.toISOString()} className="w-full h-full">
-						<EventCalendar
-							focusDay={day}
-							userData={userData}
-							filter={filter}
-							setFilter={setFilter}
-							events={monthEventMap[day.toISOString()]?.events}
-							shiftList={monthEventMap[day.toISOString()]?.shiftList}
-						/>
+						{
+							monthView ?								
+							<EventCalendar
+								focusDay={day}
+								userData={userData}
+								filter={filter}
+								setFilter={setFilter}
+								events={monthEventMap[day.toISOString()]?.events}
+								shiftList={monthEventMap[day.toISOString()]?.shiftList}
+							/>
+								:
+							<WeekCalendar
+								focusDay={day}
+								userData={userData}
+								filter={filter}
+								setFilter={setFilter}
+								events={monthEventMap[day.toISOString()]?.events}
+								shiftList={monthEventMap[day.toISOString()]?.shiftList}
+							/>
+						}
 					</SwiperSlide>
 				))}
 			</Swiper>
+			}
 		</div>
 	);
 }
 
-function EventTypeDropdown({ filter, setFilter }) {
+function EventTypeDropdown({ filter, setFilter, monthView, setMonthView }) {
 	const supabase = useContext(AuthContext);
 	const [eventTypes, setEventTypes] = useState([]);
 	const [selectedValues, setSelectedValues] = useState([]);
@@ -202,7 +220,17 @@ function EventTypeDropdown({ filter, setFilter }) {
 
 	return (
 		<div className="relative">
-			<div className="absolute top-[10px] left-[20px] z-[1000] flex items-center gap-2">
+					<div className="absolute top-[10px] left-[20px] z-[1000] flex items-center gap-4">
+				{/* view toggle: month <-> week — horizontal slider with movable knob */}
+				<div className="flex items-center gap-2">
+					<span className="text-sm text-neutral-500">Week</span>
+					<label className="relative inline-flex items-center cursor-pointer">
+						<input type="checkbox" className="sr-only peer" checked={monthView} onChange={(e) => setMonthView(e.target.checked)} />
+						<div className="w-14 h-7 bg-gray-200 rounded-full peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:bg-blue-600 transition-colors" />
+						<div className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow transform transition-transform peer-checked:translate-x-7" />
+					</label>
+					<span className="text-sm text-neutral-500">Month</span>
+				</div>
 				<h1 className="hidden lg:block w-[100px]">filter events:</h1>
 				<details ref={dropdownRef} className="dropdown">
 					<summary className="btn border-px bg-neutral-50 border-gray-300 text-gray-400 font-normal">
