@@ -9,7 +9,7 @@ export default function Home() {
     <>
     <Navbar />
     <div className="grow flex flex-col items-center space-y-4">
-        <div className="grow relative p-10 w-full flex flex-col items-center justify-evenly bg-no-repeat bg-[linear-gradient(to_bottom,rgba(20,20,20,0.3),rgba(1,1,1,0.65),rgba(1,1,1,0.9)),url('/bi_class.JPG')] bg-cover bg-[50%_30%]">
+        <div className="grow relative p-10 w-full flex flex-col items-center justify-evenly bg-no-repeat bg-[linear-gradient(to_bottom,rgba(20,20,20,0.3),rgba(1,1,1,0.65),rgba(1,1,1,0.9)),url('/bk_class.JPG')] bg-cover bg-[50%_30%]">
           <div className={`mt-16z-10 flex items-center text-white text-4xl space-x-8 [&>*]:drop-shadow-lg ${titleFont.className}`}>
             {/* <h1 className="text-2xl md:text-4xl text-blue-700 drop-shadow-lg">
                 Alpha Phi Omega
