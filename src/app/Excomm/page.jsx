@@ -9,7 +9,7 @@ const positions = [
     title: "President: Kiana Ablaza",
     image: "/BKpres.JPG",
     blurb:
-      "I had the privilege of knowing about APO before coming to UCLA through my parents and uncles. I saw the connections and experiences they had and hoped to find that for myself. I've been in APO since my first quarter, and even after getting involved with new commitments and getting closer to graduation, what ultimately keeps me coming back are the friends I've made and the impacts our work has on the community. Joining APO has been the most fulfilling and wonderful decision I've made as not only an undergraduate, but a person, and I hope others can experience that same support and community. ",
+      "I had the priviledge of knowing about APO before coming to UCLA through my parents and uncles. I saw the connections and experiences they had and hoped to find that for myself. I've been in APO since my first quarter, and even after getting involved with new commitments and getting closer to graduation, what ultimately keeps me coming back are the friends I've made and the impacts our work has on the community. Joining APO has been the most fulfilling and wonderful decision I've made as not only an undergraduate, but a person, and I hope others can experience that same support and community. ",
   },
   {
     title: "Admin Vice President: Kyla Daez",
