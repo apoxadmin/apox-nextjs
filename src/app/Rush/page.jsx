@@ -59,12 +59,12 @@ export default function Rush() {
           </h2>
           <div className="flex flex-col items-center gap-10">
             <img
-              src="/flyer1.jpeg"
+              src="/s26rush1.png"
               alt="Rush Flyer 1"
               className="w-[500px] max-w-full h-auto rounded-lg shadow-md"
             />
             <img
-              src="/flyer2.jpeg"
+              src="/s26rush2.png"
               alt="Rush Flyer 2"
               className="w-[500px] max-w-full h-auto rounded-lg shadow-md"
             />
@@ -81,7 +81,7 @@ export default function Rush() {
           </p>
           <div className="w-full">
             <iframe
-              src="https://docs.google.com/forms/d/e/1FAIpQLScdqPgcScOSdEd_7jWXMaCW6zs0di3VSR3weXJNTnlC3c2hUQ/viewform"
+              src="https://docs.google.com/forms/d/e/1FAIpQLSdYd-VW0I0TMzoQigkbJJgcLAt4KuJiRmEiGEPJ_kUemnMfhA/viewform?usp=send_form"
               width="100%"
               height="800"
               frameBorder="0"
