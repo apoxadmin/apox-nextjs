@@ -35,10 +35,10 @@ const positions = [
       "As corny as it sounds, I joined APO because of the people! The community and atmosphere this frat brings is truly welcoming!",
   },
     {
-    title: "Service Vice President: Nathan Min",
-    image: "/nathan.JPEG",
+    title: "Service Vice President: Emma Sahagun",
+    image: "/EmmaS.jpg",
     blurb:
-      "Our Organization has consolidated the culture of single-hearted unity, and is overflowing with warm sincere people. Where else in the world would our hearts lie?",
+      "I love APO and my philipinos!",
   },
     {
     title: "Service Vice President: Devon Vo",
