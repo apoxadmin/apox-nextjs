@@ -24,7 +24,7 @@ const positions = [
   },
     {
     title: "Membership Vice President: Christiana Reantaso ",
-    image: "/grace.JPEG",
+    image: "/christiana.jpg",
     blurb:
       "Pledging was one of the most spontaneous yet fulfilling things I’ve done in college. I came to APO hoping to find a community of like-minded people who cared about giving back to the community and to each other, and I did! Joined for the vibes, stayed for the memories and friendships. #livelaughloveLFS",
   },
