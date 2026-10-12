@@ -9,7 +9,7 @@ const positions = [
     title: "President: Yahir Perez",
     image: "/Yahir Perez.jpg",
     blurb:
-      "... ",
+      "President! ",
   },
   {
     title: "Admin Vice President: Kristen Takamure",
