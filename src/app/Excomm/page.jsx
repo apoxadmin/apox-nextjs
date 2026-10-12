@@ -78,7 +78,7 @@ const positions = [
   },
     {
     title: "Pledge Parent: Kaya Lee-Goins",
-    image: "/samantha.JPEG",
+    image: "/KayaLee.jpg",
     blurb:
       "...",
   },
