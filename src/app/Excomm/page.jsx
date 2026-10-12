@@ -18,7 +18,7 @@ const positions = [
   },
   {
     title: "Admin Vice President: Sebastianne Jen Jorge",
-    image: "/sean.JPEG",
+    image: "/seb.webp",
     blurb:
       "...",
   },
@@ -36,19 +36,19 @@ const positions = [
   },
     {
     title: "Service Vice President: Emma Sahagun",
-    image: "/EmmaS.jpg",
+    image: "/emma.jpg",
     blurb:
       "...",
   },
     {
     title: "Service Vice President: Joliet Nguyen",
-    image: "/devon.JPEG",
+    image: "/Joliet.webp",
     blurb:
       "...",
   },
     {
     title: "Finance Vice President: Dario Bermea",
-    image: "/hailey.JPEG",
+    image: "/Dario.png",
     blurb:
       "...",
   },
@@ -60,7 +60,7 @@ const positions = [
   },
     {
     title: "Fellowship Vice President: Laura Vo",
-    image: "/christiana.JPEG",
+    image: "/laura.jpg",
     blurb:
       "...",
   },
@@ -84,7 +84,7 @@ const positions = [
   },
     {
     title: "Historian: Subha Tubassum",
-    image: "/will.JPG",
+    image: "/subha.jpg",
     blurb:
       "... ",
   },
@@ -102,13 +102,13 @@ const positions = [
   },
       {
     title: "Interchapter Chair: Elizabeth Yawata",
-    image: "/mj.JPEG",
+    image: "/ellie.jpg",
     blurb:
       "...",
   },
       {
     title: "Interchapter Chair: Mark Flores",
-    image: "/leah.JPEG",
+    image: "/Mark.png",
     blurb:
       "...",
   },
