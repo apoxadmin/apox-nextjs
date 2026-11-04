@@ -7,7 +7,7 @@ const textFont = Rubik({ subsets: ["latin"], style: ["normal", "italic"] });
 const positions = [
   {
     title: "President: Yahir Perez",
-    image: "/Yahir Perez.jpg",
+    image: "/YahirP.jpg",
     blurb:
       "I joined Alpha Phi Omega to find a community on campus that focused on Leadership, Friendship, and Service! Over the years I have gained so much perspective on what service can look like and mean to others. APO has also brought me my closest friends that I know I will cherish forever. ",
   },
